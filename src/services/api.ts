@@ -1,6 +1,11 @@
 import config from "../config";
 import liferay from "./liferay";
 
+const IMAGE_STATUS = {
+    APPROVED: 0,
+    EXPIRED: 3,
+};
+
 export default {
     getProducts(page: number, pageSize: number) {
         return liferay.get(
@@ -17,7 +22,7 @@ export default {
                         classNameId,
                         classPK,
                         type: 0,
-                        status: 3,
+                        status: IMAGE_STATUS.APPROVED,
                         start: 0,
                         end: 20,
                     },
