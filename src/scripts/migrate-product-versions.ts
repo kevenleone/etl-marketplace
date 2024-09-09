@@ -161,6 +161,8 @@ class MigrateProductVersions {
 			version: string;
 		}[] = [];
 
+		let versionNameSpecification: string[] = [];
+
 		for (const lpkg of lpkgs) {
 			const lpkgBuildNumber = this.getLPKGBuildNumber(lpkg);
 
@@ -197,13 +199,21 @@ class MigrateProductVersions {
 			);
 
 			if (!liferayVersions.length) {
-				await api.createProductSpecification(Number(productId), {
-					id: this.liferayVersionSpecification.id,
-					specificationKey: SPECIFICATION_LIFERAY_VERSION_KEY,
-					value: {
-						en_US: this.getVersionNumber(versionName),
-					},
-				});
+				if (
+					!versionNameSpecification.find(
+						(item) => item === this.getVersionNumber(versionName),
+					)
+				) {
+					await api.createProductSpecification(Number(productId), {
+						id: this.liferayVersionSpecification.id,
+						specificationKey: SPECIFICATION_LIFERAY_VERSION_KEY,
+						value: {
+							en_US: this.getVersionNumber(versionName),
+						},
+					});
+				}
+
+				versionNameSpecification.push(this.getVersionNumber(versionName));
 
 				this.logger.info(`Specification ${versionName} created`);
 
@@ -353,14 +363,20 @@ class MigrateProductVersions {
 	}
 }
 
-const [publisherAssetFolderId, portalReleases, specificationResponse] =
+await api.myUserAccount();
+
+const [specificationResponse, publisherAssetFolderId, portalReleases] =
 	await Promise.all([
+		api.getSpecification(new URLSearchParams({ pageSize: "100" })),
 		MigrateProductVersions.getAssetFolderId(),
 		Prisma.oSB_PortalRelease.findMany(),
-		api.getSpecification(),
 	]);
 
-const liferayVersionSpecification = specificationResponse.items.find(
+const response = await specificationResponse.json<APIResponse<any>>();
+
+const { items: specifications } = response;
+
+const liferayVersionSpecification = specifications.find(
 	(specification) => specification.key === SPECIFICATION_LIFERAY_VERSION_KEY,
 );
 

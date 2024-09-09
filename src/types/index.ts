@@ -135,9 +135,41 @@ export type ProductSpecification = {
 		key: string;
 	};
 	specificationKey: string;
-	value: {
-		en_US: string;
-	};
+	value:
+		| {
+				en_US: string;
+		  }
+		| string;
+};
+
+export type ProductOption = {
+	catalogId?: string | number;
+	description?: string;
+	facetable: boolean;
+	required: boolean;
+	skuContributor: string;
+	fieldType: string;
+	id?: number;
+	key: string;
+	name: { en_US: string } | string;
+	optionExternalReferenceCode?: string;
+	optionId: number | string;
+	productOptionValues?: ProductOptionValues[];
+};
+
+export type ProductOptionValues = {
+	id: number;
+	key: string;
+	name: string;
+	preselected: boolean;
+	price: string;
+	priceType: string;
+	priority: number;
+	productOptionId: number;
+	quantity: string;
+	selectable: boolean;
+	unitOfMeasureKey: string;
+	visible: boolean;
 };
 
 export type ProductPage = APIResponse<Product>;
