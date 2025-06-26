@@ -172,10 +172,10 @@ dist
 .idea
 
 
-packages/etl/import/downloads
-packages/etl/import/TEST
-packages/etl/import/data
-packages/etl/import/csv
-packages/etl/import/json
+etl/import/downloads
+etl/import/TEST
+etl/import/data
+etl/import/csv
+etl/import/json
 
 .env

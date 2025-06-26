@@ -1,32 +1,15 @@
 import { z } from "zod";
 
-export const liferayAuthSchema = z.object({
-    LIFERAY_CLIENT_ID: z.string().optional(),
-    LIFERAY_CLIENT_SECRET: z.string().optional(),
-    LIFERAY_HOST: z.string(),
-    LIFERAY_PASSWORD: z.string().optional(),
-    LIFERAY_USERNAME: z.string().optional(),
-});
-
-export const exportProductIdsSchema = z.object({
-    CHANNEL_ID: z.string().describe("The channelId to create the products"),
-    PRODUCT_IDS: z.string(),
-});
-
-export const exportProductFileSchema = z.object({
-    CHANNEL_ID: z.string().describe("The channelId to create the products"),
-});
-
-export const createProductFromCSVSchema = z.object({
-    CATALOG_ID: z.string().describe("The catalog to create the products"),
-});
-
 export const createProductFromJSONchema = z.object({
     CHANNEL_ID: z
         .string()
         .min(3)
         .describe("The channelId to create the products"),
     SITE_ID: z.string().min(3).describe("The siteId to create the products"),
+});
+
+export const createProductFromCSVSchema = z.object({
+    CATALOG_ID: z.string().describe("The catalog to create the products"),
 });
 
 export const downloadSchema = z.object({
@@ -41,6 +24,23 @@ export const downloadSchema = z.object({
     jsessionid: z
         .string()
         .describe("Get the JSESSIONID cookie from the download site page"),
+});
+
+export const exportProductIdsSchema = z.object({
+    CHANNEL_ID: z.string().describe("The channelId to create the products"),
+    PRODUCT_IDS: z.string(),
+});
+
+export const exportProductFileSchema = z.object({
+    CHANNEL_ID: z.string().describe("The channelId to create the products"),
+});
+
+export const liferayAuthSchema = z.object({
+    LIFERAY_CLIENT_ID: z.string().optional(),
+    LIFERAY_CLIENT_SECRET: z.string().optional(),
+    LIFERAY_HOST: z.string(),
+    LIFERAY_PASSWORD: z.string().optional(),
+    LIFERAY_USERNAME: z.string().optional(),
 });
 
 export const migrateProductVersionSchema = liferayAuthSchema.extend({
