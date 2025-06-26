@@ -128,6 +128,15 @@ export default {
         );
     },
 
+    async getAccountById(accountId: number, searchParams: URLSearchParams = new URLSearchParams()) {
+        const response = await liferay.get(
+            `o/headless-admin-user/v1.0/accounts/${accountId}?${searchParams.toString()}`,
+            { timeout: 30000 }
+        );
+
+        return response.json<OrderPage>();
+    },
+
     getProductByERC(productId: number) {
         return liferay
             .get(
@@ -219,14 +228,14 @@ export default {
         return liferay.post(`api/jsonws/invoke`, {
             json: {
                 "/commerce.cpattachmentfileentry/get-cp-attachment-file-entries":
-                    {
-                        classNameId,
-                        classPK,
-                        type: 0,
-                        status: IMAGE_STATUS.APPROVED,
-                        start: 0,
-                        end: 20,
-                    },
+                {
+                    classNameId,
+                    classPK,
+                    type: 0,
+                    status: IMAGE_STATUS.APPROVED,
+                    start: 0,
+                    end: 20,
+                },
             },
         });
     },
@@ -297,6 +306,23 @@ export default {
         return liferay.get(
             "api/jsonws/company/get-company-by-web-id?webId=liferay.com"
         );
+    },
+
+    async getPostalAddresses(accountId: number | string) {
+        const response = liferay.get(
+            `o/headless-admin-user/v1.0/accounts/${accountId}/postal-addresses`
+        );
+
+        const addressList=  await response.json() as any
+        
+        return addressList.items as Array<{
+            streetAddressLine1?: string;
+            addressLocality?: string;
+            addressRegion?: string;
+            postalCode?: string;
+            addressCountry?: string;
+        }>;
+
     },
 
     getTaxonomyVocabularies(siteId: number | string) {

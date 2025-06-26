@@ -6,13 +6,37 @@ export type APIResponse<T = any> = {
 };
 
 export type Account = {
-    externalReferenceCode: string;
     company?: string;
+    customFields: CustomField[]
+    description?: string;
+    externalReferenceCode: string;
     id: number;
+    logoURL: string
     name: string;
-};
+    type?: string;
+}
+
+export type PublisherDetails = {
+    emailAddress: string;
+    location: string;
+    publisherName: string;
+    websiteURL: string;
+    publisherProfileImage: string;
+    catalogId: string
+    description: string;
+    r_accountToPublisherDetails_accountEntryId?: string
+}
+
+export type PostalAddress = {
+    addressCountry?: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    postalCode?: string;
+    streetAddressLine1?: string;
+}
 
 export type Catalog = {
+    accountId: number;
     currencyCode: string;
     defaultLanguageId: string;
     externalReferenceCode: string;
@@ -143,10 +167,10 @@ export type ProductSpecification = {
     };
     specificationKey: string;
     value:
-        | {
-              en_US: string;
-          }
-        | string;
+    | {
+        en_US: string;
+    }
+    | string;
 };
 
 export type ProductOption = {
