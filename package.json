@@ -1,23 +1,23 @@
 {
-  "name": "etl-marketplace",
-  "version": "1.0.0",
-  "description": "ETL Marketplace monorepo",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "bun run --cwd packages/* build",
-    "dev": "bun run --cwd packages/* dev",
-    "lint": "bun run --cwd packages/* lint",
-    "test": "bun run --cwd packages/* test"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  }
+    "name": "etl-marketplace",
+    "version": "1.0.0",
+    "description": "ETL Marketplace monorepo",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "bun run --cwd packages/* build",
+        "dev": "bun run --cwd packages/* dev",
+        "lint": "bun run --cwd packages/* lint",
+        "test": "bun run --cwd packages/* test"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "bun-types": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    }
 }

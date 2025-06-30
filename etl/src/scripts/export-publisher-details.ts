@@ -1,3 +1,5 @@
+import "../core/SafeRunner";
+
 import PaginationRun from "../core/PaginationRun";
 import { liferayClient } from "../services/liferay";
 import {
@@ -86,6 +88,8 @@ class ExportAccounts extends PaginationRun<PageAccount> {
             return console.error("Catalog not found", account.name);
         }
 
+        console.log(`Processing ${account.name}`);
+
         const customFields = account.customFields || [];
 
         this.publisherDetails.push({
@@ -151,7 +155,7 @@ async function main() {
 
     const exportAccounts = new ExportAccounts(catalogs);
 
-    await exportAccounts.run(1, 100);
+    await exportAccounts.run(1, 50);
 }
 
 main();
