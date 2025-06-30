@@ -7,7 +7,6 @@ import {
 } from "../types";
 import config from "../config";
 import liferay from "./liferay";
-import SearchBuilder from "../core/SearchBuilder";
 
 const IMAGE_STATUS = {
     APPROVED: 0,
@@ -15,6 +14,22 @@ const IMAGE_STATUS = {
 };
 
 export default {
+    async getPublisherDetails(
+        searchParams: URLSearchParams = new URLSearchParams()
+    ) {
+        const response = await liferay.get(`o/c/publisherdetailses?${searchParams.toString()}`)
+
+        return response.json<APIResponse<any>>();
+    },
+
+    createPublisherDetails(data: any) {
+        return liferay
+            .post("o/c/publisherdetailses", {
+                json: data,
+            })
+            .json<any>();
+    },
+
     getPriceList(urlSearchParams = new URLSearchParams()) {
         return liferay
             .get(
@@ -231,14 +246,14 @@ export default {
         return liferay.post(`api/jsonws/invoke`, {
             json: {
                 "/commerce.cpattachmentfileentry/get-cp-attachment-file-entries":
-                    {
-                        classNameId,
-                        classPK,
-                        type: 0,
-                        status: IMAGE_STATUS.APPROVED,
-                        start: 0,
-                        end: 20,
-                    },
+                {
+                    classNameId,
+                    classPK,
+                    type: 0,
+                    status: IMAGE_STATUS.APPROVED,
+                    start: 0,
+                    end: 20,
+                },
             },
         });
     },
