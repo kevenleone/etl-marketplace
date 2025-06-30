@@ -14,6 +14,7 @@ export const paths = {
         "developer"
     ),
     csv: path.join(import.meta.dir, "..", "..", "import", "csv"),
+    logs: path.join(import.meta.dir, "..", "..", "import", "logs"),
     json: path.join(import.meta.dir, "..", "..", "import", "json"),
     metadata: path.join(import.meta.dir, "..", "..", "import", "metadata"),
     sql: path.join(import.meta.dir, "..", "..", "import", "sql"),
