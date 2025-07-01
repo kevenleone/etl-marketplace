@@ -93,6 +93,7 @@ class ExportAccounts extends PaginationRun<PageAccount> {
         const customFields = account.customFields || [];
 
         this.publisherDetails.push({
+            accountId: account.id,
             catalogId: catalog.id,
             description: account.description || "",
             emailAddress: this.getCustomFieldValue(
@@ -115,6 +116,7 @@ class ExportAccounts extends PaginationRun<PageAccount> {
         }
 
         const columns = [
+            "accountId",
             "catalogId",
             "publisherName",
             "emailAddress",

@@ -17,7 +17,9 @@ export default {
     async getPublisherDetails(
         searchParams: URLSearchParams = new URLSearchParams()
     ) {
-        const response = await liferay.get(`o/c/publisherdetailses?${searchParams.toString()}`)
+        const response = await liferay.get(
+            `o/c/publisherdetailses?${searchParams.toString()}`
+        );
 
         return response.json<APIResponse<any>>();
     },
@@ -246,14 +248,14 @@ export default {
         return liferay.post(`api/jsonws/invoke`, {
             json: {
                 "/commerce.cpattachmentfileentry/get-cp-attachment-file-entries":
-                {
-                    classNameId,
-                    classPK,
-                    type: 0,
-                    status: IMAGE_STATUS.APPROVED,
-                    start: 0,
-                    end: 20,
-                },
+                    {
+                        classNameId,
+                        classPK,
+                        type: 0,
+                        status: IMAGE_STATUS.APPROVED,
+                        start: 0,
+                        end: 20,
+                    },
             },
         });
     },
