@@ -15,7 +15,6 @@
     },
     "dependencies": {
         "@prisma/client": "5.17.0",
-        "cheerio": "^1.0.0-rc.12",
         "ky": "^1.4.0",
         "liferay-headless-rest-client": "^1.0.3-alpha",
         "mysql2": "^3.10.3",
