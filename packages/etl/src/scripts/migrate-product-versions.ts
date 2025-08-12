@@ -11,7 +11,7 @@ import { APIResponse, Product, ProductSpecification } from "../types";
 import { logger } from "../utils/logger";
 import api from "../services/api";
 import Prisma from "../core/Prisma";
-import SearchBuilder from "../core/SearchBuilder";
+import { SearchBuilder } from "odata-search-builder";
 
 const DOCUMENTS_ROOT_FOLDER = 0;
 const DOWNLOAD_FOLDER = paths.download;

@@ -9,7 +9,7 @@ import { ENV } from "../config/env";
 import { liferayAuthSchema } from "../schemas/zod";
 import PaginationRun from "../core/PaginationRun";
 import { paths } from "../utils/paths";
-import SearchBuilder from "../core/SearchBuilder";
+import { SearchBuilder } from "odata-search-builder";
 import { liferayClient } from "../services/liferay";
 
 const authSchema = liferayAuthSchema.parse(ENV);

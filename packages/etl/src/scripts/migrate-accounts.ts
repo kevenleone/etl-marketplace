@@ -1,4 +1,4 @@
-import SearchBuilder from "../core/SearchBuilder";
+import { SearchBuilder } from "odata-search-builder";
 import api from "../services/api";
 import { APIResponse } from "../types";
 

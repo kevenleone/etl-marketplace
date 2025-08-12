@@ -14,7 +14,7 @@ import {
     Catalog,
 } from "liferay-headless-rest-client/headless-commerce-admin-catalog-v1.0";
 import { paths } from "../utils/paths";
-import SearchBuilder from "../core/SearchBuilder";
+import { SearchBuilder } from "odata-search-builder";
 
 function escapeCSV(value: any) {
     if (value == null) {

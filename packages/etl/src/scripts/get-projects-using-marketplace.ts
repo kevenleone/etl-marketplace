@@ -1,5 +1,5 @@
 import PaginationRun from "../core/PaginationRun";
-import SearchBuilder from "../core/SearchBuilder";
+import { SearchBuilder } from "odata-search-builder";
 import api from "../services/api";
 import { Order } from "../types";
 import { paths } from "../utils/paths";
