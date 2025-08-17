@@ -179,3 +179,7 @@ output/csv
 output/json
 
 .env
+
+.DS_Store
+
+**/**/.DS_Store

@@ -1,0 +1,8 @@
+{
+    "ignorePatterns": ["/**/dist/**", "/**/node_modules/**"],
+    "rules": {
+        "no-extra-boolean-cast": "off",
+        "no-console": ["error", { "allow": ["warn", "error"] }],
+        "sort-imports": "error"
+    }
+}

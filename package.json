@@ -9,7 +9,7 @@
     "scripts": {
         "build": "bun run --cwd packages/* build",
         "dev": "bun run --cwd packages/* dev",
-        "lint": "bun run --cwd packages/* lint",
+        "lint": "oxlint './packages/**/*.{ts,tsx}' . --fix",
         "test": "bun run --cwd packages/* test"
     },
     "author": "",
@@ -19,5 +19,9 @@
     },
     "peerDependencies": {
         "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "oxlint": "^1.11.2",
+        "prettier": "^3.6.2"
     }
 }
