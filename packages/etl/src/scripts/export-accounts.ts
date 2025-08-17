@@ -1,33 +1,34 @@
-import PaginationRun from "../core/PaginationRun";
-import api from "../services/api";
-import { Account, APIResponse } from "../types";
-import { paths } from "../utils/paths";
+import {
+    Account,
+    PageAccount,
+    getAccountsPage,
+} from 'liferay-headless-rest-client/headless-admin-user-v1.0';
 
-const getAccounts = async (page: number, pageSize: number) => {
-    const response = await api.getAccounts(
-        new URLSearchParams({
-            fields: "externalReferenceCode,id,name",
-            page: page.toString(),
-            pageSize: pageSize.toString(),
-        })
-    );
+import { liferayClient } from '../services/liferay';
+import PaginationRun from '../core/PaginationRun';
+import { paths } from '../utils/paths';
 
-    return response.json<APIResponse<Account>>();
-};
-
-class ExportAccounts extends PaginationRun<Account> {
+class ExportAccounts extends PaginationRun<PageAccount> {
     private accounts: Account[] = [];
 
-    constructor() {
-        super(getAccounts);
+    protected async fetchData(
+        page: number,
+        pageSize: number,
+    ): Promise<PageAccount> {
+        const response = await getAccountsPage({
+            client: liferayClient,
+            query: { page: String(page), pageSize: String(pageSize) },
+        });
+
+        return response.data as PageAccount;
     }
 
-    async processItem(account: Account) {
-        if (!account.externalReferenceCode.includes("KOR-")) {
+    async processItem(account: Required<Account>) {
+        if (!account.externalReferenceCode.includes('KOR-')) {
             return;
         }
 
-        delete account.company;
+        delete (account as Partial<Account>).company;
 
         this.accounts.push(account);
     }
@@ -37,11 +38,11 @@ class ExportAccounts extends PaginationRun<Account> {
             console.log(account.externalReferenceCode, account.name);
         }
 
-        console.log("Total Accounts", this.accounts.length);
+        console.log('Total Accounts', this.accounts.length);
 
         await Bun.write(
             `${paths.json}/accounts.json`,
-            JSON.stringify(this.accounts)
+            JSON.stringify(this.accounts),
         );
     }
 }

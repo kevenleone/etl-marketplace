@@ -1,38 +1,38 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const createProductFromJSONchema = z.object({
     CHANNEL_ID: z
         .string()
         .min(3)
-        .describe("The channelId to create the products"),
-    SITE_ID: z.string().min(3).describe("The siteId to create the products"),
+        .describe('The channelId to create the products'),
+    SITE_ID: z.string().min(3).describe('The siteId to create the products'),
 });
 
 export const createProductFromCSVSchema = z.object({
-    CATALOG_ID: z.string().describe("The catalog to create the products"),
+    CATALOG_ID: z.string().describe('The catalog to create the products'),
 });
 
 export const downloadSchema = z.object({
     domain: z
         .string()
-        .describe("The domain where you want to download the files"),
+        .describe('The domain where you want to download the files'),
     username: z
         .string()
         .describe(
-            "Your liferay username (the same from your email address without the domain)"
+            'Your liferay username (the same from your email address without the domain)',
         ),
     jsessionid: z
         .string()
-        .describe("Get the JSESSIONID cookie from the download site page"),
+        .describe('Get the JSESSIONID cookie from the download site page'),
 });
 
 export const exportProductIdsSchema = z.object({
-    CHANNEL_ID: z.string().describe("The channelId to create the products"),
+    CHANNEL_ID: z.string().describe('The channelId to create the products'),
     PRODUCT_IDS: z.string(),
 });
 
 export const exportProductFileSchema = z.object({
-    CHANNEL_ID: z.string().describe("The channelId to create the products"),
+    CHANNEL_ID: z.string().describe('The channelId to create the products'),
 });
 
 export const liferayAuthSchema = z.object({
@@ -46,6 +46,6 @@ export const liferayAuthSchema = z.object({
 export const migrateProductVersionSchema = liferayAuthSchema.extend({
     DATABASE_URL: z
         .string()
-        .describe("Prisma Database connection to Liferay Portal 6.1"),
-    SITE_ID: z.coerce.number().positive().int().min(1000, "Site ID is missing"),
+        .describe('Prisma Database connection to Liferay Portal 6.1'),
+    SITE_ID: z.coerce.number().positive().int().min(1000, 'Site ID is missing'),
 });

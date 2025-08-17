@@ -1,8 +1,8 @@
 import "../core/SafeRunner";
 
 import {
-    getOrdersPage,
     Order,
+    getOrdersPage,
 } from "liferay-headless-rest-client/headless-commerce-admin-order-v1.0";
 
 import { ENV } from "../config/env";

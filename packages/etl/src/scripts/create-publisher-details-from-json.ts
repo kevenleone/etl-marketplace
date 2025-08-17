@@ -1,6 +1,6 @@
-import api from "../services/api";
-import { logger } from "../utils/logger";
-import { paths } from "../utils/paths";
+import api from '../services/api';
+import { logger } from '../utils/logger';
+import { paths } from '../utils/paths';
 
 class CreatePublisherDetails {
     constructor(private publisherDetails: any[]) {}
@@ -8,9 +8,9 @@ class CreatePublisherDetails {
     async run() {
         const log = [];
 
-        logger.info("Starting proccessing ...");
+        logger.info('Starting proccessing ...');
 
-        logger.info("Reading publisher details from JSON file ...");
+        logger.info('Reading publisher details from JSON file ...');
 
         const publisherDetails =
             (await Bun.file(`${paths.json}/publisherDetails.json`).json()) ||
@@ -21,15 +21,15 @@ class CreatePublisherDetails {
                 this.publisherDetails.find(
                     (item) =>
                         item.publisherName.trim() ===
-                        publisherDetail.publisherName.trim()
+                        publisherDetail.publisherName.trim(),
                 )
             ) {
                 logger.info(
-                    `SKIPPING - publisher details for ${publisherDetail.publisherName} already exists...`
+                    `SKIPPING - publisher details for ${publisherDetail.publisherName} already exists...`,
                 );
 
                 log.push({
-                    status: "skipped",
+                    status: 'skipped',
                     message: `Publisher details for ${publisherDetail.publisherName} already exists.`,
                     publisher: publisherDetail,
                 });
@@ -39,7 +39,7 @@ class CreatePublisherDetails {
 
             try {
                 logger.info(
-                    `CREATING - publisher details for ${publisherDetail.publisherName} ...`
+                    `CREATING - publisher details for ${publisherDetail.publisherName} ...`,
                 );
 
                 await api.createPublisherDetails({
@@ -56,18 +56,18 @@ class CreatePublisherDetails {
                 });
 
                 log.push({
-                    status: "success",
+                    status: 'success',
                     message: `Publisher details for ${publisherDetail.publisherName} created successfully.`,
                     publisher: publisherDetail,
                 });
             } catch (error) {
                 logger.error(
                     `Error creating publisher details for ${publisherDetail.publisherName}:`,
-                    error
+                    error,
                 );
 
                 log.push({
-                    status: "error",
+                    status: 'error',
                     message:
                         error instanceof Error ? error.message : String(error),
                     publisher: publisherDetail,
@@ -77,19 +77,19 @@ class CreatePublisherDetails {
 
         await Bun.write(
             `${paths.logs}/publisherDetails.json`,
-            JSON.stringify(log)
+            JSON.stringify(log),
         );
 
-        logger.info("Processing completed.");
+        logger.info('Processing completed.');
     }
 }
 
 async function main() {
     const data = await api.getPublisherDetails(
         new URLSearchParams({
-            page: "1",
-            pageSize: "500",
-        })
+            page: '1',
+            pageSize: '500',
+        }),
     );
 
     const publisherDetails = data?.items || [];

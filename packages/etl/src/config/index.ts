@@ -1,5 +1,5 @@
-import "../core/SafeRunner";
-import { ENV, schema } from "./env";
+import '../core/SafeRunner';
+import { ENV, schema } from './env';
 
 const config = {
     extractDatabase: {

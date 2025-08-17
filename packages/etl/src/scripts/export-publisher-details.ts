@@ -1,29 +1,29 @@
-import "../core/SafeRunner";
+import '../core/SafeRunner';
 
-import PaginationRun from "../core/PaginationRun";
-import { liferayClient } from "../services/liferay";
+import { liferayClient } from '../services/liferay';
+import PaginationRun from '../core/PaginationRun';
 import {
-    getAccountsPage,
-    PageAccount,
     Account,
     CustomField,
+    PageAccount,
     getAccountPostalAddressesPage,
-} from "liferay-headless-rest-client/headless-admin-user-v1.0";
+    getAccountsPage,
+} from 'liferay-headless-rest-client/headless-admin-user-v1.0';
 import {
-    getCatalogsPage,
     Catalog,
-} from "liferay-headless-rest-client/headless-commerce-admin-catalog-v1.0";
-import { paths } from "../utils/paths";
-import { SearchBuilder } from "odata-search-builder";
+    getCatalogsPage,
+} from 'liferay-headless-rest-client/headless-commerce-admin-catalog-v1.0';
+import { paths } from '../utils/paths';
+import { SearchBuilder } from 'odata-search-builder';
 
 function escapeCSV(value: any) {
     if (value == null) {
-        return "";
+        return '';
     }
 
     const str = String(value);
 
-    if (str.includes('"') || str.includes(",") || str.includes("\n")) {
+    if (str.includes('"') || str.includes(',') || str.includes('\n')) {
         return `"${str.replace(/"/g, '""')}"`;
     }
 
@@ -39,12 +39,12 @@ class ExportAccounts extends PaginationRun<PageAccount> {
 
     protected async fetchData(
         page: number,
-        pageSize: number
+        pageSize: number,
     ): Promise<PageAccount> {
         const response = await getAccountsPage({
             client: liferayClient,
             query: {
-                filter: SearchBuilder.eq("type", "supplier"),
+                filter: SearchBuilder.eq('type', 'supplier'),
                 page: page.toString(),
                 pageSize: pageSize.toString(),
             },
@@ -60,15 +60,15 @@ class ExportAccounts extends PaginationRun<PageAccount> {
         });
 
         if (data?.totalCount === 0) {
-            return "";
+            return '';
         }
 
         const {
-            streetAddressLine1 = "",
-            addressLocality = "",
-            addressRegion = "",
-            postalCode = "",
-            addressCountry = "",
+            streetAddressLine1 = '',
+            addressLocality = '',
+            addressRegion = '',
+            postalCode = '',
+            addressCountry = '',
         } = data?.items?.[0] || {};
 
         return `${streetAddressLine1}, ${addressLocality}, ${addressRegion}, ${postalCode}, ${addressCountry}`.trim();
@@ -81,11 +81,11 @@ class ExportAccounts extends PaginationRun<PageAccount> {
 
     async processItem(account: Required<Account>) {
         const catalog = this.catalogs.find(
-            (catalog) => account.id === catalog.accountId
+            (catalog) => account.id === catalog.accountId,
         );
 
         if (!catalog) {
-            return console.error("Catalog not found", account.name);
+            return console.error('Catalog not found', account.name);
         }
 
         console.log(`Processing ${account.name}`);
@@ -95,15 +95,15 @@ class ExportAccounts extends PaginationRun<PageAccount> {
         this.publisherDetails.push({
             accountId: account.id,
             catalogId: catalog.id,
-            description: account.description || "",
+            description: account.description || '',
             emailAddress: this.getCustomFieldValue(
                 customFields,
-                "Contact Email"
+                'Contact Email',
             ),
             location: await this.getAccountPostalAddress(String(account.id)),
             publisherName: account.name,
             publisherProfileImage: account.logoURL,
-            websiteURL: this.getCustomFieldValue(customFields, "Homepage URL"),
+            websiteURL: this.getCustomFieldValue(customFields, 'Homepage URL'),
         });
     }
 
@@ -111,36 +111,36 @@ class ExportAccounts extends PaginationRun<PageAccount> {
         for (const publisherDetail of this.publisherDetails) {
             console.log(
                 publisherDetail.publisherName,
-                publisherDetail.catalogId
+                publisherDetail.catalogId,
             );
         }
 
         const columns = [
-            "accountId",
-            "catalogId",
-            "publisherName",
-            "emailAddress",
-            "websiteURL",
-            "description",
-            "location",
-            "publisherProfileImage",
+            'accountId',
+            'catalogId',
+            'publisherName',
+            'emailAddress',
+            'websiteURL',
+            'description',
+            'location',
+            'publisherProfileImage',
         ];
 
         const csvContent = [
-            columns.join(","),
+            columns.join(','),
             ...this.publisherDetails.map((supplier) =>
-                columns.map((field) => escapeCSV(supplier[field])).join(",")
+                columns.map((field) => escapeCSV(supplier[field])).join(','),
             ),
-        ].join("\n");
+        ].join('\n');
 
         await Bun.write(`${paths.csv}/publisherDetails.csv`, csvContent);
 
         await Bun.write(
             `${paths.json}/publisherDetails.json`,
-            JSON.stringify(this.publisherDetails)
+            JSON.stringify(this.publisherDetails),
         );
 
-        console.log("Total Accounts", this.publisherDetails.length);
+        console.log('Total Accounts', this.publisherDetails.length);
     }
 }
 
@@ -148,8 +148,8 @@ async function main() {
     const { data } = await getCatalogsPage({
         client: liferayClient,
         query: {
-            page: "1",
-            pageSize: "500",
+            page: '1',
+            pageSize: '500',
         },
     });
 

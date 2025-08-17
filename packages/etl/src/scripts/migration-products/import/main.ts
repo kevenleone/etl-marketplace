@@ -1,7 +1,6 @@
-import config from "../../../config";
-import api from "../../../services/api";
-import { path, paths } from "../../../utils/paths";
-import { sanitize } from "../../../utils/sanitize";
+import api from '../../../services/api';
+import { path, paths } from '../../../utils/paths';
+import { sanitize } from '../../../utils/sanitize';
 
 const companyId = 20119;
 
@@ -14,16 +13,16 @@ type DocumentFolderInput = {
 class MainImport {
     async processCatalogRole(catalog: any, rolesByName: any) {
         const roleName = `${catalog.name} App Editor`
-            .replace("*", "")
-            .replace(",", "")
-            .replace(".", "")
-            .replace("/", "");
+            .replace('*', '')
+            .replace(',', '')
+            .replace('.', '')
+            .replace('/', '');
 
         if (rolesByName.some(({ name }: any) => name === roleName)) {
             return;
         }
 
-        console.log("Creating Catalog Role", roleName);
+        console.log('Creating Catalog Role', roleName);
 
         const addRoleResponse = await api.addRoleJSONWS(roleName);
 
@@ -35,10 +34,10 @@ class MainImport {
             await api.addResourcePermissionJSONWS(
                 addRoleResponse.result.classPK,
                 catalog.id,
-                companyId
+                companyId,
             );
 
-            console.log("Creating Catalog Permission");
+            console.log('Creating Catalog Permission');
         } catch (error) {
             console.error(error);
         }
@@ -48,7 +47,7 @@ class MainImport {
         const catalogResponse = await api.createCatalog(catalog);
 
         console.log(
-            `Catalog Created ${catalog.name} ${catalog.externalReferenceCode} `
+            `Catalog Created ${catalog.name} ${catalog.externalReferenceCode} `,
         );
 
         await this.processCatalogRole(catalogResponse, roles);
@@ -58,7 +57,7 @@ class MainImport {
 
     async addMissingDocumentFolders(
         documentPath: string,
-        documentFoldersByPath: any
+        documentFoldersByPath: any,
     ) {
         if (documentFoldersByPath[documentPath]) {
             return;
@@ -66,12 +65,12 @@ class MainImport {
 
         let parentDocumentFolderId = 0;
 
-        const documentPathComponents = documentPath.split("/");
-        let documentPathPrefix = "";
+        const documentPathComponents = documentPath.split('/');
+        let documentPathPrefix = '';
 
         for (const documentPathComponent of documentPathComponents) {
             const _documentPath = documentPathPrefix + documentPathComponent;
-            documentPathPrefix = _documentPath + "/";
+            documentPathPrefix = _documentPath + '/';
 
             console.log(`Checking Document Path: ${_documentPath}`);
 
@@ -84,10 +83,10 @@ class MainImport {
 
             const newDocumentFolder = await api.createDocumentFolder(
                 documentPathComponent,
-                parentDocumentFolderId
+                parentDocumentFolderId,
             );
 
-            console.log("Document Folder created");
+            console.log('Document Folder created');
 
             documentFoldersByPath[_documentPath] = {
                 id: newDocumentFolder.id,
@@ -109,8 +108,8 @@ class MainImport {
 
         const formData = new FormData();
 
-        formData.append("document", JSON.stringify({ title: input.filename }));
-        formData.append("file", file);
+        formData.append('document', JSON.stringify({ title: input.filename }));
+        formData.append('file', file);
 
         return api.updateSiteDocuments(input.id, formData);
     }
@@ -120,7 +119,7 @@ class MainImport {
     async uploadDeveloperDocuments(
         developerEntry: any,
         documentFolders: any,
-        siteDocuments: any
+        siteDocuments: any,
     ) {
         const documents = developerEntry.documents;
 
@@ -130,7 +129,7 @@ class MainImport {
 
         const folder = path.join(
             paths.developer,
-            developerEntry.developerEntryId
+            developerEntry.developerEntryId,
         );
 
         const name =
@@ -142,13 +141,13 @@ class MainImport {
 
         await this.addMissingDocumentFolders(
             developerTaxDocumentsFolder,
-            documentFolders
+            documentFolders,
         );
 
         const taxDocumentFolderId = documentFolders[developerFolder].id;
 
         if (!taxDocumentFolderId) {
-            return console.warn("WATCH MEEE");
+            return console.warn('WATCH MEEE');
         }
 
         const developerDirectory = `${paths.developer}/${developerEntry.developerEntryId}`;
@@ -184,9 +183,9 @@ class MainImport {
         const developerEntries: any = {};
 
         const [extractedApps, extractedDeveloperEntries] = await Promise.all([
-            Bun.file(path.join(paths.data, "extracted_apps.json")).json(),
+            Bun.file(path.join(paths.data, 'extracted_apps.json')).json(),
             Bun.file(
-                path.join(paths.data, "extracted_developer_entries.json")
+                path.join(paths.data, 'extracted_developer_entries.json'),
             ).json(),
         ]);
 
@@ -201,8 +200,8 @@ class MainImport {
             const catalog = {
                 externalReferenceCode: extractedApp.developerEntryId,
                 name: extractedApp.developerName,
-                currencyCode: "USD",
-                defaultLanguageId: "en_US",
+                currencyCode: 'USD',
+                defaultLanguageId: 'en_US',
             };
             const result = await this.processCatalog({ catalog, roles });
 
@@ -212,7 +211,7 @@ class MainImport {
             await this.uploadDeveloperDocuments(
                 developerEntry,
                 documentsFolderByPath,
-                documentsFolderByPath
+                documentsFolderByPath,
             );
 
             savedCatalogs.push(result);
@@ -230,9 +229,9 @@ class MainImport {
                 documentFolders.find(
                     (_documentFolder) =>
                         _documentFolder.id ===
-                        documentFolder.parentDocumentFolderId
+                        documentFolder.parentDocumentFolderId,
                 ),
-                nextPath
+                nextPath,
             );
         }
 
@@ -262,7 +261,7 @@ class MainImport {
 
         for (const documentFolder of documentFolders) {
             documentsFolderByPath[
-                this.getPath(documentFolders, documentFolder, "")
+                this.getPath(documentFolders, documentFolder, '')
             ] = documentFolder;
         }
 
@@ -285,13 +284,13 @@ class MainImport {
         }
 
         let businessPublisherAccountGroup = accountGroups.find(
-            (accountGroup: any) => accountGroup.name === "Business Publisher"
+            (accountGroup: any) => accountGroup.name === 'Business Publisher',
         );
 
         if (!businessPublisherAccountGroup) {
             businessPublisherAccountGroup = await api.createAccountGroup({
-                externalReferenceCode: "business-publisher",
-                name: "Business Publisher",
+                externalReferenceCode: 'business-publisher',
+                name: 'Business Publisher',
             });
 
             console.log(`Account Group - ${businessPublisherAccountGroup}`);

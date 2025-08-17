@@ -1,44 +1,43 @@
-import { z } from "zod";
+import '../core/SafeRunner';
 
-import { createProductFromJSONchema, liferayAuthSchema } from "../schemas/zod";
-import { ENV } from "../config/env";
-import { logger } from "../utils/logger";
-import { paths } from "../utils/paths";
-import api from "../services/api";
+import { SearchBuilder } from 'odata-search-builder';
+
 import {
-    APIResponse,
-    Catalog,
-    Product,
-    ProductSpecification,
-    Vocabulary,
-} from "../types";
-import { SearchBuilder } from "odata-search-builder";
+    type Catalog,
+    type Specification,
+    getCatalogsPage,
+    getSpecificationsPage,
+} from 'liferay-headless-rest-client/headless-commerce-admin-catalog-v1.0';
+
+import { liferayAuthSchema } from '../schemas/zod';
+import { ENV } from '../config/env';
+import { logger } from '../utils/logger';
+import { paths } from '../utils/paths';
+import api from '../services/api';
+import { APIResponse, Product, Vocabulary } from '../types';
+import { liferayClient } from '../services/liferay';
 
 /**
  * @description
  * Enforce the running of the script with the env properties
  */
 
-const env = createProductFromJSONchema.parse(ENV);
-
 class CreateProductFromJSON {
-    env: z.infer<typeof createProductFromJSONchema>;
     logger = logger;
 
     constructor(
         private catalogs: Catalog[] = [],
-        private specifications: ProductSpecification[] = [],
-        private vocabularies: Vocabulary[] = []
+        private specifications: Specification[] = [],
+        private vocabularies: Vocabulary[] = [],
     ) {
-        this.env = env;
         const authSchema = liferayAuthSchema.parse(ENV);
 
         if (
-            authSchema.LIFERAY_HOST.startsWith("https") &&
-            !authSchema.LIFERAY_HOST.includes("-uat")
+            authSchema.LIFERAY_HOST.startsWith('https') &&
+            !authSchema.LIFERAY_HOST.includes('-uat')
         ) {
             throw new Error(
-                "This script is only allowed to be executed for localhost environment"
+                'This script is only allowed to be executed for localhost environment',
             );
         }
     }
@@ -46,7 +45,7 @@ class CreateProductFromJSON {
     async getImageAsBase64(url: string) {
         const response = await fetch(url);
         const buffer = await response.arrayBuffer();
-        const base64Image = Buffer.from(buffer).toString("base64");
+        const base64Image = Buffer.from(buffer).toString('base64');
 
         return base64Image;
     }
@@ -60,11 +59,11 @@ class CreateProductFromJSON {
     async createCatalog(product: Product) {
         const catalogName = product.catalogName?.replaceAll(
             "'",
-            "''"
+            "''",
         ) as string;
 
         const catalogFiltered = this.catalogs.find(
-            (catalog: Catalog) => catalog.name === catalogName
+            (catalog: Catalog) => catalog.name === catalogName,
         );
 
         if (catalogFiltered) {
@@ -73,8 +72,8 @@ class CreateProductFromJSON {
 
         const accountResponse = await api.getAccounts(
             new URLSearchParams({
-                filter: SearchBuilder.eq("name", catalogName as string),
-            })
+                filter: SearchBuilder.eq('name', catalogName as string),
+            }),
         );
 
         const { items } = await accountResponse.json<APIResponse>();
@@ -84,7 +83,7 @@ class CreateProductFromJSON {
         if (!accountId) {
             const accountResponse = await api.createAccount({
                 name: catalogName,
-                type: "supplier",
+                type: 'supplier',
             });
 
             const account = await accountResponse.json<{ id: number }>();
@@ -94,8 +93,8 @@ class CreateProductFromJSON {
 
         const response = await api.createCatalog({
             accountId,
-            currencyCode: "USD",
-            defaultLanguageId: "en_US",
+            currencyCode: 'USD',
+            defaultLanguageId: 'en_US',
             name: catalogName,
         });
 
@@ -108,7 +107,7 @@ class CreateProductFromJSON {
 
     async run() {
         const jsonProducts = await Bun.file(
-            `${paths.json}/products.json`
+            `${paths.json}/products.json`,
         ).json();
 
         for (const [index, product] of jsonProducts.entries()) {
@@ -118,36 +117,36 @@ class CreateProductFromJSON {
 
             let catalog;
             let categories = [];
-            let productSpecifications: ProductSpecification[] = [];
+            let productSpecifications: Specification[] = [];
 
             const productCategories = product?.categories;
 
             try {
                 await api.getProductByERC(product.externalReferenceCode);
 
-                this.logger.info("already created");
+                this.logger.info('already created');
             } catch (error) {
                 catalog = await this.createCatalog(product);
 
                 for (const category of productCategories) {
                     const vocabulary = this.vocabularies?.filter(
                         (vocabulary) =>
-                            category.vocabulary.replaceAll("tag", "tags") ===
+                            category.vocabulary.replaceAll('tag', 'tags') ===
                                 vocabulary.name
-                                    .replaceAll(" ", "-")
-                                    .replaceAll("tag", "tags")
+                                    .replaceAll(' ', '-')
+                                    .replaceAll('tag', 'tags')
                                     .toLowerCase() ||
-                            category.vocabulary === vocabulary.name
+                            category.vocabulary === vocabulary.name,
                     );
 
                     if (vocabulary.length) {
                         const { items: categoryList } = await api.getCategories(
-                            vocabulary[0]?.id
+                            vocabulary[0]?.id,
                         );
 
                         const filteredCategory = categoryList?.filter(
                             (categoryResponse) =>
-                                category.name === categoryResponse.name
+                                category.name === categoryResponse.name,
                         );
 
                         if (filteredCategory?.length) {
@@ -167,7 +166,7 @@ class CreateProductFromJSON {
                     const filteredSpecification = this.specifications.find(
                         (specification) =>
                             specification.key ===
-                            productionSpecification.specificationKey
+                            productionSpecification.specificationKey,
                     );
 
                     if (filteredSpecification) {
@@ -177,7 +176,7 @@ class CreateProductFromJSON {
                                 filteredSpecification?.key as string,
                             value: {
                                 en_US: await this.getVersionNumber(
-                                    productionSpecification.value
+                                    productionSpecification.value,
                                 ),
                             },
                         });
@@ -197,13 +196,13 @@ class CreateProductFromJSON {
                             en_US: product.name,
                         },
                         productSpecifications,
-                        productType: "virtual",
+                        productType: 'virtual',
                     })
                     .catch((error) =>
                         logger.error(
                             `${index} - Failed to create ${product.name}` +
-                                error
-                        )
+                                error,
+                        ),
                     );
 
                 // Tentativa máxima de criação da imagem
@@ -218,7 +217,7 @@ class CreateProductFromJSON {
                             await api.createImage(
                                 {
                                     attachment: await this.getImageAsBase64(
-                                        image.src
+                                        image.src,
                                     ),
                                     galleryEnabled: image.galleryEnabled,
                                     neverExpire: true,
@@ -226,53 +225,59 @@ class CreateProductFromJSON {
                                     tags: image.tags || [],
                                     title: { en_US: image.title },
                                 },
-                                product.externalReferenceCode
+                                product.externalReferenceCode,
                             );
                             imageCreated = true;
                         } catch (error) {
                             attempt++;
                             this.logger.error(
                                 `${index} - Failed to create image ${image.title} (Attempt ${attempt} of ${maxAttempts}): ` +
-                                    error
+                                    error,
                             );
 
                             if (attempt >= maxAttempts) {
                                 this.logger.error(
-                                    `${index} - Exceeded max attempts for image ${image.title}. Moving to next image.`
+                                    `${index} - Exceeded max attempts for image ${image.title}. Moving to next image.`,
                                 );
                             }
                         }
                     }
                 }
 
-                this.logger.info("created");
+                this.logger.info('created');
             }
         }
     }
 }
 
-const searchParams = new URLSearchParams({ pageSize: "300" });
+const query = {
+    pageSize: '300',
+};
 
 // Trigger the Authentication
 await api.myUserAccount();
 
 const [catalogsResponse, specificationResponse, vocabulariesResponse] =
     await Promise.all([
-        api.getCatalogs(searchParams),
-        api.getSpecification(searchParams),
+        getCatalogsPage({
+            client: liferayClient,
+            query: query,
+        }),
+        getSpecificationsPage({
+            client: liferayClient,
+            query,
+        }),
         api.getTaxonomyVocabularies(ENV.SITE_ID as string),
     ]);
 
-const { items: catalogs } = await catalogsResponse.json<APIResponse>();
-const { items: specifications } = await specificationResponse.json<
-    APIResponse<ProductSpecification>
->();
+const { items: catalogs = [] } = catalogsResponse.data ?? {};
+const { items: specifications = [] } = specificationResponse.data ?? {};
 const { items: vocabularies } = await vocabulariesResponse.json<APIResponse>();
 
 const createProductFromJSON = new CreateProductFromJSON(
     catalogs,
     specifications,
-    vocabularies
+    vocabularies,
 );
 
 await createProductFromJSON.run();

@@ -1,40 +1,40 @@
-import Prisma from "../core/Prisma";
-import { path, paths } from "../utils/paths";
+import Prisma from '../core/Prisma';
+import { path, paths } from '../utils/paths';
 
 class AppEntryDiff {
     async getCSVLines() {
-        const csv = await Bun.file(path.join(paths.csv, "products.csv"));
+        const csv = await Bun.file(path.join(paths.csv, 'products.csv'));
 
-        return csv.split("\n").map((line) => line.split(";"));
+        return csv.split('\n').map((line) => line.split(';'));
     }
 
     async run() {
         const appEntries = await Prisma.oSB_AppEntry.findMany({
             where: { status: 102 },
-            orderBy: { title: "asc" },
+            orderBy: { title: 'asc' },
         });
         const lines = await this.getCSVLines();
 
         const status = {
-            0: "Approved",
-            1: "Pending",
-            2: "Unsubmitted",
-            3: "Not Available - Approved",
-            4: "Denied",
-            102: "Approved - Subscribers Only",
+            0: 'Approved',
+            1: 'Pending',
+            2: 'Unsubmitted',
+            3: 'Not Available - Approved',
+            4: 'Denied',
+            102: 'Approved - Subscribers Only',
         };
 
         let i = 0;
 
         const rows = [
-            "Title|Developer Name|Status|Status Label|Present on MP2|Hidden\n",
+            'Title|Developer Name|Status|Status Label|Present on MP2|Hidden\n',
         ];
 
         for (const appEntry of appEntries) {
             const lineFound = lines.some(
                 ([, appEntryId, title]) =>
                     title === appEntry.title ||
-                    appEntryId === appEntry.appEntryId.toString()
+                    appEntryId === appEntry.appEntryId.toString(),
             );
 
             rows.push(
@@ -45,7 +45,7 @@ class AppEntryDiff {
                     status[appEntry.status],
                     lineFound,
                     !!appEntry.hidden_,
-                ].join("|") + "\n"
+                ].join('|') + '\n',
             );
 
             console.log(
@@ -53,7 +53,7 @@ class AppEntryDiff {
                 i,
                 appEntry.title,
                 appEntry.status,
-                lineFound
+                lineFound,
             );
             i++;
         }
@@ -67,9 +67,9 @@ class AppEntryDiff {
         let i = 0;
 
         for (const line of lines) {
-            const [externalReferenceCode, id, productName] = line.split(";");
+            const [externalReferenceCode, id, productName] = line.split(';');
 
-            const isUUID = externalReferenceCode.includes("-");
+            const isUUID = externalReferenceCode.includes('-');
 
             const where = {
                 ...(isUUID && { title: productName }),

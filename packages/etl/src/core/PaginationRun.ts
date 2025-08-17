@@ -1,5 +1,5 @@
-import { APIResponse } from "../types";
-import { logger } from "../utils/logger";
+import { APIResponse } from '../types';
+import { logger } from '../utils/logger';
 
 export default class PaginationRun<T> {
     protected logger = logger;
@@ -10,11 +10,11 @@ export default class PaginationRun<T> {
     }
 
     protected async fetchData(page: number, pageSize: number): Promise<T> {
-        throw new Error("Implementation needed");
+        throw new Error('Implementation needed');
     }
 
     protected async processItem(item: T, index: number) {
-        throw new Error("Implementation needed");
+        throw new Error('Implementation needed');
     }
 
     protected async processFinished() {}
@@ -25,10 +25,10 @@ export default class PaginationRun<T> {
         const { items, ...productResponse } = response as APIResponse;
 
         logger.info(
-            `Start Processing - Page: ${productResponse.page}/${productResponse.lastPage}`
+            `Start Processing - Page: ${productResponse.page}/${productResponse.lastPage}`,
         );
 
-        console.time("process items");
+        console.time('process items');
 
         let index = 0;
         for (const item of items) {
@@ -38,10 +38,10 @@ export default class PaginationRun<T> {
             index++;
         }
 
-        console.timeEnd("process items");
+        console.timeEnd('process items');
 
         if (productResponse.page === productResponse.lastPage) {
-            logger.info("Processed Items", this.processedItems);
+            logger.info('Processed Items', this.processedItems);
 
             await this.processFinished();
 
