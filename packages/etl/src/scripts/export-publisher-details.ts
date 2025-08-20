@@ -30,7 +30,7 @@ function escapeCSV(value: any) {
     return str;
 }
 
-class ExportAccounts extends PaginationRun<PageAccount> {
+class ExportPublisherDetails extends PaginationRun<PageAccount> {
     private publisherDetails: any[] = [];
 
     constructor(protected catalogs: Catalog[]) {
@@ -155,9 +155,9 @@ async function main() {
 
     const catalogs = data?.items || [];
 
-    const exportAccounts = new ExportAccounts(catalogs);
+    const exportPublisherDetails = new ExportPublisherDetails(catalogs);
 
-    await exportAccounts.run(1, 50);
+    await exportPublisherDetails.run(1, 50);
 }
 
 main();

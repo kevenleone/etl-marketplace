@@ -1,16 +1,17 @@
-import "../core/SafeRunner";
+import '../core/SafeRunner';
 
 import {
     Order,
+    PageOrder,
     getOrdersPage,
-} from "liferay-headless-rest-client/headless-commerce-admin-order-v1.0";
+} from 'liferay-headless-rest-client/headless-commerce-admin-order-v1.0';
 
-import { ENV } from "../config/env";
-import { liferayAuthSchema } from "../schemas/zod";
-import PaginationRun from "../core/PaginationRun";
-import { paths } from "../utils/paths";
-import { SearchBuilder } from "odata-search-builder";
-import { liferayClient } from "../services/liferay";
+import { ENV } from '../config/env';
+import { liferayAuthSchema } from '../schemas/zod';
+import PaginationRun from '../core/PaginationRun';
+import { paths } from '../utils/paths';
+import { SearchBuilder } from 'odata-search-builder';
+import { liferayClient } from '../services/liferay';
 
 const authSchema = liferayAuthSchema.parse(ENV);
 
@@ -28,28 +29,27 @@ function countOrders(orders: any[]) {
     }, {});
 }
 
-class GetOrders extends PaginationRun<Order> {
+class GetOrders extends PaginationRun<PageOrder> {
     private orders: any[] = [];
 
-    constructor() {
-        super(async (page, pageSize) => {
-            const { data } = await getOrdersPage({
-                client: liferayClient,
-                query: {
-                    filter: new SearchBuilder()
-                        .gt("createDate", new Date(2025, 0, 1).toISOString())
-                        .and()
-                        .lambda("orderStatus", 0, { unquote: true })
-                        .build(),
-                    nestedFields: "orderItems",
-                    sort: "createDate:desc",
-                    page: `${page}`,
-                    pageSize: `${pageSize}`,
-                },
-            });
-
-            return data;
+    protected async fetchData(
+        page: number,
+        pageSize: number,
+    ): Promise<PageOrder> {
+        const { data } = await getOrdersPage({
+            client: liferayClient,
+            query: {
+                filter: new SearchBuilder()
+                    .any('orderStatus', { operator: 'eq', value: 0 })
+                    .build(),
+                nestedFields: 'orderItems',
+                sort: 'createDate:desc',
+                page: `${page}`,
+                pageSize: `${pageSize}`,
+            },
         });
+
+        return data as PageOrder;
     }
 
     async processItem(order: Order): Promise<void> {
@@ -68,7 +68,7 @@ class GetOrders extends PaginationRun<Order> {
                     quantity,
                     totalAmount,
                     productName: name?.en_US,
-                })
+                }),
             ),
         });
     }
@@ -91,8 +91,8 @@ class GetOrders extends PaginationRun<Order> {
                         order.createDate,
                         order.totalFormatted,
                         order.orderStatusInfo?.label,
-                    ].join("|") + "\n"
-            )
+                    ].join('|') + '\n',
+            ),
         );
 
         await Bun.write(
@@ -100,17 +100,17 @@ class GetOrders extends PaginationRun<Order> {
             JSON.stringify({
                 ordersCount: orderSummary,
                 topOrder: getTopOrders(orderSummary),
-            })
+            }),
         );
 
         await Bun.write(
             `${paths.json}/orders.json`,
-            JSON.stringify(this.orders)
+            JSON.stringify(this.orders),
         );
     }
 }
 
-console.log("Starting:", authSchema.LIFERAY_HOST, new Date());
+console.log('Starting:', authSchema.LIFERAY_HOST, new Date());
 
 const getOrders = new GetOrders();
 
