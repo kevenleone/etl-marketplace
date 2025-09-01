@@ -1,0 +1,44 @@
+flowchart TB
+   subgraph External[External API]
+        Analytics[[Analytics]]
+        CloudAPI[[DXP Cloud]]
+        Koroneiki[[Koroneiki]]
+        Provisioning[[Provisioning]]
+    end
+
+    subgraph DXPCloud[DXP Cloud]
+        subgraph Marketplace[lxce5a2marketplace]
+            Liferay[marketplace.liferay.com]
+        end
+
+         subgraph EXTMarketplace[exte5a2marketplace]
+            CXCE[Custom Element]
+            CXCRON[Cron Job]
+            CXSpring[Springboot]
+        end
+
+        subgraph TrialProvisioning[Trial Provisioning]
+            subgraph TrialDXP1[ext/lxcf6u0]
+                Liferay1[Liferay]
+            end
+
+            subgraph TrialDXP2[ext/lxcv1e6]
+                Liferay2[Liferay]
+            end
+        end
+    end
+
+    Marketplace --> CXSpring
+    Marketplace --> CXCE
+
+    CXSpring --> Marketplace
+    CXSpring --> TrialProvisioning
+    CXSpring --> External
+    
+    CXCRON --> CXSpring
+    CXCRON --> Marketplace
+
+    CloudAPI --> https://api.liferay.cloud/api/login
+    CloudAPI --> https://api.liferay.cloud/api/project
+    CloudAPI --> https://api.liferay.cloud/api/project/:id/invite
+    CloudAPI --> https://api.liferay.cloud/api/app/:orderId/deploy

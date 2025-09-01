@@ -1,0 +1,69 @@
+sequenceDiagram
+    participant Frontend
+    participant TrialRestController
+    participant MarketplaceService
+    participant ConsoleService
+    participant MarketplaceTrialDXP
+    participant CloudAPI
+    
+    Frontend->>Frontend: POST /order
+
+    Frontend->>TrialRestController: POST /trial/provisioning (json)
+    Note over TrialRestController: @AuthenticationPrincipal Jwt jwt, @RequestBody String json
+    
+    TrialRestController->>MarketplaceService: getOrder(orderId)
+    MarketplaceService-->>TrialRestController: Return Order object
+    
+    TrialRestController->>TrialRestController: Get trial provisioning context
+    Note over TrialRestController: _getTrialProvisioningContextJSONObject(orderTypeExternalReferenceCode)
+    
+    TrialRestController->>MarketplaceTrialDXP: Retrieve Portal Instances
+    MarketplaceTrialDXP-->>TrialRestController: Return Page<PortalInstance>
+    
+    TrialRestController->>MarketplaceService: Update Order Status to Processing
+    
+    TrialRestController->>MarketplaceService: Get User Account
+    MarketplaceService-->>TrialRestController: User Account
+    
+    TrialRestController->>MarketplaceService: Send Notification to Creator with Processing email template
+    
+    Note over TrialRestController: Try to provision portal instance
+    
+    alt Try portal instance provisioning
+        TrialRestController->>TrialRestController: _postPortalInstance(jwt, email, projectId, context)
+        TrialRestController->>MarketplaceTrialDXP: getMarketplaceTrialDXP(context)
+        MarketplaceTrialDXP-->>TrialRestController: Return MarketplaceTrialDXP
+        
+        TrialRestController->>MarketplaceTrialDXP: Create PortalInstance
+        MarketplaceTrialDXP-->>TrialRestController: Return created PortalInstance
+        
+        Note over TrialRestController: Try to set up project in Console
+        
+        alt Try console project setup
+            TrialRestController->>ConsoleService: SetUp Cloud Project (Project, Invite, Link between Environment and Deploy)
+            
+            ConsoleService->>CloudAPI: POST https://api.liferay.cloud/projects
+            CloudAPI-->>ConsoleService: Project
+
+            ConsoleService->>CloudAPI: POST https://api.liferay.cloud/projects/$id/invite
+            ConsoleService->>CloudAPI: POST https://api.liferay.cloud/lxc-extension-links
+            ConsoleService->>CloudAPI: POST https://api.liferay.cloud/admin/projects/$id/apps
+
+            ConsoleService->>TrialRestController: Console Project Settled Up
+            
+            TrialRestController->>MarketplaceService: Update Order Status to In Progress
+            
+            TrialRestController->>MarketplaceService: Send Notification to Creator with Completed Provisioning email template
+            
+        else Catch FrontendResponseException
+            TrialRestController->>TrialRestController: RollBack Trial Creation
+            TrialRestController->>TrialRestController: Delete Portal Instance
+            TrialRestController->>MarketplaceService: Update Order Status to Cancelled
+        end
+        
+    else Catch portal instance provisioning exception
+        TrialRestController->>MarketplaceService: Update Order Status to Cancelled
+        TrialRestController-->>Frontend: Throw exception in the backend
+    end
+    
+    TrialRestController-->>Frontend: Return (void)

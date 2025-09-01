@@ -1,8 +1,8 @@
-import ky from "ky";
-import { createClient } from "liferay-headless-rest-client";
-import Cache from "../utils/cache";
-import { liferayAuthSchema } from "../schemas/zod";
-import { ENV } from "../config/env";
+import ky from 'ky';
+import { createClient } from 'liferay-headless-rest-client';
+import Cache from '../utils/cache';
+import { liferayAuthSchema } from '../schemas/zod';
+import { ENV } from '../config/env';
 
 const {
     LIFERAY_HOST,
@@ -24,21 +24,22 @@ const kyFetch = liferay.extend({
     headers: {
         Authorization: isBasicAuth
             ? `Basic ${btoa(`${LIFERAY_USERNAME}:${LIFERAY_PASSWORD}`)}`
-            : "",
+            : '',
     },
+    timeout: 30000,
     hooks: {
         beforeRequest: [
             (request) => {
-                const authorization = cache.get("authorization");
+                const authorization = cache.get('authorization');
 
                 if (authorization) {
-                    request.headers.set("authorization", authorization);
+                    request.headers.set('authorization', authorization);
                 }
             },
         ],
         beforeRetry: [
             async ({ request, error, retryCount }) => {
-                const authorization = request.headers.get("authorization");
+                const authorization = request.headers.get('authorization');
 
                 if (authorization) {
                     console.log({
@@ -56,41 +57,41 @@ const kyFetch = liferay.extend({
                     return;
                 }
 
-                const isExpired = cache.has("expires_in")
-                    ? Date.now() > cache.get("expires_in")
+                const isExpired = cache.has('expires_in')
+                    ? Date.now() > cache.get('expires_in')
                     : false;
 
-                if (!request.headers.get("authorization") || isExpired) {
+                if (!request.headers.get('authorization') || isExpired) {
                     const searchParams = new URLSearchParams();
 
-                    searchParams.set("client_id", LIFERAY_CLIENT_ID);
-                    searchParams.set("client_secret", LIFERAY_CLIENT_SECRET);
-                    searchParams.set("grant_type", "client_credentials");
+                    searchParams.set('client_id', LIFERAY_CLIENT_ID);
+                    searchParams.set('client_secret', LIFERAY_CLIENT_SECRET);
+                    searchParams.set('grant_type', 'client_credentials');
 
-                    const response = await liferay.post("o/oauth2/token", {
+                    const response = await liferay.post('o/oauth2/token', {
                         body: searchParams,
                     });
 
-                    console.log("Token exchanged");
+                    console.log('Token exchanged');
 
                     const data = await response.json<any>();
 
                     const authorization = `${data.token_type} ${data.access_token}`;
 
                     cache.set(
-                        "expires_in",
-                        data.expires_in * 1000 + Date.now() - 15000
+                        'expires_in',
+                        data.expires_in * 1000 + Date.now() - 15000,
                     );
-                    cache.set("authorization", authorization);
+                    cache.set('authorization', authorization);
 
-                    return request.headers.set("authorization", authorization);
+                    return request.headers.set('authorization', authorization);
                 }
             },
         ],
     },
     retry: {
         limit: 5,
-        methods: ["get", "post"],
+        methods: ['get', 'post'],
         statusCodes: [403, 401],
         delay: (attemptCount) => 5000 * attemptCount,
     },

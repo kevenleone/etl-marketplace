@@ -85,6 +85,7 @@ class GetOrders extends PaginationRun<PageOrder> {
                 (order) =>
                     [
                         order.id,
+                        order.creatorEmailAddress,
                         order.orderTypeExternalReferenceCode,
                         order.productName,
                         order.accountId,
