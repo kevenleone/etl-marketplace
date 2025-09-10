@@ -1,5 +1,4 @@
 import {
-    getProductsPage,
     getProductByExternalReferenceCode,
     patchProductVirtualSettingsFileEntry,
     ProductVirtualSettingsFileEntry,
