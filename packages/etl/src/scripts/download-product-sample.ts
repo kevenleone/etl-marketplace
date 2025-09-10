@@ -25,7 +25,6 @@ import { getFileName } from '../utils/filename';
 
 async function downloadFileEntriesFromProduct(externalReferenceCode: string) {
     // Equivalent to
-
     // /o/headless-commerce-admin-catalog/v1.0/products/by-externalReferenceCode/${externalReferenceCode}?nestedFields=productVirtualSettings
 
     const response = await getProductByExternalReferenceCode({
@@ -125,7 +124,6 @@ async function updateFileEntryVersion(
     payload: ProductVirtualSettingsFileEntry,
 ) {
     // Equivalent to
-
     // o/headless-commerce-admin-catalog/v1.0/product-virtual-settings-file-entries/${fileEntryId}
 
     await patchProductVirtualSettingsFileEntry({
