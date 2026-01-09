@@ -12,7 +12,9 @@ import { liferayClient } from '../services/liferay';
 
 class UpdateNotificationTemplates {
     static async exportTemplates() {
-        logger.info('[exportTemplates] Exporting React Email Templates');
+        logger.info(
+            '[exportTemplates] Exporting React Email Templates',
+        );
 
         await $`cd ${paths.emailPackage} && bun run export`.quiet();
 
@@ -23,11 +25,15 @@ class UpdateNotificationTemplates {
         const notificationTemplates =
             await $`cd ${paths.emailPackage}/emails/notification-templates && ls`.quiet();
 
-        return notificationTemplates.stdout.toString().trim().split('\n');
+        return notificationTemplates.stdout
+            .toString()
+            .trim()
+            .split('\n');
     }
 
     static async transformNotificationTemplates() {
-        const notificationTemplates = await this.getNotificationTemplates();
+        const notificationTemplates =
+            await this.getNotificationTemplates();
         const transformedNotificationTemplates = [];
 
         for (const notificationTemplate of notificationTemplates) {
@@ -41,7 +47,9 @@ class UpdateNotificationTemplates {
                 continue;
             }
 
-            const template = await Bun.file(notificationTemplatePath).json();
+            const template = await Bun.file(
+                notificationTemplatePath,
+            ).json();
 
             const indexHtmlPath = `${paths.emailPackage}/out/notification-templates/${notificationTemplate}/index.html`;
 
@@ -63,10 +71,11 @@ class UpdateNotificationTemplates {
     }
 
     static async run() {
-        const { data, error } = await getNotificationTemplatesPage({
-            client: liferayClient,
-            query: { pageSize: '-1' },
-        });
+        const { data, error } =
+            await getNotificationTemplatesPage({
+                client: liferayClient,
+                query: { pageSize: '-1' },
+            });
 
         if (error) {
             throw new Error(error as any);
@@ -78,11 +87,13 @@ class UpdateNotificationTemplates {
             await this.transformNotificationTemplates();
 
         for (const notificationTemplate of notificationTemplates) {
-            const existingNotificationTemplate = data?.items?.find(
-                (item) =>
-                    item.externalReferenceCode ===
-                    notificationTemplate.template.externalReferenceCode,
-            );
+            const existingNotificationTemplate =
+                data?.items?.find(
+                    (item) =>
+                        item.externalReferenceCode ===
+                        notificationTemplate.template
+                            .externalReferenceCode,
+                );
 
             if (existingNotificationTemplate) {
                 logger.info(
@@ -93,7 +104,9 @@ class UpdateNotificationTemplates {
                     body: {
                         ...existingNotificationTemplate,
                         ...notificationTemplate.template,
-                        body: { en_US: notificationTemplate.body },
+                        body: {
+                            en_US: notificationTemplate.body,
+                        },
                     },
                     client: liferayClient,
                     path: {
@@ -112,7 +125,9 @@ class UpdateNotificationTemplates {
             await postNotificationTemplate({
                 body: {
                     ...notificationTemplate.template,
-                    body: { en_US: notificationTemplate.body },
+                    body: {
+                        en_US: notificationTemplate.body,
+                    },
                 },
                 client: liferayClient,
             });
@@ -126,7 +141,8 @@ class UpdateNotificationTemplates {
                     !notificationTemplates?.find(
                         (notificationTemplate) =>
                             item.externalReferenceCode ===
-                            notificationTemplate.template.externalReferenceCode,
+                            notificationTemplate.template
+                                .externalReferenceCode,
                     ),
             )
             .map(
@@ -134,7 +150,9 @@ class UpdateNotificationTemplates {
                     `${index}. ${name} - ${externalReferenceCode}`,
             );
 
-        logger.info(`[run] Templates not processed: \n\n${diff?.join('\n')}`);
+        logger.info(
+            `[run] Templates not processed: \n\n${diff?.join('\n')}`,
+        );
         logger.info(
             `[run] Templates processed: ${notificationTemplates.length}, skipped: ${diff?.length}`,
         );
