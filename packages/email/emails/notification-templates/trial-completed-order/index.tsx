@@ -1,6 +1,6 @@
 import { Link, Section, Text } from '@react-email/components';
 
-import Layout from '../../components/Layout';
+import Layout from '../../layout/Layout';
 
 type Props = {
     name: string;

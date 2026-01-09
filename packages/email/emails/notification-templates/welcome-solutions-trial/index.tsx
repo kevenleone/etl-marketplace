@@ -1,6 +1,6 @@
 import { Heading, Section, Text } from '@react-email/components';
 
-import Layout from '../../components/Layout';
+import Layout from '../../layout/Layout';
 
 type Props = {
     commerceOrderAuthorFirstName: string;

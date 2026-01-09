@@ -8,7 +8,7 @@ import {
     Text,
 } from '@react-email/components';
 
-import Layout from '../../components/Layout';
+import Layout from '../../layout/Layout';
 
 type Props = {
     appType: string;
