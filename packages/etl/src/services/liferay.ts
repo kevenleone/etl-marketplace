@@ -39,21 +39,7 @@ const kyFetch = liferay.extend({
         ],
         beforeRetry: [
             async ({ request, error, retryCount }) => {
-                const authorization = request.headers.get('authorization');
-
-                if (authorization) {
-                    console.log({
-                        request,
-                        retryCount,
-                        error,
-                    });
-                }
-
-                if (
-                    isBasicAuth ||
-                    !LIFERAY_CLIENT_ID ||
-                    !LIFERAY_CLIENT_SECRET
-                ) {
+                if (!LIFERAY_CLIENT_ID || !LIFERAY_CLIENT_SECRET) {
                     return;
                 }
 
