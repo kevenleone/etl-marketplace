@@ -10,7 +10,17 @@ import {
 
 import Layout from '../../components/Layout';
 
-export default function NewPublisherRequestPublisher() {
+type Props = {
+    catalogName: string;
+    publisherImage: string;
+    publisherName: string;
+};
+
+export default function NewPublisherRequestPublisher({
+    catalogName = '[%CATALOG_NAME%]',
+    publisherImage = '[%PUBLISHER_IMAGE%]',
+    publisherName = '[%PUBLISHER_NAME%]',
+}: Props) {
     return (
         <Layout preview="Publisher Request Received">
             <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
@@ -30,7 +40,7 @@ export default function NewPublisherRequestPublisher() {
                 <Row>
                     <Column width="58">
                         <Img
-                            src="[%PUBLISHER_IMAGE%]"
+                            src={publisherImage}
                             width="58"
                             height="58"
                             alt="App Icon"
@@ -39,10 +49,10 @@ export default function NewPublisherRequestPublisher() {
                     </Column>
                     <Column className="pl-3">
                         <Text className="text-[28px] font-semibold text-heading m-0">
-                            [%PUBLISHER_NAME%]
+                            {publisherName}
                         </Text>
                         <Text className="text-base text-text m-0">
-                            [%CATALOG_NAME%]
+                            {catalogName}
                         </Text>
                     </Column>
                 </Row>
@@ -77,3 +87,9 @@ export default function NewPublisherRequestPublisher() {
         </Layout>
     );
 }
+
+NewPublisherRequestPublisher.PreviewProps = {
+    catalogName: 'Liferay, Inc.',
+    publisherImage: 'https://github.com/liferay.png',
+    publisherName: 'Liferay, Inc.',
+} as Props;

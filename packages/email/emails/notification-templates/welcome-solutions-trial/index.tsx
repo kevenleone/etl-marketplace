@@ -1,10 +1,18 @@
 import { Heading, Section, Text } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function WelcomeSolutionsTrial() {
+type Props = {
+    commerceOrderAuthorFirstName: string;
+    commerceOrderId: string;
+};
+
+export default function WelcomeSolutionsTrial({
+    commerceOrderAuthorFirstName = '[%COMMERCEORDER_AUTHOR_FIRST_NAME%]',
+    commerceOrderId = '[%COMMERCEORDER_ID%]',
+}: Props) {
     return (
-        <TrialLayout preview="Welcome Solutions Trial">
+        <Layout preview="Welcome Solutions Trial">
             <Section className="mb-6 text-center">
                 <Heading className="text-[30px] font-bold text-black m-0 mt-[2.5rem] mb-4 text-center">
                     Your solution is being provisioned
@@ -15,7 +23,7 @@ export default function WelcomeSolutionsTrial() {
                 <Text className="text-base text-text mb-4">
                     Dear{' '}
                     <span className="font-bold">
-                        [%COMMERCEORDER_AUTHOR_FIRST_NAME%]
+                        {commerceOrderAuthorFirstName}
                     </span>
                     ,
                 </Text>
@@ -28,7 +36,7 @@ export default function WelcomeSolutionsTrial() {
                 <Text className="text-base text-text mb-4">
                     Your Order ID is:{' '}
                     <span className="font-bold text-black">
-                        [%COMMERCEORDER_ID%]
+                        {commerceOrderId}
                     </span>
                 </Text>
 
@@ -48,6 +56,11 @@ export default function WelcomeSolutionsTrial() {
                     Liferay Marketplace.
                 </Text>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+WelcomeSolutionsTrial.PreviewProps = {
+    commerceOrderAuthorFirstName: 'John',
+    commerceOrderId: '123456789',
+} as Props;

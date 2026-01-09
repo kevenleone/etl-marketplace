@@ -1,10 +1,18 @@
 import { Text, Heading, Link, Section } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function TrialProcessingOrder() {
+type Props = {
+    commerceOrderAuthorFirstName: string;
+    commerceOrderId: string;
+};
+
+export default function TrialProcessingOrder({
+    commerceOrderAuthorFirstName = '[%COMMERCEORDER_AUTHOR_FIRST_NAME%]',
+    commerceOrderId = '[%COMMERCEORDER_ID%]',
+}: Props) {
     return (
-        <TrialLayout preview="Trial Processing Order">
+        <Layout preview="Trial Processing Order">
             <Section className="mb-6">
                 {/* Spacing handled by layout */}
             </Section>
@@ -13,7 +21,7 @@ export default function TrialProcessingOrder() {
                 <Text className="text-base text-text mb-4">
                     Dear{' '}
                     <span className="font-bold">
-                        [%COMMERCEORDER_AUTHOR_FIRST_NAME%]
+                        {commerceOrderAuthorFirstName}
                     </span>
                     ,
                 </Text>
@@ -25,7 +33,7 @@ export default function TrialProcessingOrder() {
 
                 <Text className="text-base text-text mb-4">
                     Your Order ID is:{' '}
-                    <span className="font-bold">[%COMMERCEORDER_ID%]</span>
+                    <span className="font-bold">{commerceOrderId}</span>
                 </Text>
 
                 <Text className="text-base text-text mb-4">
@@ -45,6 +53,11 @@ export default function TrialProcessingOrder() {
                     The Liferay Marketplace Team
                 </Text>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+TrialProcessingOrder.PreviewProps = {
+    commerceOrderAuthorFirstName: 'John',
+    commerceOrderId: '123456789',
+} as Props;

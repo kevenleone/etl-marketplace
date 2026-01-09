@@ -1,17 +1,25 @@
 import { Text, Heading, Link, Section } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function TrialOnHoldOrder() {
+type Props = {
+    commerceOrderAuthorFirstName: string;
+    commerceOrderId: string;
+};
+
+export default function TrialOnHoldOrder({
+    commerceOrderAuthorFirstName = '[%COMMERCEORDER_AUTHOR_FIRST_NAME%]',
+    commerceOrderId = '[%COMMERCEORDER_ID%]',
+}: Props) {
     return (
-        <TrialLayout preview="Trial On Hold Order">
+        <Layout preview="Trial On Hold Order">
             <Section className="mb-6"></Section>
 
             <Section>
                 <Text className="text-base text-text mb-4">
                     Dear{' '}
                     <span className="font-bold">
-                        [%COMMERCEORDER_AUTHOR_FIRST_NAME%]
+                        {commerceOrderAuthorFirstName}
                     </span>
                     ,
                 </Text>
@@ -22,7 +30,7 @@ export default function TrialOnHoldOrder() {
 
                 <Text className="text-base text-text mb-4">
                     Your Order ID is:{' '}
-                    <span className="font-bold">[%COMMERCEORDER_ID%]</span>
+                    <span className="font-bold">{commerceOrderId}</span>
                 </Text>
 
                 <Text className="text-base text-text mb-4">
@@ -41,6 +49,11 @@ export default function TrialOnHoldOrder() {
                     The Liferay Marketplace Team
                 </Text>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+TrialOnHoldOrder.PreviewProps = {
+    commerceOrderAuthorFirstName: 'John',
+    commerceOrderId: '123456789',
+} as Props;

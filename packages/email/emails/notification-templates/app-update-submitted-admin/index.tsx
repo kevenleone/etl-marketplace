@@ -1,16 +1,30 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
+    Heading,
+    Img,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../components/Layout';
 
-export default function AppUpdateSubmittedAdmin() {
+type Props = {
+    appType: string;
+    cpDefinitionDeveloperName: string;
+    cpDefinitionName: string;
+    cpDefinitionProductId: string;
+    cpDefinitionThumbnail: string;
+};
+
+export default function AppUpdateSubmittedAdmin({
+    appType = '[%APP_TYPE%]',
+    cpDefinitionDeveloperName = '[%CPDEFINITION_DEVELOPER_NAME%]',
+    cpDefinitionName = '[%CPDEFINITION_NAME%]',
+    cpDefinitionProductId = '[%CPDEFINITION_PRODUCTID%]',
+    cpDefinitionThumbnail = '[%CPDEFINITION_THUMBNAIL%]',
+}: Props) {
     return (
         <Layout preview="Updated App Submission Pending Your Review">
             <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
@@ -29,7 +43,7 @@ export default function AppUpdateSubmittedAdmin() {
                 <Row>
                     <Column width="56">
                         <Img
-                            src="[%CPDEFINITION_THUMBNAIL%]"
+                            src={cpDefinitionThumbnail}
                             width="56"
                             height="56"
                             alt="App Icon"
@@ -38,22 +52,22 @@ export default function AppUpdateSubmittedAdmin() {
                     </Column>
                     <Column className="pl-3">
                         <Text className="text-[28px] font-semibold text-heading m-0">
-                            [%CPDEFINITION_NAME%]
+                            {cpDefinitionName}
                         </Text>
                         <Row className="mt-1">
                             <Column>
                                 <Text className="text-base text-text m-0 pr-4">
-                                    [%CPDEFINITION_DEVELOPER_NAME%]
+                                    {cpDefinitionDeveloperName}
                                 </Text>
                             </Column>
                             <Column>
                                 <Text className="text-base text-text m-0 pr-4">
-                                    [%CPDEFINITION_DEVELOPER_NAME%]
+                                    {cpDefinitionDeveloperName}
                                 </Text>
                             </Column>
                             <Column>
                                 <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
-                                    [%APP_TYPE%]
+                                    {appType}
                                 </div>
                             </Column>
                         </Row>
@@ -73,7 +87,7 @@ export default function AppUpdateSubmittedAdmin() {
 
             <Section className="mb-6">
                 <Link
-                    href="https://marketplace.liferay.com/administrator-dashboard#/apps/[%CPDEFINITION_PRODUCTID%]"
+                    href={`https://marketplace.liferay.com/administrator-dashboard#/apps/${cpDefinitionProductId}`}
                     className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Review App
@@ -82,3 +96,11 @@ export default function AppUpdateSubmittedAdmin() {
         </Layout>
     );
 }
+
+AppUpdateSubmittedAdmin.PreviewProps = {
+    appType: 'SaaS',
+    cpDefinitionDeveloperName: 'Liferay, Inc.',
+    cpDefinitionName: 'Liferay',
+    cpDefinitionProductId: '123456789',
+    cpDefinitionThumbnail: 'https://github.com/liferay.png',
+} as Props;

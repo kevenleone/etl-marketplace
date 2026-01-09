@@ -1,10 +1,20 @@
 import { Text, Heading, Link, Section } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function TrialAdminExtensionResponse() {
+type Props = {
+    trialExtensionRequestAuthorFirstName: string;
+    trialExtensionRequestProjectId: string;
+    trialExtensionRequestDueStatus: string;
+};
+
+export default function TrialAdminExtensionResponse({
+    trialExtensionRequestAuthorFirstName = '[%TRIALEXTENSIONREQUEST_AUTHOR_FIRST_NAME%]',
+    trialExtensionRequestProjectId = '[%TRIALEXTENSIONREQUEST_PROJECTID%]',
+    trialExtensionRequestDueStatus = '[%TRIALEXTENSIONREQUEST_DUESTATUS%]',
+}: Props) {
     return (
-        <TrialLayout
+        <Layout
             preview="Trial Extension Response"
             style={{ maxWidth: '640px' }}
         >
@@ -14,7 +24,7 @@ export default function TrialAdminExtensionResponse() {
                 <Text className="text-base text-text mb-4">
                     Dear{' '}
                     <span className="font-bold">
-                        [%TRIALEXTENSIONREQUEST_AUTHOR_FIRST_NAME%]
+                        {trialExtensionRequestAuthorFirstName}
                     </span>
                     ,
                 </Text>
@@ -22,11 +32,11 @@ export default function TrialAdminExtensionResponse() {
                 <Text className="text-base text-text mb-4">
                     Your request for{' '}
                     <span className="font-bold">
-                        [%TRIALEXTENSIONREQUEST_PROJECTID%]
+                        {trialExtensionRequestProjectId}
                     </span>{' '}
                     was{' '}
                     <span className="font-bold">
-                        [%TRIALEXTENSIONREQUEST_DUESTATUS%]
+                        {trialExtensionRequestDueStatus}
                     </span>{' '}
                     by the admin.
                 </Text>
@@ -50,6 +60,12 @@ export default function TrialAdminExtensionResponse() {
                     </Link>
                 </Section>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+TrialAdminExtensionResponse.PreviewProps = {
+    trialExtensionRequestAuthorFirstName: 'John',
+    trialExtensionRequestProjectId: '123456789',
+    trialExtensionRequestDueStatus: 'Approved',
+} as Props;

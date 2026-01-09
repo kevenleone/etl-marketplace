@@ -8,15 +8,25 @@ import {
     Container,
 } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function NextStepsTemplateFree() {
+type Props = {
+    getAppInformationDashboardLink: string;
+    getAppInformationOrderId: string;
+    getAppInformationProductName: string;
+};
+
+export default function NextStepsTemplateFree({
+    getAppInformationDashboardLink = '[%GETAPPINFORMATION_DASHBOARDLINK%]',
+    getAppInformationOrderId = '[%GETAPPINFORMATION_ORDERID%]',
+    getAppInformationProductName = '[%GETAPPINFORMATION_PRODUCTNAME%]',
+}: Props) {
     return (
-        <TrialLayout preview="Next Steps">
+        <Layout preview="Next Steps">
             <Section className="text-center mb-[35px] mt-[35px]">
-                {/* Logo and Next Steps are handled in content area in original but Logo is in header in TrialLayout.
+                {/* Logo and Next Steps are handled in content area in original but Logo is in header in Layout.
                     Original: Logo, then Next Steps.
-                    TrialLayout: key parts match.
+                    Layout: key parts match.
                  */}
             </Section>
 
@@ -30,14 +40,14 @@ export default function NextStepsTemplateFree() {
             <Section className="px-[7rem] mb-[2.5rem] text-center">
                 <Text className="text-text text-center m-0 mb-4">
                     Congratulations on the purchase of{' '}
-                    <b>[%GETAPPINFORMATION_PRODUCTNAME%]</b>!
+                    <b>{getAppInformationProductName}</b>!
                 </Text>
                 <Text className="text-text text-center m-0 mb-4">
                     Your app is ready for download.
                 </Text>
                 <Text className="text-text text-center m-0 mb-4">
                     Your Order ID is:{' '}
-                    <b className="text-black">[%GETAPPINFORMATION_ORDERID%]</b>
+                    <b className="text-black">{getAppInformationOrderId}</b>
                 </Text>
                 <Text className="text-text text-center m-0">
                     To find your app download, find your Order ID and choose
@@ -47,7 +57,7 @@ export default function NextStepsTemplateFree() {
 
             <Section className="text-center mb-[2.5rem]">
                 <Link
-                    href="[%GETAPPINFORMATION_DASHBOARDLINK%]"
+                    href={getAppInformationDashboardLink}
                     className="bg-white border-2 border-black text-black font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem]"
                 >
                     Go to Dashboard
@@ -62,6 +72,12 @@ export default function NextStepsTemplateFree() {
                     Learn more about App Configuration
                 </Link>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+NextStepsTemplateFree.PreviewProps = {
+    getAppInformationDashboardLink: 'https://console.liferay.com',
+    getAppInformationOrderId: '123456789',
+    getAppInformationProductName: 'Liferay',
+} as Props;

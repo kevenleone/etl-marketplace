@@ -1,14 +1,22 @@
 import { Heading, Hr, Img, Link, Section, Text } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function PublisherAccountRequest() {
+type Props = {
+    groupKey: string;
+    portalUrl: string;
+};
+
+export default function PublisherAccountRequest({
+    groupKey = '[$GROUP_KEY$]',
+    portalUrl = '[$PORTAL_URL$]',
+}: Props) {
     return (
-        <TrialLayout preview="Invite Members" style={{ maxWidth: '598px' }}>
+        <Layout preview="Invite Members" style={{ maxWidth: '598px' }}>
             <Section className="text-center mb-[19px]">
                 <div className="flex justify-center items-center">
                     <Img
-                        src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay_inc-png"
+                        src={`${portalUrl}/documents/d/${groupKey}/liferay_inc-png`}
                         width="28"
                         height="28"
                         alt="Liferay Logo"
@@ -69,7 +77,7 @@ export default function PublisherAccountRequest() {
                     </Link>
                 </Text>
                 <Img
-                    src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay_logo-png"
+                    src={`${portalUrl}/documents/d/${groupKey}/liferay_logo-png`}
                     width="180"
                     height="57"
                     alt="Liferay Logo"
@@ -114,6 +122,11 @@ export default function PublisherAccountRequest() {
                     Uptime Status
                 </Link>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+PublisherAccountRequest.PreviewProps = {
+    groupKey: 'guest',
+    portalUrl: 'https://liferay.com',
+} as Props;

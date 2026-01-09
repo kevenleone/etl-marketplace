@@ -1,13 +1,20 @@
 import { Text, Heading, Link, Section } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function TrialExtensionRequest() {
+type Props = {
+    trialExtensionRequestAuthorFirstName: string;
+    trialExtensionRequestDuration: string;
+    trialExtensionRequestProjectId: string;
+};
+
+export default function TrialExtensionRequest({
+    trialExtensionRequestAuthorFirstName = '[%TRIALEXTENSIONREQUEST_AUTHOR_FIRST_NAME%]',
+    trialExtensionRequestDuration = '[%TRIALEXTENSIONREQUEST_DURATION%]',
+    trialExtensionRequestProjectId = '[%TRIALEXTENSIONREQUEST_PROJECTID%]',
+}: Props) {
     return (
-        <TrialLayout
-            preview="Trial Extension Requested"
-            style={{ maxWidth: '640px' }}
-        >
+        <Layout preview="Trial Extension Requested">
             <Section className="mb-6"></Section>
 
             <Section>
@@ -18,15 +25,15 @@ export default function TrialExtensionRequest() {
                 <Text className="text-base text-text mb-4">
                     User{' '}
                     <span className="font-bold">
-                        [%TRIALEXTENSIONREQUEST_AUTHOR_FIRST_NAME%]
+                        {trialExtensionRequestAuthorFirstName}
                     </span>{' '}
                     has requested a{' '}
                     <span className="font-bold">
-                        [%TRIALEXTENSIONREQUEST_DURATION%]
+                        {trialExtensionRequestDuration}
                     </span>
                     -day extension for trial environment{' '}
                     <span className="font-bold">
-                        [%TRIALEXTENSIONREQUEST_PROJECTID%]
+                        {trialExtensionRequestProjectId}
                     </span>
                     .
                 </Text>
@@ -50,6 +57,12 @@ export default function TrialExtensionRequest() {
                     </Link>
                 </Section>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+TrialExtensionRequest.PreviewProps = {
+    trialExtensionRequestAuthorFirstName: 'John',
+    trialExtensionRequestDuration: '30',
+    trialExtensionRequestProjectId: '123456789',
+} as Props;

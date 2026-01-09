@@ -1,10 +1,22 @@
 import { Text, Heading, Link, Section } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function TrialAdminNotification() {
+type Props = {
+    commerceOrderAccountName: string;
+    commerceOrderAuthorEmailAddress: string;
+    commerceOrderId: string;
+    commerceOrderCreateDate: string;
+};
+
+export default function TrialAdminNotification({
+    commerceOrderAccountName = '[%COMMERCEORDER_ACCOUNT_NAME%]',
+    commerceOrderAuthorEmailAddress = '[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]',
+    commerceOrderId = '[%COMMERCEORDER_ID%]',
+    commerceOrderCreateDate = '[%COMMERCEORDER_CREATEDATE%]',
+}: Props) {
     return (
-        <TrialLayout
+        <Layout
             preview="Trial Admin Notification"
             style={{ maxWidth: '640px' }}
         >
@@ -22,21 +34,19 @@ export default function TrialAdminNotification() {
                 <Text className="text-base text-text mb-4">
                     Author Name:{' '}
                     <span className="font-bold">
-                        [%COMMERCEORDER_ACCOUNT_NAME%]
+                        {commerceOrderAccountName}
                     </span>
                     <br />
                     Author Email:{' '}
                     <span className="font-bold">
-                        [%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]
+                        {commerceOrderAuthorEmailAddress}
                     </span>
                     <br />
                     Order ID:{' '}
-                    <span className="font-bold">[%COMMERCEORDER_ID%]</span>
+                    <span className="font-bold">{commerceOrderId}</span>
                     <br />
                     Created At:{' '}
-                    <span className="font-bold">
-                        [%COMMERCEORDER_CREATEDATE%]
-                    </span>
+                    <span className="font-bold">{commerceOrderCreateDate}</span>
                 </Text>
 
                 <Text className="text-base text-text mb-8">
@@ -45,6 +55,13 @@ export default function TrialAdminNotification() {
                     The Liferay Marketplace Team
                 </Text>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+TrialAdminNotification.PreviewProps = {
+    commerceOrderAccountName: 'Liferay',
+    commerceOrderAuthorEmailAddress: 'test@liferay.com',
+    commerceOrderId: '123456789',
+    commerceOrderCreateDate: 'Jan 01, 2023',
+} as Props;

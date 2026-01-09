@@ -10,7 +10,21 @@ import {
 
 import Layout from '../../components/Layout';
 
-export default function AppUpdateSubmittedPublisher() {
+type Props = {
+    appName: string;
+    appType: string;
+    catalogName: string;
+    cpDefinitionProductId: string;
+    productThumbnail: string;
+};
+
+export default function AppUpdateSubmittedPublisher({
+    appName = '[%APP_NAME%]',
+    appType = '[%APP_TYPE%]',
+    catalogName = '[%CATALOG_NAME%]',
+    cpDefinitionProductId = '[%CPDEFINITION_PRODUCTID%]',
+    productThumbnail = '[%PRODUCT_THUMBNAIL%]',
+}: Props) {
     return (
         <Layout preview="Your App Update is Under Review">
             <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
@@ -30,7 +44,7 @@ export default function AppUpdateSubmittedPublisher() {
                 <Row>
                     <Column width="56">
                         <Img
-                            src="[%PRODUCT_THUMBNAIL%]"
+                            src={productThumbnail}
                             width="56"
                             height="56"
                             alt="App Icon"
@@ -39,17 +53,17 @@ export default function AppUpdateSubmittedPublisher() {
                     </Column>
                     <Column className="pl-3">
                         <Text className="text-[28px] font-semibold text-heading m-0">
-                            [%APP_NAME%]
+                            {appName}
                         </Text>
                         <Row className="mt-1">
                             <Column>
                                 <Text className="text-base text-text m-0 pr-4">
-                                    [%CATALOG_NAME%]
+                                    {catalogName}
                                 </Text>
                             </Column>
                             <Column>
                                 <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
-                                    [%APP_TYPE%]
+                                    {appType}
                                 </div>
                             </Column>
                         </Row>
@@ -71,7 +85,7 @@ export default function AppUpdateSubmittedPublisher() {
 
             <Section className="mb-12">
                 <Link
-                    href="https://marketplace.liferay.com/publisher-dashboard#/app/[%CPDEFINITION_PRODUCTID%]"
+                    href={`https://marketplace.liferay.com/publisher-dashboard#/app/${cpDefinitionProductId}`}
                     className="bg-white border border-primary text-primary font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
@@ -95,3 +109,11 @@ export default function AppUpdateSubmittedPublisher() {
         </Layout>
     );
 }
+
+AppUpdateSubmittedPublisher.PreviewProps = {
+    appName: 'Liferay',
+    appType: 'SaaS',
+    catalogName: 'Liferay, Inc.',
+    cpDefinitionProductId: '123456789',
+    productThumbnail: 'https://github.com/liferay.png',
+} as Props;

@@ -1,10 +1,16 @@
 import { Heading, Link, Section, Text } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function NextStepsTemplatePaidOrTrial() {
+type Props = {
+    commerceOrderId: string;
+};
+
+export default function NextStepsTemplatePaidOrTrial({
+    commerceOrderId = '[%COMMERCEORDER_ID%]',
+}: Props) {
     return (
-        <TrialLayout preview="Next Steps Paid DXP">
+        <Layout preview="Next Steps Paid DXP">
             <Section className="text-center mb-[35px] mt-[35px]"></Section>
 
             <Heading
@@ -23,7 +29,7 @@ export default function NextStepsTemplatePaidOrTrial() {
                     a license for your app.
                 </Text>
                 <Text className="text-text text-center m-0 mb-4">
-                    Your Order ID is: <strong>[%COMMERCEORDER_ID%]</strong>
+                    Your Order ID is: <strong>{commerceOrderId}</strong>
                 </Text>
                 <Text className="text-text text-center m-0">
                     Click <strong>Continue Configuration</strong> below to
@@ -56,6 +62,10 @@ export default function NextStepsTemplatePaidOrTrial() {
                     Learn more about App Configuration
                 </Link>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+NextStepsTemplatePaidOrTrial.PreviewProps = {
+    commerceOrderId: '123456789',
+} as Props;

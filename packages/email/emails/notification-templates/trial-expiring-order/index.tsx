@@ -1,10 +1,18 @@
 import { Text, Link, Section } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function TrialExpiringOrder() {
+type Props = {
+    trialCreatorFirstName: string;
+    trialEndDate: string;
+};
+
+export default function TrialExpiringOrder({
+    trialCreatorFirstName = '[%TRIAL_CREATOR_FIRST_NAME%]',
+    trialEndDate = '[%TRIAL_END_DATE%]',
+}: Props) {
     return (
-        <TrialLayout preview="Trial Expiring Order">
+        <Layout preview="Trial Expiring Order">
             <Section className="mb-6">
                 {/* Empty div in original, but spacing might be needed */}
             </Section>
@@ -12,16 +20,13 @@ export default function TrialExpiringOrder() {
             <Section>
                 <Text className="text-base text-text mb-4">
                     Dear{' '}
-                    <span className="font-bold">
-                        [%TRIAL_CREATOR_FIRST_NAME%]
-                    </span>
-                    ,
+                    <span className="font-bold">{trialCreatorFirstName}</span>,
                 </Text>
 
                 <Text className="text-base text-text mb-4">
                     Your Trial will end on{' '}
-                    <span className="font-bold">[%TRIAL_END_DATE%]</span> and
-                    all of your data will be deleted automatically.
+                    <span className="font-bold">{trialEndDate}</span> and all of
+                    your data will be deleted automatically.
                 </Text>
 
                 <Text className="text-base text-text mb-4">
@@ -41,6 +46,11 @@ export default function TrialExpiringOrder() {
                     Go to Dashboard
                 </Link>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+TrialExpiringOrder.PreviewProps = {
+    trialCreatorFirstName: 'John',
+    trialEndDate: 'Jan 01, 2023',
+} as Props;

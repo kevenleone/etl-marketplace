@@ -1,20 +1,30 @@
 import { Link, Section, Text } from '@react-email/components';
 
-import TrialLayout from '../../components/TrialLayout';
+import Layout from '../../components/Layout';
 
-export default function TrialCompletedOrder() {
+type Props = {
+    name: string;
+    url: string;
+    email: string;
+};
+
+export default function TrialCompletedOrder({
+    name = '%NAME%',
+    url = '%URL%',
+    email = '%EMAIL%',
+}: Props) {
     return (
-        <TrialLayout preview="Trial Completed Order">
+        <Layout preview="Trial Completed Order">
             <Section className="mb-6"></Section>
 
             <Section>
                 <Text className="text-base text-text mb-4">
-                    Dear <span className="font-bold">%NAME%</span>,
+                    Dear <span className="font-bold">{name}</span>,
                 </Text>
 
                 <Text className="text-base text-text mb-4">
                     Your Trial is available at the following URL:{' '}
-                    <Link href="https://%URL%">%URL%</Link>
+                    <Link href={`https://${url}`}>{url}</Link>
                 </Text>
 
                 <Text className="text-base text-text mb-4">
@@ -22,7 +32,7 @@ export default function TrialCompletedOrder() {
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    <span className="font-bold">Username:</span> %EMAIL%
+                    <span className="font-bold">Username:</span> {email}
                     <br />
                     <span className="font-bold">Password:</span> `test`
                 </Text>
@@ -42,7 +52,7 @@ export default function TrialCompletedOrder() {
 
                 <Section className="mt-5 text-center">
                     <Link
-                        href="%URL%"
+                        href={url}
                         className="bg-primary text-white font-semibold py-3 px-6 rounded-lg text-base no-underline inline-block items-center justify-center min-w-[150px] mr-3"
                     >
                         Access your solution
@@ -55,6 +65,12 @@ export default function TrialCompletedOrder() {
                     </Link>
                 </Section>
             </Section>
-        </TrialLayout>
+        </Layout>
     );
 }
+
+TrialCompletedOrder.PreviewProps = {
+    name: 'John Doe',
+    url: 'liferay.com',
+    email: 'test@liferay.com',
+} as Props;
