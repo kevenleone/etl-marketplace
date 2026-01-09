@@ -9,7 +9,6 @@ import {
     Section,
     Text,
 } from '@react-email/components';
-import Footer from './footer';
 
 interface PlaidVerifyIdentityEmailProps {
     validationCode?: string;
@@ -49,7 +48,6 @@ export const PlaidVerifyIdentityEmail = ({
                     if you did not request this code.
                 </Text>
             </Container>
-            <Footer value="1" />
 
             <Text style={footer}>Securely powered by Plaid.</Text>
         </Body>

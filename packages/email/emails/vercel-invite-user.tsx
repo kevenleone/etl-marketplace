@@ -34,7 +34,7 @@ const baseUrl = process.env.VERCEL_URL
     : '';
 
 export const VercelInviteUserEmail = ({
-    username,
+    username = '[%USERNAME%]',
     userImage,
     invitedByUsername,
     invitedByEmail,
@@ -142,8 +142,6 @@ export const VercelInviteUserEmail = ({
                         </Text>
                     </Container>
                 </Body>
-
-                <Footer value="1" />
             </Tailwind>
         </Html>
     );

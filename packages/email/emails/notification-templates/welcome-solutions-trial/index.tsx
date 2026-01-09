@@ -1,43 +1,53 @@
-import { Text, Heading, Link, Section } from '@react-email/components';
+import { Heading, Section, Text } from '@react-email/components';
 
 import TrialLayout from '../../components/TrialLayout';
 
 export default function WelcomeSolutionsTrial() {
     return (
         <TrialLayout preview="Welcome Solutions Trial">
-             <Section className="mb-6 text-center">
-                 <Heading className="text-[30px] font-bold text-black m-0 mt-[2.5rem] mb-4 text-center">Your solution is being provisioned</Heading>
-             </Section>
+            <Section className="mb-6 text-center">
+                <Heading className="text-[30px] font-bold text-black m-0 mt-[2.5rem] mb-4 text-center">
+                    Your solution is being provisioned
+                </Heading>
+            </Section>
 
-             <Section>
+            <Section>
                 <Text className="text-base text-text mb-4">
-                    Dear <span className="font-bold">[%COMMERCEORDER_AUTHOR_FIRST_NAME%]</span>,
-                </Text>
-
-                <Text className="text-base text-text mb-4">
-                    Welcome to Liferay Marketplace! We're thrilled to have you on board for your Solutions Trial.
-                </Text>
-
-                <Text className="text-base text-text mb-4">
-                    Your Order ID is: <span className="font-bold text-black">[%COMMERCEORDER_ID%]</span>
+                    Dear{' '}
+                    <span className="font-bold">
+                        [%COMMERCEORDER_AUTHOR_FIRST_NAME%]
+                    </span>
+                    ,
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    Please be patient as we provision your solution. This process <span className="font-bold">may take a few moments.</span>
+                    Welcome to Liferay Marketplace! We're thrilled to have you
+                    on board for your Solutions Trial.
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    Once provisioning is complete, you'll receive another email containing detailed instructions.
+                    Your Order ID is:{' '}
+                    <span className="font-bold text-black">
+                        [%COMMERCEORDER_ID%]
+                    </span>
                 </Text>
 
-                <Text className="text-base text-text mb-0">
-                    Thank you,
+                <Text className="text-base text-text mb-4">
+                    Please be patient as we provision your solution. This
+                    process{' '}
+                    <span className="font-bold">may take a few moments.</span>
                 </Text>
+
+                <Text className="text-base text-text mb-4">
+                    Once provisioning is complete, you'll receive another email
+                    containing detailed instructions.
+                </Text>
+
+                <Text className="text-base text-text mb-0">Thank you,</Text>
                 <Text className="text-base text-text mt-0">
                     Liferay Marketplace.
                 </Text>
-
-             </Section>
+            </Section>
         </TrialLayout>
     );
 }

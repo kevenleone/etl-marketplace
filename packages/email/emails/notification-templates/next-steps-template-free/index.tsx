@@ -1,45 +1,67 @@
-import { Text, Heading, Link, Section, Img, Hr, Container } from '@react-email/components';
+import {
+    Text,
+    Heading,
+    Link,
+    Section,
+    Img,
+    Hr,
+    Container,
+} from '@react-email/components';
 
 import TrialLayout from '../../components/TrialLayout';
 
 export default function NextStepsTemplateFree() {
     return (
         <TrialLayout preview="Next Steps">
-             <Section className="text-center mb-[35px] mt-[35px]">
+            <Section className="text-center mb-[35px] mt-[35px]">
                 {/* Logo and Next Steps are handled in content area in original but Logo is in header in TrialLayout.
                     Original: Logo, then Next Steps.
                     TrialLayout: key parts match.
                  */}
-             </Section>
+            </Section>
 
-             <Heading as="h2" className="text-[30px] font-bold m-0 mb-4 mt-[2.5rem] text-center text-black">Next Steps</Heading>
+            <Heading
+                as="h2"
+                className="text-[30px] font-bold m-0 mb-4 mt-[2.5rem] text-center text-black"
+            >
+                Next Steps
+            </Heading>
 
-             <Section className="px-[7rem] mb-[2.5rem] text-center">
-                 <Text className="text-text text-center m-0 mb-4">
-                    Congratulations on the purchase of <b>[%GETAPPINFORMATION_PRODUCTNAME%]</b>!
-                 </Text>
-                 <Text className="text-text text-center m-0 mb-4">
+            <Section className="px-[7rem] mb-[2.5rem] text-center">
+                <Text className="text-text text-center m-0 mb-4">
+                    Congratulations on the purchase of{' '}
+                    <b>[%GETAPPINFORMATION_PRODUCTNAME%]</b>!
+                </Text>
+                <Text className="text-text text-center m-0 mb-4">
                     Your app is ready for download.
-                 </Text>
-                 <Text className="text-text text-center m-0 mb-4">
-                    Your Order ID is: <b className="text-black">[%GETAPPINFORMATION_ORDERID%]</b>
-                 </Text>
-                 <Text className="text-text text-center m-0">
-                    To find your app download, find your Order ID and choose Manage, then Download LPKG.
-                 </Text>
-             </Section>
+                </Text>
+                <Text className="text-text text-center m-0 mb-4">
+                    Your Order ID is:{' '}
+                    <b className="text-black">[%GETAPPINFORMATION_ORDERID%]</b>
+                </Text>
+                <Text className="text-text text-center m-0">
+                    To find your app download, find your Order ID and choose
+                    Manage, then Download LPKG.
+                </Text>
+            </Section>
 
-             <Section className="text-center mb-[2.5rem]">
-                <Link href="[%GETAPPINFORMATION_DASHBOARDLINK%]" className="bg-white border-2 border-black text-black font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem]">
+            <Section className="text-center mb-[2.5rem]">
+                <Link
+                    href="[%GETAPPINFORMATION_DASHBOARDLINK%]"
+                    className="bg-white border-2 border-black text-black font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem]"
+                >
                     Go to Dashboard
                 </Link>
-             </Section>
+            </Section>
 
-             <Section className="text-center px-[7rem] py-1">
-                 <Link href="https://learn.liferay.com" className="text-primary font-bold text-xl no-underline">
+            <Section className="text-center px-[7rem] py-1">
+                <Link
+                    href="https://learn.liferay.com"
+                    className="text-primary font-bold text-xl no-underline"
+                >
                     Learn more about App Configuration
-                 </Link>
-             </Section>
+                </Link>
+            </Section>
         </TrialLayout>
     );
 }
