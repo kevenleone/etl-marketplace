@@ -1,27 +1,61 @@
-# React Email Starter
+# Email Package
 
-A live preview right in your browser so you don't need to keep sending real emails during development.
+This package manages the email templates for the ETL Marketplace project using [React Email](https://react.email/). It allows for developing, previewing, and exporting HTML email templates.
+
+## Tech Stack
+
+- **Framework**: React Email
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
 
 ## Getting Started
 
-First, install the dependencies:
+### Installation
 
-```sh
-npm install
-# or
-yarn
+```bash
+bun install
 ```
 
-Then, run the development server:
+### Development Server
 
-```sh
-npm run dev
-# or
-yarn dev
+To start the local preview server:
+
+```bash
+bun run dev
 ```
 
-Open [localhost:3000](http://localhost:3000) with your browser to see the result.
+This will open the preview at [http://localhost:3000](http://localhost:3000).
 
-## License
+## Project Structure
 
-MIT License
+- **`emails/notification-templates`**: Contains the individual email templates. Each folder corresponds to a notification type.
+- **`emails/components`**: Reusable components like `Layout.tsx`, `Header.tsx`, `Footer.tsx`.
+- **`emails/styles`**: Shared styles and Tailwind configuration.
+
+## Creating a New Template
+
+1. Create a new folder in `emails/notification-templates`.
+2. Create an `index.tsx` file.
+3. Use the `Layout` component to ensure consistent styling.
+
+```tsx
+import { Layout } from '../../components/Layout';
+import { Button, Text } from '@react-email/components';
+
+export default function MyNewTemplate() {
+    return (
+        <Layout>
+            <Text>Hello!</Text>
+            <Button href="https://example.com">
+                Click me
+            </Button>
+        </Layout>
+    );
+}
+```
+
+## Scripts
+
+- **`bun run dev`**: Start the preview server.
+- **`bun run export`**: Export templates to HTML (used by the ETL process).
+- **`bun run build`**: Build the text package.

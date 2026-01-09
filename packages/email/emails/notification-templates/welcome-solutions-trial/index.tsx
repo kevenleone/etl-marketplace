@@ -1,4 +1,8 @@
-import { Heading, Section, Text } from '@react-email/components';
+import {
+    Heading,
+    Section,
+    Text,
+} from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
@@ -29,8 +33,9 @@ export default function WelcomeSolutionsTrial({
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    Welcome to Liferay Marketplace! We're thrilled to have you
-                    on board for your Solutions Trial.
+                    Welcome to Liferay Marketplace! We're
+                    thrilled to have you on board for your
+                    Solutions Trial.
                 </Text>
 
                 <Text className="text-base text-text mb-4">
@@ -41,17 +46,22 @@ export default function WelcomeSolutionsTrial({
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    Please be patient as we provision your solution. This
-                    process{' '}
-                    <span className="font-bold">may take a few moments.</span>
+                    Please be patient as we provision your
+                    solution. This process{' '}
+                    <span className="font-bold">
+                        may take a few moments.
+                    </span>
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    Once provisioning is complete, you'll receive another email
-                    containing detailed instructions.
+                    Once provisioning is complete, you'll
+                    receive another email containing
+                    detailed instructions.
                 </Text>
 
-                <Text className="text-base text-text mb-0">Thank you,</Text>
+                <Text className="text-base text-text mb-0">
+                    Thank you,
+                </Text>
                 <Text className="text-base text-text mt-0">
                     Liferay Marketplace.
                 </Text>
