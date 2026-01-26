@@ -49,3 +49,8 @@ export const migrateProductVersionSchema = liferayAuthSchema.extend({
         .describe('Prisma Database connection to Liferay Portal 6.1'),
     SITE_ID: z.coerce.number().positive().int().min(1000, 'Site ID is missing'),
 });
+
+export const koroneikiAuthSchema = z.object({
+    KORONEIKI_AUTHORIZATION: z.string().describe('Koroneiki API Key'),
+    KORONEIKI_URL: z.string().describe('Koroneiki API URL'),
+});
