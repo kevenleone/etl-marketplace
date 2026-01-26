@@ -1,9 +1,10 @@
 import ky from 'ky';
 import { createClient } from 'liferay-headless-rest-client';
-import Cache from '../utils/cache';
-import { liferayAuthSchema } from '../schemas/zod';
+
 import { ENV } from '../config/env';
+import { liferayAuthSchema } from '../schemas/zod';
 import { logger } from '../utils/logger';
+import Cache from '../utils/cache';
 
 const {
     LIFERAY_HOST,

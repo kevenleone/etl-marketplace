@@ -23,7 +23,23 @@ export type Account = {
     parentAccountId: number;
     status: number;
     taxId: string;
-    type: "business" | "person" | string;
+    type: 'business' | 'person' | string;
+};
+
+type Contact = {
+    dateCreated: string;
+    dateModified: string;
+    emailAddress: string;
+    emailAddressVerified: boolean;
+    entitlements: any[];
+    externalLinks: any[];
+    firstName: string;
+    key: string;
+    languageId: string;
+    lastName: string;
+    middleName: string;
+    teams: any[];
+    uuid: string;
 };
 
 export type AccountContactInformation = {
@@ -40,20 +56,18 @@ export type ActionLink = {
     href: string;
 };
 
-export type HttpMethod =
-    | "GET"
-    | "POST"
-    | "PUT"
-    | "PATCH"
-    | "DELETE";
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export type KoroneikiAccount = {
     address: any[];
     contactEmailAddress: string;
+    description: string;
     externalReferenceCode: string;
     name: string;
+    key: string;
     type: string;
-}
+    workerContacts: Contact[];
+};
 
 export type DxpUserAccount = {
     id: number;
@@ -64,7 +78,9 @@ export type DxpUserAccount = {
         name: string;
         roleBriefs: any[];
     }>;
-}
+};
+
+export type KoroneikiContact = Contact;
 
 export type EmailAddress = Record<string, unknown>;
 export type PostalAddress = Record<string, unknown>;
