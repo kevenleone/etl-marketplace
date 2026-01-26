@@ -52,5 +52,5 @@ export const migrateProductVersionSchema = liferayAuthSchema.extend({
 
 export const koroneikiAuthSchema = z.object({
     KORONEIKI_AUTHORIZATION: z.string().describe('Koroneiki API Key'),
-    KORONEIKI_URL: z.string().describe('Koroneiki API URL'),
+    KORONEIKI_HOST: z.string().describe('Koroneiki Host URL'),
 });

@@ -3,6 +3,7 @@ import { createClient } from 'liferay-headless-rest-client';
 import Cache from '../utils/cache';
 import { liferayAuthSchema } from '../schemas/zod';
 import { ENV } from '../config/env';
+import { logger } from '../utils/logger';
 
 const {
     LIFERAY_HOST,
@@ -21,6 +22,7 @@ const liferay = ky.extend({
 const cache = Cache.getInstance();
 
 const kyFetch = liferay.extend({
+    throwHttpErrors: false,
     headers: {
         Authorization: isBasicAuth
             ? `Basic ${btoa(`${LIFERAY_USERNAME}:${LIFERAY_PASSWORD}`)}`
@@ -58,7 +60,7 @@ const kyFetch = liferay.extend({
                         body: searchParams,
                     });
 
-                    console.log('Token exchanged');
+                    logger.info('Token exchanged');
 
                     const data = await response.json<any>();
 
