@@ -1,7 +1,13 @@
+import { KoroneikiContact } from '../scripts/koroneiki-accounts/types';
+import { APIResponse } from '../types';
 import koroneikiClient from './koroneiki';
 
 export const koroneikiApi = {
-    async getKoroneikiAccountsPage(page: number, pageSize: number, filter?: string): Promise<any> {
+    async getKoroneikiAccountsPage(
+        page: number,
+        pageSize: number,
+        filter?: string,
+    ): Promise<any> {
         const searchParams = new URLSearchParams();
 
         searchParams.set('page', page.toString());
@@ -18,15 +24,7 @@ export const koroneikiApi = {
         return await response.json();
     },
 
-    async getKoroneikiAccounts(filters?: string): Promise<any> {
-        const searchParams = new URLSearchParams();
-
-        if (filters) {
-            searchParams.set('filter', filters);
-
-            searchParams.set('pageSize', '-1');
-        }
-
+    async getKoroneikiAccounts(searchParams: URLSearchParams): Promise<any> {
         const response = await koroneikiClient.fetch(
             `o/koroneiki-rest/v1.0/accounts?${searchParams.toString()}`,
         );
@@ -34,7 +32,17 @@ export const koroneikiApi = {
         return await response.json();
     },
 
-    async getKoroneikUserAccounts(): Promise<any> {
+    async getKoroneikiAccountContacts(
+        accountKey: string,
+    ): Promise<APIResponse<KoroneikiContact>> {
+        const response = await koroneikiClient.fetch(
+            `o/koroneiki-rest/v1.0/accounts/${accountKey}/contacts`,
+        );
+
+        return response.json();
+    },
+
+    async getKoroneikiUserAccounts(): Promise<any> {
         const response = await koroneikiClient.fetch(
             `o/headless-admin-user/v1.0/user-accounts`,
         );

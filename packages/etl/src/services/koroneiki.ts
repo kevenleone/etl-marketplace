@@ -1,18 +1,20 @@
-import ky from "ky";
-import { koroneikiAuthSchema } from "../schemas/zod";
-import { ENV } from "../config/env";
+import ky from 'ky';
 
-const { KORONEIKI_AUTHORIZATION, KORONEIKI_URL } = koroneikiAuthSchema.parse(ENV);
+import { koroneikiAuthSchema } from '../schemas/zod';
+import { ENV } from '../config/env';
+
+const { KORONEIKI_AUTHORIZATION, KORONEIKI_HOST } =
+    koroneikiAuthSchema.parse(ENV);
 
 const koroneiki = ky.extend({
-    prefixUrl: KORONEIKI_URL,
+    prefixUrl: KORONEIKI_HOST,
     headers: {
-        "API_TOKEN": KORONEIKI_AUTHORIZATION
-    }
-})
+        API_TOKEN: KORONEIKI_AUTHORIZATION,
+    },
+});
 
 const koroneikiClient = {
-    fetch: koroneiki
-}
+    fetch: koroneiki,
+};
 
-export default koroneikiClient
+export default koroneikiClient;
