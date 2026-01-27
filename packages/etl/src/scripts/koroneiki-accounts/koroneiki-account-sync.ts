@@ -16,10 +16,31 @@ import { path, paths } from '../../utils/paths';
 import PaginationRun from '../../core/PaginationRun';
 import { isEmailAddressValid } from '../../utils/validators';
 import { SearchBuilder } from 'odata-search-builder';
+import Cache from '../../utils/cache';
 
 type AccountWithUserAccount = Account & { accountUserAccounts: any[] };
 
+const cache = Cache.getInstance();
+
 class KoroneikAccountSync {
+    dynamicLog(description: string, error: unknown) {
+        if (error) {
+            return logger.error(
+                `${description}, error: ${JSON.stringify(error)}`,
+            );
+        }
+
+        logger.info(description);
+    }
+
+    async getFileEntryValues<T>(filePath: string, defaultValue: T) {
+        try {
+            return Bun.file(filePath).json() as T;
+        } catch {
+            return defaultValue;
+        }
+    }
+
     async getDXPAccounts() {
         logger.info('[getDXPAccounts] start processing');
 
@@ -33,7 +54,7 @@ class KoroneikAccountSync {
                     getAccountsPage({
                         client: liferayClient,
                         query: {
-                            nestedFields: 'postalAddresses,accountUserAccounts',
+                            nestedFields: 'accountUserAccounts,postalAddresses',
                             page: page.toString(),
                             pageSize: pageSize.toString(),
                         },
@@ -120,6 +141,7 @@ class KoroneikAccountSync {
 
                     items.push({
                         address,
+                        description: koroneikiAccount.description,
                         contactEmailAddress:
                             koroneikiAccount.contactEmailAddress,
                         externalReferenceCode: koroneikiAccount.key,
@@ -142,22 +164,37 @@ class KoroneikAccountSync {
         return items;
     }
 
-    async getFileEntryValues<T>(filePath: string, defaultValue: T) {
-        try {
-            return Bun.file(filePath).json() as T;
-        } catch {
-            return defaultValue;
+    async getUserAccountByEmailAddress(emailAddress: string) {
+        const key = `emailAddress:${emailAddress}`;
+
+        if (cache.has(key)) {
+            logger.info('[getUserAccountByEmailAddress] cache found account');
+
+            return cache.get(key);
         }
+
+        const { data } = await getUserAccountByEmailAddress({
+            client: liferayClient,
+            path: {
+                emailAddress,
+            },
+        });
+
+        logger.info(
+            `[getUserAccountByEmailAddress] account fetch for ${emailAddress}`,
+        );
+
+        if (data) {
+            cache.set(key, data);
+        }
+
+        return data;
     }
 
     async syncKoroneikiAccountMembers(
         liferayAccount: AccountWithUserAccount,
         koroneikiAccount: KoroneikiAccount,
     ) {
-        logger.info(
-            `[syncKoroneikiAccountMembers] processing ${koroneikiAccount.name}`,
-        );
-
         const { items: koroneikiContacts } =
             await koroneikiApi.getKoroneikiAccountContacts(
                 koroneikiAccount.key,
@@ -167,6 +204,10 @@ class KoroneikAccountSync {
             const emailAddress = koroneikiContact.emailAddress;
 
             if (!isEmailAddressValid(emailAddress)) {
+                logger.warn(
+                    `[syncKoroneikiAccountMembers] Skipping invalid email address ${emailAddress}`,
+                );
+
                 continue;
             }
 
@@ -177,25 +218,18 @@ class KoroneikAccountSync {
 
             if (liferayUserAccount) {
                 logger.info(
-                    `[syncKoroneikiAccountMembers] user ${emailAddress} already linked to "${liferayAccount.name}"`,
+                    `[syncKoroneikiAccountMembers] "${emailAddress}" is already linked to account`,
                 );
 
                 continue;
             }
 
-            let { data: userAccount } = await getUserAccountByEmailAddress({
-                client: liferayClient,
-                path: {
-                    emailAddress: decodeURIComponent(
-                        koroneikiContact.emailAddress,
-                    ),
-                },
-            });
+            let userAccount =
+                await this.getUserAccountByEmailAddress(emailAddress);
 
             if (!userAccount) {
                 const { data, error } = await postUserAccount({
                     body: {
-                        alternateName: koroneikiContact.firstName,
                         emailAddress,
                         familyName: koroneikiContact.lastName,
                         givenName: koroneikiContact.firstName,
@@ -203,10 +237,12 @@ class KoroneikAccountSync {
                     client: liferayClient,
                 });
 
-                userAccount = data;
+                if (data && !error) {
+                    cache.set(`emailAddress:${emailAddress}`, data);
+                }
 
                 this.dynamicLog(
-                    `[syncKoroneikiAccountMembers] post user account "${emailAddress}"`,
+                    `[syncKoroneikiAccountMembers] "${emailAddress}" post user account`,
                     error,
                 );
             }
@@ -220,20 +256,56 @@ class KoroneikAccountSync {
             });
 
             this.dynamicLog(
-                `[syncKoroneikiAccountMembers] linked used "${emailAddress}" to account "${koroneikiAccount.name}"`,
+                `[syncKoroneikiAccountMembers] "${emailAddress}" linked used to account`,
                 error,
             );
         }
     }
 
-    dynamicLog(description: string, error: unknown) {
-        if (error) {
-            return logger.error(
-                `${description}, error: ${JSON.stringify(error)}`,
+    async syncLiferayAccount(
+        liferayAccount: Account | undefined,
+        koroneikiAccount: KoroneikiAccount,
+    ) {
+        if (!liferayAccount) {
+            const { data, error } = await postAccount({
+                body: {
+                    externalReferenceCode: koroneikiAccount.key,
+                    name: koroneikiAccount.name,
+                },
+                client: liferayClient,
+                query: { nestedFields: 'accountUserAccounts' } as any,
+            });
+
+            this.dynamicLog(
+                `[syncLiferayAccount] post account "${koroneikiAccount.name}"`,
+                error,
             );
+
+            return data as Account;
         }
 
-        logger.info(description);
+        if (
+            liferayAccount.description === koroneikiAccount.description &&
+            liferayAccount.name === koroneikiAccount.name
+        ) {
+            logger.info('[syncLiferayAccount] skip patch account');
+
+            return liferayAccount;
+        }
+
+        const { error } = await patchAccount({
+            body: {
+                externalReferenceCode: koroneikiAccount.key,
+                description: koroneikiAccount.description,
+                name: koroneikiAccount.name,
+            },
+            client: liferayClient,
+            path: { accountId: `${liferayAccount.id}` },
+        });
+
+        this.dynamicLog(`[syncLiferayAccount] patch account`, error);
+
+        return liferayAccount;
     }
 
     async main() {
@@ -249,53 +321,31 @@ class KoroneikAccountSync {
         >(path.join(paths.json, 'koroneiki-accounts.json'), []);
 
         const dxpAccountsMap = new Map<string, Account>(
-            dxpAccounts.map((account: any) => [
+            dxpAccounts.map((account) => [
                 account.externalReferenceCode,
                 account,
             ]),
         );
+
+        let i = 1;
 
         for (const koroneikiAccount of koroneikiAccounts) {
             let liferayAccount = dxpAccountsMap.get(
                 koroneikiAccount.externalReferenceCode,
             );
 
+            logger.info('\n');
             logger.info(
                 `[main:start] ============================= "${koroneikiAccount.name}" =============================`,
             );
+            logger.info(
+                `[main:start] - Koroneiki Account ${i}/${koroneikiAccounts.length}`,
+            );
 
-            if (liferayAccount) {
-                const { error } = await patchAccount({
-                    body: {
-                        externalReferenceCode: koroneikiAccount.key,
-                        description: koroneikiAccount.description,
-                        name: koroneikiAccount.name,
-                    },
-                    client: liferayClient,
-                    path: { accountId: `${liferayAccount.id}` },
-                });
-
-                this.dynamicLog(
-                    `[main] patch account "${liferayAccount.name}"`,
-                    error,
-                );
-            } else {
-                const { data, error } = await postAccount({
-                    body: {
-                        externalReferenceCode: koroneikiAccount.key,
-                        name: koroneikiAccount.name,
-                    },
-                    client: liferayClient,
-                    query: { nestedFields: 'accountUserAccounts' } as any,
-                });
-
-                liferayAccount = data as Account;
-
-                this.dynamicLog(
-                    `[main] post account "${koroneikiAccount.name}"`,
-                    error,
-                );
-            }
+            liferayAccount = await this.syncLiferayAccount(
+                liferayAccount,
+                koroneikiAccount,
+            );
 
             if (!liferayAccount) {
                 logger.info('[main] Liferay account not exist');
@@ -308,7 +358,7 @@ class KoroneikAccountSync {
                 koroneikiAccount,
             );
 
-            logger.info('\n');
+            i++;
         }
     }
 }
@@ -316,6 +366,6 @@ class KoroneikAccountSync {
 const koroneikAccountSync = new KoroneikAccountSync();
 
 await koroneikAccountSync.getDXPAccounts();
-// await koroneikAccountSync.getKoroneikiAccounts();
+await koroneikAccountSync.getKoroneikiAccounts();
 
 koroneikAccountSync.main();
