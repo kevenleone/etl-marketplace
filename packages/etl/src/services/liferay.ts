@@ -32,25 +32,25 @@ const kyFetch = liferay.extend({
     timeout: 30000,
     hooks: {
         beforeRequest: [
-            (request) => {
-                const authorization = cache.get('authorization');
-
-                if (authorization) {
-                    request.headers.set('authorization', authorization);
+            async (request) => {
+                if (isBasicAuth) {
+                    return request.headers.set(
+                        'authorization',
+                        `Basic ${btoa(`${LIFERAY_USERNAME}:${LIFERAY_PASSWORD}`)}`,
+                    );
                 }
-            },
-        ],
-        beforeRetry: [
-            async ({ request, error, retryCount }) => {
+
                 if (!LIFERAY_CLIENT_ID || !LIFERAY_CLIENT_SECRET) {
                     return;
                 }
+
+                let authorization = cache.get('authorization');
 
                 const isExpired = cache.has('expires_in')
                     ? Date.now() > cache.get('expires_in')
                     : false;
 
-                if (!request.headers.get('authorization') || isExpired) {
+                if (!authorization || isExpired) {
                     const searchParams = new URLSearchParams();
 
                     searchParams.set('client_id', LIFERAY_CLIENT_ID);
@@ -65,16 +65,17 @@ const kyFetch = liferay.extend({
 
                     const data = await response.json<any>();
 
-                    const authorization = `${data.token_type} ${data.access_token}`;
+                    authorization = `${data.token_type} ${data.access_token}`;
 
                     cache.set(
                         'expires_in',
                         data.expires_in * 1000 + Date.now() - 15000,
                     );
-                    cache.set('authorization', authorization);
 
-                    return request.headers.set('authorization', authorization);
+                    cache.set('authorization', authorization);
                 }
+
+                return request.headers.set('authorization', authorization);
             },
         ],
     },
