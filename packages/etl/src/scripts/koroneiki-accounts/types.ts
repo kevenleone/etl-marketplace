@@ -59,12 +59,13 @@ export type ActionLink = {
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export type KoroneikiAccount = {
-    address: any[];
     contactEmailAddress: string;
     description: string;
     externalReferenceCode: string;
-    name: string;
     key: string;
+    name: string;
+    parentAccountKey: string;
+    postalAddresses: PostalAddress[];
     type: string;
     workerContacts: Contact[];
 };
@@ -83,6 +84,20 @@ export type DxpUserAccount = {
 export type KoroneikiContact = Contact;
 
 export type EmailAddress = Record<string, unknown>;
-export type PostalAddress = Record<string, unknown>;
+
+export type PostalAddress = {
+    addressCountry: string;
+    addressLocality: string;
+    addressRegion: string;
+    addressType: string;
+    id: number;
+    mailing: boolean;
+    postalCode: string;
+    primary: boolean;
+    streetAddressLine1: string;
+    streetAddressLine2: string;
+    streetAddressLine3: string;
+};
+
 export type Telephone = Record<string, unknown>;
 export type WebUrl = Record<string, unknown>;

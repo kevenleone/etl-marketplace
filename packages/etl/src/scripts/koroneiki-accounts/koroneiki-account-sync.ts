@@ -1,13 +1,25 @@
+import process from 'node:process';
+
 import {
+    deleteAccountUserAccountByEmailAddress,
     getAccountsPage,
     getUserAccountByEmailAddress,
     patchAccount,
     postAccount,
+    postAccountPostalAddress,
     postAccountUserAccountByEmailAddress,
+    PostalAddress,
     postUserAccount,
 } from 'liferay-headless-rest-client/headless-admin-user-v1.0';
 
-import { Account, KoroneikiAccount } from './types';
+import {
+    getRegionsPage,
+    getCountriesPage,
+    Region,
+    Country,
+} from 'liferay-headless-rest-client/headless-admin-address-v1.0';
+
+import { Account, KoroneikiAccount, KoroneikiContact } from './types';
 
 import { koroneikiApi } from '../../services/koroneikiApi';
 import { liferayClient } from '../../services/liferay';
@@ -18,11 +30,50 @@ import { isEmailAddressValid } from '../../utils/validators';
 import { SearchBuilder } from 'odata-search-builder';
 import Cache from '../../utils/cache';
 
-type AccountWithUserAccount = Account & { accountUserAccounts: any[] };
+type AccountWithUserAccount = Account & {
+    accountUserAccounts: any[];
+    postalAddresses: PostalAddress[];
+};
 
-const cache = Cache.getInstance();
+const cacheInstance = Cache.getInstance();
+
+const { data } = await getCountriesPage({
+    client: liferayClient,
+    query: { pageSize: '-1' },
+});
+
+const countriesRegionMap = new Map<string, string[]>(
+    (data?.items as Country[]).map(({ name, regions }) => [
+        name,
+        regions?.map(({ name }) => name) as string[],
+    ]),
+);
 
 class KoroneikAccountSync {
+    constructor() {
+        this.gracefullyShutdown();
+    }
+
+    gracefullyShutdown() {
+        function handleShutdown(signal: string) {
+            logger.info(
+                `[SHUTDOWN] Received ${signal} signal - performing graceful shutdown`,
+            );
+
+            // You can add your cache listing logic here
+            logger.info(
+                `[SHUTDOWN] Cache contains ${cacheInstance.cache.size} items`,
+            );
+            console.log(cacheInstance.cache.keys());
+
+            logger.info('[SHUTDOWN] Exiting gracefully');
+            process.exit(0);
+        }
+
+        process.on('SIGINT', () => handleShutdown('SIGINT'));
+        process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+    }
+
     dynamicLog(description: string, error: unknown) {
         if (error) {
             return logger.error(
@@ -63,6 +114,7 @@ class KoroneikAccountSync {
                 processItem: async (item) => {
                     const account = item as Account & {
                         accountUserAccounts: any[];
+                        postalAddresses: PostalAddress;
                     };
 
                     items.push({
@@ -71,17 +123,12 @@ class KoroneikAccountSync {
                         id: account.id,
                         name: account.name,
                         type: account.type,
+                        postalAddresses: account.postalAddresses,
                         accountUserAccounts: account.accountUserAccounts.map(
-                            ({
+                            ({ emailAddress, familyName, givenName }) => ({
                                 emailAddress,
                                 familyName,
                                 givenName,
-                                roleBriefs,
-                            }) => ({
-                                emailAddress,
-                                familyName,
-                                givenName,
-                                roleBriefs,
                             }),
                         ),
                     } as unknown as AccountWithUserAccount);
@@ -126,27 +173,28 @@ class KoroneikAccountSync {
                 processItem: async (item: any) => {
                     const koroneikiAccount = item as KoroneikiAccount;
 
-                    let address = item?.postalAddresses
+                    let postalAddresses = item?.postalAddresses
                         ? [...item.postalAddresses]
                         : [];
 
-                    if (!address.length) {
+                    if (!postalAddresses.length) {
                         const addressResponse =
                             await koroneikiApi.getKoroneikiPostalAddress(
                                 item.key,
                             );
 
-                        address = addressResponse.items;
+                        postalAddresses = addressResponse.items;
                     }
 
                     items.push({
-                        address,
-                        description: koroneikiAccount.description,
                         contactEmailAddress:
                             koroneikiAccount.contactEmailAddress,
+                        description: koroneikiAccount.description,
                         externalReferenceCode: koroneikiAccount.key,
                         key: koroneikiAccount.key,
                         name: koroneikiAccount.name,
+                        parentAccountKey: koroneikiAccount.parentAccountKey,
+                        postalAddresses,
                         type: 'business',
                     } as KoroneikiAccount);
                 },
@@ -167,10 +215,8 @@ class KoroneikAccountSync {
     async getUserAccountByEmailAddress(emailAddress: string) {
         const key = `emailAddress:${emailAddress}`;
 
-        if (cache.has(key)) {
-            logger.info('[getUserAccountByEmailAddress] cache found account');
-
-            return cache.get(key);
+        if (cacheInstance.has(key)) {
+            return cacheInstance.get(key);
         }
 
         const { data } = await getUserAccountByEmailAddress({
@@ -180,24 +226,66 @@ class KoroneikAccountSync {
             },
         });
 
-        logger.info(
-            `[getUserAccountByEmailAddress] account fetch for ${emailAddress}`,
-        );
-
         if (data) {
-            cache.set(key, data);
+            cacheInstance.set(key, data);
         }
 
         return data;
+    }
+
+    /**
+     * Get Koroneiki account contacts by account key
+     * @param accountKey
+     * @returns Koroneiki account contacts
+     */
+    async getKoroneikiAccountContact(accountKey: string) {
+        const key = `accountContacts:${accountKey}`;
+
+        if (cacheInstance.has(key)) {
+            return cacheInstance.get(key);
+        }
+
+        const response =
+            await koroneikiApi.getKoroneikiAccountContacts(accountKey);
+
+        cacheInstance.set(key, response);
+
+        return response;
+    }
+
+    async getKoroneikiAccountContacts(accountKeys: string[]) {
+        const promises = await Promise.all(
+            accountKeys.map((accountKey) =>
+                this.getKoroneikiAccountContact(accountKey),
+            ),
+        );
+
+        const items: KoroneikiContact[] = [];
+
+        for (const promise of promises) {
+            items.push(...promise.items);
+        }
+
+        return items;
     }
 
     async syncKoroneikiAccountMembers(
         liferayAccount: AccountWithUserAccount,
         koroneikiAccount: KoroneikiAccount,
     ) {
-        const { items: koroneikiContacts } =
-            await koroneikiApi.getKoroneikiAccountContacts(
-                koroneikiAccount.key,
+        const koroneikiContacts = await this.getKoroneikiAccountContacts(
+            koroneikiAccount.parentAccountKey
+                ? [koroneikiAccount.key, koroneikiAccount.parentAccountKey]
+                : [koroneikiAccount.key],
+        );
+
+        const liferayAccountsToUnassociate =
+            liferayAccount?.accountUserAccounts.filter(
+                ({ emailAddress }) =>
+                    !koroneikiContacts.find(
+                        ({ emailAddress: koroneikiEmailAddress }) =>
+                            koroneikiEmailAddress === emailAddress,
+                    ),
             );
 
         for (const koroneikiContact of koroneikiContacts) {
@@ -238,7 +326,7 @@ class KoroneikAccountSync {
                 });
 
                 if (data && !error) {
-                    cache.set(`emailAddress:${emailAddress}`, data);
+                    cacheInstance.set(`emailAddress:${emailAddress}`, data);
                 }
 
                 this.dynamicLog(
@@ -260,6 +348,21 @@ class KoroneikAccountSync {
                 error,
             );
         }
+
+        for (const { emailAddress } of liferayAccountsToUnassociate) {
+            const { error } = await deleteAccountUserAccountByEmailAddress({
+                client: liferayClient,
+                path: {
+                    accountId: String(liferayAccount.id),
+                    emailAddress: emailAddress,
+                },
+            });
+
+            this.dynamicLog(
+                `[syncKoroneikiAccountMembers] "${emailAddress}" unlinked from account`,
+                error,
+            );
+        }
     }
 
     async syncLiferayAccount(
@@ -269,6 +372,16 @@ class KoroneikAccountSync {
         if (!liferayAccount) {
             const { data, error } = await postAccount({
                 body: {
+                    customFields: koroneikiAccount.parentAccountKey
+                        ? [
+                              {
+                                  name: 'parent-koroneiki-account-key',
+                                  customValue: {
+                                      data: koroneikiAccount.parentAccountKey,
+                                  } as any,
+                              },
+                          ]
+                        : undefined,
                     externalReferenceCode: koroneikiAccount.key,
                     name: koroneikiAccount.name,
                 },
@@ -306,6 +419,73 @@ class KoroneikAccountSync {
         this.dynamicLog(`[syncLiferayAccount] patch account`, error);
 
         return liferayAccount;
+    }
+
+    async syncAccountAddress(
+        liferayAccount: AccountWithUserAccount,
+        koroneikiAccount: KoroneikiAccount,
+    ) {
+        for (const koroneikiPostalAddress of koroneikiAccount.postalAddresses) {
+            const liferayAccountAddress = liferayAccount.postalAddresses?.find(
+                ({ streetAddressLine1 }) =>
+                    streetAddressLine1 ===
+                    koroneikiPostalAddress.streetAddressLine1,
+            );
+
+            if (liferayAccountAddress) {
+                logger.info(
+                    `[syncAccountAddress] address ${liferayAccountAddress.streetAddressLine1} already exist`,
+                );
+
+                continue;
+            }
+
+            let addressRegion;
+
+            if (!addressRegion) {
+                addressRegion = countriesRegionMap.get(
+                    koroneikiPostalAddress.addressCountry
+                        .toLowerCase()
+                        .replace(' ', '-'),
+                )?.[0];
+
+                logger.info(
+                    '[syncAccountAddress] using fallback region ' +
+                        addressRegion,
+                );
+            }
+
+            const { error } = await postAccountPostalAddress({
+                body: {
+                    addressCountry: koroneikiPostalAddress.addressCountry,
+                    addressLocality: koroneikiPostalAddress.addressLocality,
+                    postalCode: koroneikiPostalAddress.postalCode,
+                    streetAddressLine1:
+                        koroneikiPostalAddress.streetAddressLine1,
+                    streetAddressLine2:
+                        koroneikiPostalAddress.streetAddressLine2,
+                    streetAddressLine3:
+                        koroneikiPostalAddress.streetAddressLine3,
+                    addressType: 'billing-and-shipping',
+                    addressRegion: addressRegion,
+                    primary: koroneikiPostalAddress.primary,
+                },
+                client: liferayClient,
+                path: { accountId: liferayAccount.id.toString() },
+            });
+
+            if (error) {
+                logger.error(
+                    '[syncAccountAddress] Failed to post account with region ' +
+                        JSON.stringify(koroneikiPostalAddress),
+                );
+            }
+
+            this.dynamicLog(
+                `[syncAccountAddress] address synced region: ${addressRegion}`,
+                error,
+            );
+        }
     }
 
     async main() {
@@ -353,10 +533,16 @@ class KoroneikAccountSync {
                 continue;
             }
 
-            await this.syncKoroneikiAccountMembers(
-                liferayAccount as AccountWithUserAccount,
-                koroneikiAccount,
-            );
+            for (const sync of [
+                this.syncAccountAddress,
+                this.syncKoroneikiAccountMembers,
+            ]) {
+                await sync.call(
+                    this,
+                    liferayAccount as AccountWithUserAccount,
+                    koroneikiAccount,
+                );
+            }
 
             i++;
         }
@@ -367,5 +553,4 @@ const koroneikAccountSync = new KoroneikAccountSync();
 
 await koroneikAccountSync.getDXPAccounts();
 await koroneikAccountSync.getKoroneikiAccounts();
-
-koroneikAccountSync.main();
+await koroneikAccountSync.main();
