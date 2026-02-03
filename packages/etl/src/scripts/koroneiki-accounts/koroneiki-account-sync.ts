@@ -440,14 +440,15 @@ class KoroneikAccountSync {
                 continue;
             }
 
-            let addressRegion;
+            let addressRegion = '';
 
             if (!addressRegion) {
-                addressRegion = countriesRegionMap.get(
-                    koroneikiPostalAddress.addressCountry
-                        .toLowerCase()
-                        .replace(' ', '-'),
-                )?.[0];
+                addressRegion =
+                    countriesRegionMap.get(
+                        koroneikiPostalAddress.addressCountry
+                            ?.toLowerCase()
+                            ?.replace(' ', '-'),
+                    )?.[0] || '';
 
                 logger.info(
                     '[syncAccountAddress] using fallback region ' +
