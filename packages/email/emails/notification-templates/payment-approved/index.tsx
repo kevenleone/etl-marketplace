@@ -12,10 +12,11 @@ import {
 import Layout from '../../layout/Layout';
 
 type Props = {
-    appId: string;
+    orderId: string;
     appNetPrice: string;
     appVAT: string;
     appTotalPrice: string;
+    buttonText: string;
     livePreview: boolean;
     appName: string;
     appPrice: string;
@@ -27,13 +28,14 @@ type Props = {
 
 export default function AppUpdateSubmittedPublisher({
     appName = '[%APP_NAME%]',
-    appId = '[%APP_ID%]',
+    buttonText = '[%BUTTON_TEXT%]',
+    orderId = '[%ORDER_ID%]',
     appNetPrice = '[%APP_NET_PRICE%]',
     appVAT = '[%APP_VAT%]',
     appTotalPrice = '[%APP_TOTAL_PRICE%]',
     catalogName = '[%CATALOG_NAME%]',
-    cpDefinitionProductId = '[%CPDEFINITION_PRODUCTID%]',
-    emailDescription = '[%APP_DESCRIPTION%]',
+    cpDefinitionProductId = '[%CPDEFINITION_ID%]',
+    emailDescription = '[%EMAIL_DESCRIPTION%]',
     livePreview = false,
     productThumbnail = '[%PRODUCT_THUMBNAIL%]',
 }: Props) {
@@ -61,7 +63,7 @@ export default function AppUpdateSubmittedPublisher({
                         />
                     </Column>
                     <Column className="pl-3">
-                        
+
                         <Row className="mt-1">
                             <Column>
                                 <Text className="text-[23px] font-semibold text-heading m-0">
@@ -118,16 +120,16 @@ export default function AppUpdateSubmittedPublisher({
                 <Text className="text-base text-text m-0 mb-4">
                     Your Order ID is:{' '}
                     <span className="font-bold">
-                        {appId}
+                        {orderId}
                     </span>
-                    
+
                 </Text>
 
                 {livePreview ? <div
-					dangerouslySetInnerHTML={{
-						__html: (emailDescription),
-					}}
-				/> : emailDescription}
+                    dangerouslySetInnerHTML={{
+                        __html: (emailDescription),
+                    }}
+                /> : emailDescription}
 
             </Section>
 
@@ -136,7 +138,7 @@ export default function AppUpdateSubmittedPublisher({
                     href={`https://marketplace.liferay.com/publisher-dashboard#/app/${cpDefinitionProductId}`}
                     className="bg-primary border border-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
-                    Launch CDP
+                    {buttonText}
                 </Link>
             </Section>
 
@@ -163,7 +165,8 @@ AppUpdateSubmittedPublisher.PreviewProps = {
     appNetPrice: '$200.00',
     appVAT: '$44.00',
     appTotalPrice: '$261.00',
-    appId: '26574346',
+    buttonText: 'Launch LDP',
+    orderId: '26574346',
     appPrice: '€1.230,00',
     livePreview: true,
     catalogName: 'Liferay, Inc.',
