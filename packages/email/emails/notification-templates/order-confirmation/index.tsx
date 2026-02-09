@@ -11,8 +11,9 @@ import {
 import Layout from '../../layout/Layout';
 
 type Props = {
-    appId: string;
+    orderId: string;
     appName: string;
+    buttonText: string;
     appPrice: string;
     catalogName: string;
     cpDefinitionProductId: string;
@@ -23,11 +24,12 @@ type Props = {
 
 export default function AppUpdateSubmittedPublisher({
     appName = '[%APP_NAME%]',
-    appId = '[%APP_ID%]',
+    buttonText = '[%BUTTON_TEXT%]',
+    orderId = '[%ORDER_ID%]',
     appPrice = '[%APP_PRICE%]',
     catalogName = '[%CATALOG_NAME%]',
-    cpDefinitionProductId = '[%CPDEFINITION_PRODUCTID%]',
-    emailDescription = '[%APP_DESCRIPTION%]',
+    cpDefinitionProductId = '[%CPDEFINITION_ID%]',
+    emailDescription = '[%EMAIL_DESCRIPTION%]',
     livePreview = false,
     productThumbnail = '[%PRODUCT_THUMBNAIL%]',
 }: Props) {
@@ -55,20 +57,29 @@ export default function AppUpdateSubmittedPublisher({
                         />
                     </Column>
                     <Column className="pl-3">
-                        
                         <Row className="mt-1">
                             <Column>
-                                <Text className="text-[23px] font-semibold text-heading m-0">
+                                <Text className="text-[23px] font-semibold text-heading m-0" style={{ lineHeight: '1' }}>
                                     {appName}
-                                </Text>
-                                <Text className="text-base text-text m-0 pr-4">
-                                    {catalogName}
                                 </Text>
                             </Column>
                             <Column>
-                                <Text className="text-[14px] font-semibold text-right">
+                                <Text className="text-[14px] font-semibold text-right" style={{ lineHeight: '1' }}>
                                     {appPrice}
                                 </Text>
+                            </Column>
+                        </Row>
+                        <Row>
+                            <Column>
+                                <table cellPadding="0" cellSpacing="0" border={0}>
+                                    <tr>
+                                        <td style={{ verticalAlign: 'middle', paddingRight: '8px', position: 'relative', top: '-2px' }}>
+                                            <span className="text-base text-text m-0">
+                                                {catalogName}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
                             </Column>
                         </Row>
                     </Column>
@@ -79,15 +90,15 @@ export default function AppUpdateSubmittedPublisher({
                 <Text className="text-base text-text m-0 mb-4">
                     Your Order ID is:{' '}
                     <span className="font-bold">
-                        {appId}
+                        {orderId}
                     </span>
-                    
+
                 </Text>
-                {livePreview ? <div
-					dangerouslySetInnerHTML={{
-						__html: (emailDescription),
-					}}
-				/> : emailDescription}
+                {livePreview ? <div className="text-muted m-0 lh-base"
+                    dangerouslySetInnerHTML={{
+                        __html: (emailDescription),
+                    }}
+                /> : emailDescription}
             </Section>
 
             <Section className="mb-12">
@@ -95,7 +106,7 @@ export default function AppUpdateSubmittedPublisher({
                     href={`https://marketplace.liferay.com/publisher-dashboard#/app/${cpDefinitionProductId}`}
                     className="bg-primary border border-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
-                    Go to Dashboard
+                    {buttonText}
                 </Link>
             </Section>
 
@@ -119,7 +130,8 @@ export default function AppUpdateSubmittedPublisher({
 
 AppUpdateSubmittedPublisher.PreviewProps = {
     appName: 'Customer Data Platform',
-    appId: '26574346',
+    buttonText: 'Go to Dashboard',
+    orderId: '26574346',
     appPrice: '€1.230,00',
     catalogName: 'Liferay, Inc.',
     cpDefinitionProductId: '123456789',
