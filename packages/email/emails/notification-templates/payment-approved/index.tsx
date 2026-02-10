@@ -53,7 +53,7 @@ export default function AppUpdateSubmittedPublisher({
 
             <Section className="mb-6">
                 <Row>
-                    <Column width="56">
+                    <Column style={{ verticalAlign: 'top' }} width="56">
                         <Img
                             src={productThumbnail}
                             width="56"
@@ -65,7 +65,7 @@ export default function AppUpdateSubmittedPublisher({
                     <Column className="pl-3">
 
                         <Row className="mt-1">
-                            <Column>
+                            <Column style={{ verticalAlign: 'top' }}>
                                 <Text className="text-[23px] font-semibold text-heading m-0">
                                     {appName}
                                 </Text>
@@ -73,7 +73,7 @@ export default function AppUpdateSubmittedPublisher({
                                     {catalogName}
                                 </Text>
                             </Column>
-                            <Column>
+                            <Column style={{ verticalAlign: 'top' }}>
                                 <Row>
                                     <Column>
                                         <Text className="text-[14px] text-left m-0">
