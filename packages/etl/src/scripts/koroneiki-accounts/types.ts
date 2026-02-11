@@ -58,8 +58,15 @@ export type ActionLink = {
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
+type ExternalLink = {
+    domain: string;
+    entityName: string;
+    entityId: string;
+};
+
 export type KoroneikiAccount = {
     contactEmailAddress: string;
+    externalLinks: ExternalLink[];
     description: string;
     externalReferenceCode: string;
     key: string;

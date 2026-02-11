@@ -365,6 +365,22 @@ class KoroneikAccountSync {
         }
     }
 
+    getSalesforceAccountKey(koroneikiAccount: KoroneikiAccount): string {
+        for (const externalLink of koroneikiAccount.externalLinks || []) {
+            const domain = externalLink.domain?.toLowerCase();
+            const entityName = externalLink.entityName?.toLowerCase();
+
+            if (
+                (domain === 'salesforce' || domain === 'dossiera') &&
+                entityName === 'account'
+            ) {
+                return externalLink.entityId;
+            }
+        }
+
+        return '';
+    }
+
     async syncLiferayAccount(
         liferayAccount: Account | undefined,
         koroneikiAccount: KoroneikiAccount,
@@ -372,16 +388,22 @@ class KoroneikAccountSync {
         if (!liferayAccount) {
             const { data, error } = await postAccount({
                 body: {
-                    customFields: koroneikiAccount.parentAccountKey
-                        ? [
-                              {
-                                  name: 'parent-koroneiki-account-key',
-                                  customValue: {
-                                      data: koroneikiAccount.parentAccountKey,
-                                  } as any,
-                              },
-                          ]
-                        : undefined,
+                    customFields: [
+                        {
+                            name: 'parent-koroneiki-account-key',
+                            customValue: {
+                                data: koroneikiAccount.parentAccountKey,
+                            } as any,
+                        },
+                        {
+                            name: 'salesforce-account-key',
+                            customValue: {
+                                data: this.getSalesforceAccountKey(
+                                    koroneikiAccount,
+                                ),
+                            } as any,
+                        },
+                    ],
                     externalReferenceCode: koroneikiAccount.key,
                     name: koroneikiAccount.name,
                 },
