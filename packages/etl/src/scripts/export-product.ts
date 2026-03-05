@@ -1,11 +1,10 @@
 import '../core/SafeRunner';
 
 import {
-    getChannelProductsPage,
     PageProduct,
     Product,
     ProductSpecification,
-    Sku,
+    getChannelProductsPage,
 } from 'liferay-headless-rest-client/headless-commerce-delivery-catalog-v1.0';
 
 import { exportProductFileSchema } from '../schemas/zod';

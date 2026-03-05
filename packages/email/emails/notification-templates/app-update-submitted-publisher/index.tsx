@@ -1,29 +1,29 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
+    Heading,
+    Img,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
 type Props = {
-    appName: string;
-    appType: string;
     catalogName: string;
     cpDefinitionProductId: string;
+    productName: string;
     productThumbnail: string;
+    productType: string;
 };
 
 export default function AppUpdateSubmittedPublisher({
-    appName = '[%APP_NAME%]',
-    appType = '[%APP_TYPE%]',
     catalogName = '[%CATALOG_NAME%]',
     cpDefinitionProductId = '[%CPDEFINITION_PRODUCTID%]',
+    productName = '[%PRODUCT_NAME%]',
     productThumbnail = '[%PRODUCT_THUMBNAIL%]',
+    productType = '[%PRODUCT_TYPE%]',
 }: Props) {
     return (
         <Layout preview="Your App Update is Under Review">
@@ -53,7 +53,7 @@ export default function AppUpdateSubmittedPublisher({
                     </Column>
                     <Column className="pl-3">
                         <Text className="text-[28px] font-semibold text-heading m-0">
-                            {appName}
+                            {productName}
                         </Text>
                         <Row className="mt-1">
                             <Column>
@@ -63,7 +63,7 @@ export default function AppUpdateSubmittedPublisher({
                             </Column>
                             <Column>
                                 <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
-                                    {appType}
+                                    {productType}
                                 </div>
                             </Column>
                         </Row>
@@ -111,9 +111,9 @@ export default function AppUpdateSubmittedPublisher({
 }
 
 AppUpdateSubmittedPublisher.PreviewProps = {
-    appName: 'Liferay',
-    appType: 'SaaS',
     catalogName: 'Liferay, Inc.',
     cpDefinitionProductId: '123456789',
+    productName: 'Liferay',
     productThumbnail: 'https://github.com/liferay.png',
+    productType: 'SaaS',
 } as Props;

@@ -1,26 +1,26 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
+    Heading,
+    Img,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
 type Props = {
     appName: string;
-    appType: string;
+    productType: string;
     catalogName: string;
     cpDefinitionProductId: string;
     productThumbnail: string;
 };
 
 export default function NewAppSubmittedPublisher({
-    appName = '[%APP_NAME%]',
-    appType = '[%APP_TYPE%]',
+    appName = '[%PRODUCT_NAME%]',
+    productType = '[%PRODUCT_TYPE%]',
     catalogName = '[%CATALOG_NAME%]',
     cpDefinitionProductId = '[%CPDEFINITION_PRODUCTID%]',
     productThumbnail = '[%PRODUCT_THUMBNAIL%]',
@@ -63,7 +63,7 @@ export default function NewAppSubmittedPublisher({
                             </Column>
                             <Column>
                                 <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
-                                    {appType}
+                                    {productType}
                                 </div>
                             </Column>
                         </Row>
@@ -86,7 +86,7 @@ export default function NewAppSubmittedPublisher({
             <Section className="mb-12">
                 <Link
                     href={`https://marketplace.liferay.com/publisher-dashboard#/app/${cpDefinitionProductId}`}
-                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
+                    className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
                 </Link>
@@ -112,7 +112,7 @@ export default function NewAppSubmittedPublisher({
 
 NewAppSubmittedPublisher.PreviewProps = {
     appName: 'Liferay',
-    appType: 'SaaS',
+    productType: 'SaaS',
     catalogName: 'Liferay, Inc.',
     cpDefinitionProductId: '123456789',
     productThumbnail: 'https://github.com/liferay.png',

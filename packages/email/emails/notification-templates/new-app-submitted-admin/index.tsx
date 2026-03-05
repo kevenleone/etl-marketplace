@@ -1,29 +1,29 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
+    Heading,
+    Img,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
 type Props = {
-    appType: string;
-    cpDefinitionDeveloperName: string;
-    cpDefinitionName: string;
+    catalogName: string;
     cpDefinitionProductId: string;
-    cpDefinitionThumbnail: string;
+    productName: string;
+    productThumbnail: string;
+    productType: string;
 };
 
 export default function NewAppSubmittedAdmin({
-    appType = '[%APP_TYPE%]',
-    cpDefinitionDeveloperName = '[%CPDEFINITION_DEVELOPER_NAME%]',
-    cpDefinitionName = '[%CPDEFINITION_NAME%]',
+    catalogName = '[%CATALOG_NAME%]',
     cpDefinitionProductId = '[%CPDEFINITION_PRODUCTID%]',
-    cpDefinitionThumbnail = '[%CPDEFINITION_THUMBNAIL%]',
+    productName = '[%PRODUCT_NAME%]',
+    productThumbnail = '[%PRODUCT_THUMBNAIL%]',
+    productType = '[%PRODUCT_TYPE%]',
 }: Props) {
     return (
         <Layout preview="New App Submission Pending Approval">
@@ -43,7 +43,7 @@ export default function NewAppSubmittedAdmin({
                 <Row>
                     <Column width="56">
                         <Img
-                            src={cpDefinitionThumbnail}
+                            src={productThumbnail}
                             width="56"
                             height="56"
                             alt="App Icon"
@@ -52,22 +52,22 @@ export default function NewAppSubmittedAdmin({
                     </Column>
                     <Column className="pl-3">
                         <Text className="text-[28px] font-semibold text-heading m-0">
-                            {cpDefinitionName}
+                            {productName}
                         </Text>
                         <Row className="mt-1">
                             <Column>
                                 <Text className="text-base text-text m-0 pr-4">
-                                    {cpDefinitionDeveloperName}
+                                    {catalogName}
                                 </Text>
                             </Column>
                             <Column>
                                 <Text className="text-base text-text m-0 pr-4">
-                                    {cpDefinitionDeveloperName}
+                                    {catalogName}
                                 </Text>
                             </Column>
                             <Column>
                                 <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
-                                    {appType}
+                                    {productType}
                                 </div>
                             </Column>
                         </Row>
@@ -98,9 +98,9 @@ export default function NewAppSubmittedAdmin({
 }
 
 NewAppSubmittedAdmin.PreviewProps = {
-    appType: 'SaaS',
-    cpDefinitionDeveloperName: 'Liferay, Inc.',
-    cpDefinitionName: 'Liferay',
+    catalogName: 'Liferay, Inc.',
     cpDefinitionProductId: '123456789',
-    cpDefinitionThumbnail: 'https://github.com/liferay.png',
+    productName: 'Liferay',
+    productThumbnail: 'https://github.com/liferay.png',
+    productType: 'SaaS',
 } as Props;

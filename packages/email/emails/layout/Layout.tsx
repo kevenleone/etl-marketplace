@@ -1,17 +1,17 @@
 import {
     Body,
     Container,
+    Font,
     Head,
+    Heading,
+    Hr,
     Html,
     Img,
+    Link,
     Preview,
     Section,
-    Text,
-    Hr,
-    Link,
     Tailwind,
-    Font,
-    Heading,
+    Text,
 } from '@react-email/components';
 
 interface LayoutProps {

@@ -1,8 +1,8 @@
 import {
-    getProductByExternalReferenceCode,
-    patchProductVirtualSettingsFileEntry,
     ProductVirtualSettingsFileEntry,
+    getProductByExternalReferenceCode,
     getProductVirtualSettingIdProductVirtualSettingsFileEntriesPage,
+    patchProductVirtualSettingsFileEntry,
     postProductVirtualSettingIdProductVirtualSettingsFileEntry,
 } from 'liferay-headless-rest-client/headless-commerce-admin-catalog-v1.0';
 

@@ -1,43 +1,41 @@
 import {
-    Text,
+    Column,
     Heading,
     Hr,
-    Link,
-    Section,
     Img,
-    Column,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
 type Props = {
-    orderId: string;
-    appNetPrice: string;
-    appVAT: string;
-    appTotalPrice: string;
-    buttonText: string;
-    livePreview: boolean;
-    appName: string;
     appPrice: string;
-    emailDescription: string;
+    buttonText: string;
     catalogName: string;
-    cpDefinitionProductId: string;
+    description: string;
+    livePreview: boolean;
+    orderId: string;
+    productName: string;
     productThumbnail: string;
+    subtotalFormatted: string;
+    taxAmountFormatted: string;
+    totalFormatted: string;
 };
 
-export default function AppUpdateSubmittedPublisher({
-    appName = '[%APP_NAME%]',
+export default function PaymentApproved({
     buttonText = '[%BUTTON_TEXT%]',
-    orderId = '[%ORDER_ID%]',
-    appNetPrice = '[%APP_NET_PRICE%]',
-    appVAT = '[%APP_VAT%]',
-    appTotalPrice = '[%APP_TOTAL_PRICE%]',
     catalogName = '[%CATALOG_NAME%]',
-    cpDefinitionProductId = '[%CPDEFINITION_ID%]',
-    emailDescription = '[%EMAIL_DESCRIPTION%]',
+    description = '[%DESCRIPTION%]',
     livePreview = false,
+    orderId = '[%ORDER_ID%]',
+    productName = '[%PRODUCT_NAME%]',
     productThumbnail = '[%PRODUCT_THUMBNAIL%]',
+    subtotalFormatted = '[%SUBTOTAL_FORMATTED%]',
+    taxAmountFormatted = '[%TAX_AMOUNT_FORMATTED%]',
+    totalFormatted = '[%TOTAL_FORMATTED%]',
 }: Props) {
     return (
         <Layout preview="Your App Update is Under Review">
@@ -63,11 +61,10 @@ export default function AppUpdateSubmittedPublisher({
                         />
                     </Column>
                     <Column className="pl-3">
-
                         <Row className="mt-1">
                             <Column style={{ verticalAlign: 'top' }}>
                                 <Text className="text-[23px] font-semibold text-heading m-0">
-                                    {appName}
+                                    {productName}
                                 </Text>
                                 <Text className="text-base text-text m-0 pr-4">
                                     {catalogName}
@@ -82,7 +79,7 @@ export default function AppUpdateSubmittedPublisher({
                                     </Column>
                                     <Column>
                                         <Text className="text-[14px] font-semibold text-right m-0">
-                                            {appNetPrice}
+                                            {subtotalFormatted}
                                         </Text>
                                     </Column>
                                 </Row>
@@ -94,7 +91,7 @@ export default function AppUpdateSubmittedPublisher({
                                     </Column>
                                     <Column>
                                         <Text className="text-[14px] font-semibold text-right m-0">
-                                            {appVAT}
+                                            {taxAmountFormatted}
                                         </Text>
                                     </Column>
                                 </Row>
@@ -106,7 +103,7 @@ export default function AppUpdateSubmittedPublisher({
                                     </Column>
                                     <Column>
                                         <Text className="text-[16px] font-semibold text-right m-0">
-                                            {appTotalPrice}
+                                            {totalFormatted}
                                         </Text>
                                     </Column>
                                 </Row>
@@ -119,23 +116,23 @@ export default function AppUpdateSubmittedPublisher({
             <Section className="mt-4 mb-6">
                 <Text className="text-base text-text m-0 mb-4">
                     Your Order ID is:{' '}
-                    <span className="font-bold">
-                        {orderId}
-                    </span>
-
+                    <span className="font-bold">{orderId}</span>
                 </Text>
 
-                {livePreview ? <div
-                    dangerouslySetInnerHTML={{
-                        __html: (emailDescription),
-                    }}
-                /> : emailDescription}
-
+                {livePreview ? (
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html: description,
+                        }}
+                    />
+                ) : (
+                    description
+                )}
             </Section>
 
             <Section className="mb-12">
                 <Link
-                    href={`https://marketplace.liferay.com/publisher-dashboard#/app/${cpDefinitionProductId}`}
+                    href={`https://marketplace.liferay.com/customer-dashboard#/order/${orderId}`}
                     className="bg-primary border border-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     {buttonText}
@@ -160,17 +157,16 @@ export default function AppUpdateSubmittedPublisher({
     );
 }
 
-AppUpdateSubmittedPublisher.PreviewProps = {
-    appName: 'Customer Data Platform',
-    appNetPrice: '$200.00',
-    appVAT: '$44.00',
-    appTotalPrice: '$261.00',
-    buttonText: 'Launch LDP',
-    orderId: '26574346',
+PaymentApproved.PreviewProps = {
     appPrice: '€1.230,00',
-    livePreview: true,
+    buttonText: 'Launch LDP',
     catalogName: 'Liferay, Inc.',
-    emailDescription: ` <p style="color:gray; margin:0px; line-height: 24px;">You are all set 🚀 You <b>can start using all the premium features</b> of your Customer Data Platform right away. Click the button below to access your CDP and enjoy the full experience.</p>`,
-    cpDefinitionProductId: '123456789',
+    description: ` <p style="color:gray; margin:0px; line-height: 24px;">You are all set 🚀 You <b>can start using all the premium features</b> of your Customer Data Platform right away. Click the button below to access your CDP and enjoy the full experience.</p>`,
+    livePreview: true,
+    orderId: '123456789',
+    productName: 'Customer Data Platform',
     productThumbnail: 'https://github.com/liferay.png',
+    subtotalFormatted: '$200.00',
+    taxAmountFormatted: '$44.00',
+    totalFormatted: '$261.00',
 } as Props;

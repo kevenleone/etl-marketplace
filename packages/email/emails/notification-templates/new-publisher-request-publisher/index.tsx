@@ -1,11 +1,11 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
+    Heading,
+    Img,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';

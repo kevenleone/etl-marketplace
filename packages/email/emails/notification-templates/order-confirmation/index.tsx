@@ -1,37 +1,37 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
+    Heading,
+    Img,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
 type Props = {
-    orderId: string;
-    appName: string;
     buttonText: string;
-    appPrice: string;
     catalogName: string;
-    cpDefinitionProductId: string;
-    emailDescription: string;
+    description: string;
     livePreview: boolean;
+    orderId: string;
+    productName: string;
     productThumbnail: string;
+    totalFormatted: string;
 };
 
-export default function AppUpdateSubmittedPublisher({
-    appName = '[%APP_NAME%]',
+// ORDER-CONFIRMATION
+
+export default function OrderConfirmation({
     buttonText = '[%BUTTON_TEXT%]',
-    orderId = '[%ORDER_ID%]',
-    appPrice = '[%APP_PRICE%]',
     catalogName = '[%CATALOG_NAME%]',
-    cpDefinitionProductId = '[%CPDEFINITION_ID%]',
-    emailDescription = '[%EMAIL_DESCRIPTION%]',
+    description = '[%DESCRIPTION%]',
     livePreview = false,
+    orderId = '[%ORDER_ID%]',
+    productName = '[%PRODUCT_NAME%]',
     productThumbnail = '[%PRODUCT_THUMBNAIL%]',
+    totalFormatted = '[%TOTAL_FORMATTED%]',
 }: Props) {
     return (
         <Layout preview="Order Confirmation">
@@ -59,21 +59,38 @@ export default function AppUpdateSubmittedPublisher({
                     <Column className="pl-3">
                         <Row className="mt-1">
                             <Column>
-                                <Text className="text-[23px] font-semibold text-heading m-0" style={{ lineHeight: '1' }}>
-                                    {appName}
+                                <Text
+                                    className="text-[23px] font-semibold text-heading m-0"
+                                    style={{ lineHeight: '1' }}
+                                >
+                                    {productName}
                                 </Text>
                             </Column>
                             <Column>
-                                <Text className="text-[14px] font-semibold text-right" style={{ lineHeight: '1' }}>
-                                    {appPrice}
+                                <Text
+                                    className="text-[14px] font-semibold text-right"
+                                    style={{ lineHeight: '1' }}
+                                >
+                                    {totalFormatted}
                                 </Text>
                             </Column>
                         </Row>
                         <Row>
                             <Column>
-                                <table cellPadding="0" cellSpacing="0" border={0}>
+                                <table
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                    border={0}
+                                >
                                     <tr>
-                                        <td style={{ verticalAlign: 'middle', paddingRight: '8px', position: 'relative', top: '-2px' }}>
+                                        <td
+                                            style={{
+                                                verticalAlign: 'middle',
+                                                paddingRight: '8px',
+                                                position: 'relative',
+                                                top: '-2px',
+                                            }}
+                                        >
                                             <span className="text-base text-text m-0">
                                                 {catalogName}
                                             </span>
@@ -89,21 +106,23 @@ export default function AppUpdateSubmittedPublisher({
             <Section className="mb-6">
                 <Text className="text-base text-text m-0 mb-4">
                     Your Order ID is:{' '}
-                    <span className="font-bold">
-                        {orderId}
-                    </span>
-
+                    <span className="font-bold">{orderId}</span>
                 </Text>
-                {livePreview ? <div className="text-muted m-0 lh-base"
-                    dangerouslySetInnerHTML={{
-                        __html: (emailDescription),
-                    }}
-                /> : emailDescription}
+                {livePreview ? (
+                    <div
+                        className="text-muted m-0 lh-base"
+                        dangerouslySetInnerHTML={{
+                            __html: description,
+                        }}
+                    />
+                ) : (
+                    description
+                )}
             </Section>
 
             <Section className="mb-12">
                 <Link
-                    href={`https://marketplace.liferay.com/publisher-dashboard#/app/${cpDefinitionProductId}`}
+                    href={`https://marketplace.liferay.com/customer-dashboard#/order/${orderId}`}
                     className="bg-primary border border-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     {buttonText}
@@ -128,15 +147,14 @@ export default function AppUpdateSubmittedPublisher({
     );
 }
 
-AppUpdateSubmittedPublisher.PreviewProps = {
-    appName: 'Customer Data Platform',
+OrderConfirmation.PreviewProps = {
     buttonText: 'Go to Dashboard',
-    orderId: '26574346',
-    appPrice: '€1.230,00',
     catalogName: 'Liferay, Inc.',
-    cpDefinitionProductId: '123456789',
-    emailDescription: `<p style="color:gray; margin:0px; line-height: 24px;">Your workspace is being created now!</p>
+    description: `<p style="color:gray; margin:0px; line-height: 24px;">Your workspace is being created now!</p>
     <p style="color:gray; margin:0px; line-height: 24px;">Click the button below to go to your dashboard and check the status of your environment. You can start using it as soon as it is ready.</p>`,
     livePreview: true,
+    orderId: '26574346',
+    productName: 'Customer Data Platform',
     productThumbnail: 'https://github.com/liferay.png',
+    totalFormatted: '€1.230,00',
 } as Props;

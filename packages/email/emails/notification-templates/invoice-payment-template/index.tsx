@@ -1,12 +1,12 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
-    Row,
+    Heading,
     Hr,
+    Img,
+    Link,
+    Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
@@ -15,7 +15,6 @@ type Props = {
     accountId: string;
     accountName: string;
     appName: string;
-    appType: string;
     billingAddressFormatted: string;
     billingAddressName: string;
     billingAddressPhone: string;
@@ -28,18 +27,18 @@ type Props = {
     orderId: string;
     orderPaymentMethod: string;
     orderStatus: string;
-    paymentTerms: string;
+    paymentTermDescription: string;
     productThumbnail: string;
+    productType: string;
+    taxAmountFormatted: string;
+    taxId: string;
     totalFormatted: string;
-    vatFormatted: string;
-    vatNumber: string;
 };
 
 export default function InvoicePaymentTemplate({
     accountId = '[%ACCOUNT_ID%]',
     accountName = '[%ACCOUNT_NAME%]',
-    appName = '[%APP_NAME%]',
-    appType = '[%APP_TYPE%]',
+    appName = '[%PRODUCT_NAME%]',
     billingAddressFormatted = '[%BILLING_ADDRESS_FORMATTED%]',
     billingAddressName = '[%BILLING_ADDRESS_NAME%]',
     billingAddressPhone = '[%BILLING_ADDRESS_PHONE%]',
@@ -47,16 +46,17 @@ export default function InvoicePaymentTemplate({
     emailAddress = '[%EMAIL_ADDRESS%]',
     exchangeRate = '[%EXCHANGE_RATE%]',
     licenseType = '[%LICENSE_TYPE%]',
-    netPriceFormatted = '[%NET_PRICE_FORMATTED%]',
+    netPriceFormatted = '[%SUBTOTAL_FORMATTED%]',
     orderDate = '[%ORDER_DATE%]',
     orderId = '[%ORDER_ID%]',
     orderPaymentMethod = '[%ORDER_PAYMENT_METHOD%]',
     orderStatus = '[%ORDER_STATUS%]',
-    paymentTerms = '[%PAYMENT_TERMS%]',
+    paymentTermDescription = '[%PAYMENT_TERM_DESCRIPTION%]',
     productThumbnail = '[%PRODUCT_THUMBNAIL%]',
+    productType = '[%PRODUCT_TYPE%]',
+    taxAmountFormatted = '[%TAX_AMOUNT_FORMATTED%]',
+    taxId = '[%TAX_ID%]',
     totalFormatted = '[%TOTAL_FORMATTED%]',
-    vatFormatted = '[%VAT_FORMATTED%]',
-    vatNumber = '[%VAT_NUMBER%]',
 }: Props) {
     return (
         <Layout preview="New Order Placed">
@@ -110,7 +110,7 @@ export default function InvoicePaymentTemplate({
                                 {catalogName}
                             </span>
                             <span className="border border-[#2E5AAC] text-[#2E5AAC] rounded px-2 py-0.5 text-xs ml-2">
-                                {appType}
+                                {productType}
                             </span>
                         </div>
                     </Column>
@@ -132,7 +132,7 @@ export default function InvoicePaymentTemplate({
                 <Row>
                     <Column align="left">VAT:</Column>
                     <Column align="right" className="font-bold">
-                        {vatFormatted}
+                        {taxAmountFormatted}
                     </Column>
                 </Row>
                 <Row>
@@ -174,10 +174,11 @@ export default function InvoicePaymentTemplate({
                 Account ID: <span className="font-bold">{accountId}</span>
             </Text>
             <Text className="text-sm m-0">
-                Tax/VAT ID: <span className="font-bold">{vatNumber}</span>
+                Tax/VAT ID: <span className="font-bold">{taxId}</span>
             </Text>
             <Text className="text-sm m-0 mb-4">
-                Payment Terms: <span className="font-bold">{paymentTerms}</span>
+                Payment Terms:{' '}
+                <span className="font-bold">{paymentTermDescription}</span>
             </Text>
 
             <Text className="text-base font-bold text-[#3f404b] m-0 mt-6 block">
@@ -216,7 +217,6 @@ InvoicePaymentTemplate.PreviewProps = {
     accountId: '12345',
     accountName: 'Liferay',
     appName: 'Liferay',
-    appType: 'SaaS',
     billingAddressFormatted: '123 Main St, Los Angeles, CA 90001',
     billingAddressName: 'John Doe',
     billingAddressPhone: '123-456-7890',
@@ -229,9 +229,10 @@ InvoicePaymentTemplate.PreviewProps = {
     orderId: '123456789',
     orderPaymentMethod: 'Credit Card',
     orderStatus: 'Completed',
-    paymentTerms: 'Net 30',
+    paymentTermDescription: 'Net 30',
     productThumbnail: 'https://github.com/liferay.png',
+    productType: 'SaaS',
+    taxAmountFormatted: '$10.00',
+    taxId: '123456789',
     totalFormatted: '$110.00',
-    vatFormatted: '$10.00',
-    vatNumber: '123456789',
 } as Props;

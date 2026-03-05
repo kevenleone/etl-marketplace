@@ -1,6 +1,7 @@
 import process from 'node:process';
 
 import {
+    PostalAddress,
     deleteAccountUserAccountByEmailAddress,
     getAccountsPage,
     getUserAccountByEmailAddress,
@@ -8,15 +9,12 @@ import {
     postAccount,
     postAccountPostalAddress,
     postAccountUserAccountByEmailAddress,
-    PostalAddress,
     postUserAccount,
 } from 'liferay-headless-rest-client/headless-admin-user-v1.0';
 
 import {
-    getRegionsPage,
-    getCountriesPage,
-    Region,
     Country,
+    getCountriesPage,
 } from 'liferay-headless-rest-client/headless-admin-address-v1.0';
 
 import { Account, KoroneikiAccount, KoroneikiContact } from './types';
@@ -385,28 +383,28 @@ class KoroneikAccountSync {
         liferayAccount: Account | undefined,
         koroneikiAccount: KoroneikiAccount,
     ) {
+        const accountBody = {
+            customFields: [
+                {
+                    name: 'koroneiki-parent-account-key',
+                    customValue: {
+                        data: koroneikiAccount.parentAccountKey,
+                    } as any,
+                },
+                {
+                    name: 'salesforce-account-key',
+                    customValue: {
+                        data: this.getSalesforceAccountKey(koroneikiAccount),
+                    } as any,
+                },
+            ],
+            externalReferenceCode: koroneikiAccount.key,
+            name: koroneikiAccount.name,
+        };
+
         if (!liferayAccount) {
             const { data, error } = await postAccount({
-                body: {
-                    customFields: [
-                        {
-                            name: 'parent-koroneiki-account-key',
-                            customValue: {
-                                data: koroneikiAccount.parentAccountKey,
-                            } as any,
-                        },
-                        {
-                            name: 'salesforce-account-key',
-                            customValue: {
-                                data: this.getSalesforceAccountKey(
-                                    koroneikiAccount,
-                                ),
-                            } as any,
-                        },
-                    ],
-                    externalReferenceCode: koroneikiAccount.key,
-                    name: koroneikiAccount.name,
-                },
+                body: accountBody,
                 client: liferayClient,
                 query: { nestedFields: 'accountUserAccounts' } as any,
             });
@@ -429,11 +427,7 @@ class KoroneikAccountSync {
         }
 
         const { error } = await patchAccount({
-            body: {
-                externalReferenceCode: koroneikiAccount.key,
-                description: koroneikiAccount.description,
-                name: koroneikiAccount.name,
-            },
+            body: accountBody,
             client: liferayClient,
             path: { accountId: `${liferayAccount.id}` },
         });

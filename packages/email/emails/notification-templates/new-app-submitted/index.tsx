@@ -1,41 +1,43 @@
 import {
-    Text,
-    Heading,
-    Link,
-    Section,
-    Img,
     Column,
+    Heading,
+    Img,
+    Link,
     Row,
+    Section,
+    Text,
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
 type Props = {
-    cpDefinitionCreateDate: string;
-    cpDefinitionDeveloperName: string;
-    cpDefinitionName: string;
-    cpDefinitionThumbnail: string;
-    cpDefinitionUrl: string;
+    createDate: string;
+    catalogName: string;
+    productName: string;
+    productThumbnail: string;
+    dashboardURL: string;
 };
 
+// NEW-APP-SUBMITTED
+
 export default function NewAppSubmitted({
-    cpDefinitionCreateDate = '[%CPDEFINITION_CREATEDATE%]',
-    cpDefinitionDeveloperName = '[%CPDEFINITION_DEVELOPER_NAME%]',
-    cpDefinitionName = '[%CPDEFINITION_NAME%]',
-    cpDefinitionThumbnail = '[%CPDEFINITION_THUMBNAIL%]',
-    cpDefinitionUrl = '[%CPDEFINITION_URL%]',
+    catalogName = '[%CATALOG_NAME%]',
+    createDate = '[%CREATE_DATE%]',
+    dashboardURL = '[%DASHBOARD_URL%]',
+    productName = '[%PRODUCT_NAME%]',
+    productThumbnail = '[%PRODUCT_THUMBNAIL%]',
 }: Props) {
     return (
         <Layout preview="New app submitted">
             <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
-                New app submitted
+                New App Submitted
             </Heading>
 
             <Section className="mb-6">
                 <Row>
                     <Column width="60">
                         <Img
-                            src={cpDefinitionThumbnail}
+                            src={productThumbnail}
                             width="60"
                             height="60"
                             alt="App Icon"
@@ -44,10 +46,10 @@ export default function NewAppSubmitted({
                     </Column>
                     <Column className="pl-3">
                         <Text className="text-xl font-semibold text-heading m-0">
-                            {cpDefinitionName}
+                            {productName}
                         </Text>
                         <Text className="text-base text-text m-0">
-                            {cpDefinitionDeveloperName}
+                            {catalogName}
                         </Text>
                     </Column>
                 </Row>
@@ -57,14 +59,14 @@ export default function NewAppSubmitted({
                 <Text className="text-lg text-text">
                     Submission Date:{' '}
                     <span className="font-semibold text-heading">
-                        {cpDefinitionCreateDate}
+                        {createDate}
                     </span>
                 </Text>
             </Section>
 
             <Section className="mb-6 text-center">
                 <Link
-                    href={cpDefinitionUrl}
+                    href={dashboardURL}
                     className="bg-primary text-white font-bold py-3 px-6 rounded-lg text-base no-underline inline-block"
                 >
                     Go to app
@@ -75,9 +77,9 @@ export default function NewAppSubmitted({
 }
 
 NewAppSubmitted.PreviewProps = {
-    cpDefinitionCreateDate: 'Jan 1, 2023',
-    cpDefinitionDeveloperName: 'Liferay, Inc.',
-    cpDefinitionName: 'Liferay',
-    cpDefinitionThumbnail: 'https://github.com/liferay.png',
-    cpDefinitionUrl: 'https://marketplace.liferay.com',
+    catalogName: 'Liferay, Inc.',
+    createDate: 'Jan 1, 2023',
+    dashboardURL: 'https://marketplace.liferay.com',
+    productName: 'Liferay',
+    productThumbnail: 'https://github.com/liferay.png',
 } as Props;

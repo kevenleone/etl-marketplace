@@ -1,4 +1,4 @@
-import { Text, Heading, Link, Section } from '@react-email/components';
+import { Link, Section, Text } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
 
