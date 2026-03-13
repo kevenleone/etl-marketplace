@@ -1,7 +1,7 @@
 {
     "description": "",
     "editorType": "richText",
-    "externalReferenceCode": "MARKETPLACE-INVOICE-ORDER-SUBMIT-TEMPLATE",
+    "externalReferenceCode": "MARKETPLACE-INVOICE-ORDER",
     "name": "Invoice Order",
     "recipientType": "email",
     "recipients": [

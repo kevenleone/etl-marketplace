@@ -1,7 +1,7 @@
 {
     "description": "",
     "editorType": "richText",
-    "externalReferenceCode": "PAYMENT-APPROVED",
+    "externalReferenceCode": "MARKETPLACE-PAYMENT-APPROVED",
     "name": "Payment Approved",
     "recipientType": "email",
     "recipients": [
