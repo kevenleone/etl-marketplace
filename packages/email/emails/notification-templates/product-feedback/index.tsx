@@ -13,8 +13,8 @@ import Layout from '../../layout/Layout';
 type Props = {
     catalogName: string;
     emailBody: string;
-    marketplaceHost: string;
     livePreview: boolean;
+    marketplaceHost: string;
     orderId: string;
     productName: string;
     productThumbnail: string;
@@ -106,16 +106,15 @@ export default function ProductFeedback({
 }
 
 ProductFeedback.PreviewProps = {
-    buttonLink: 'liferay.com',
     catalogName: 'Liferay, Inc.',
     emailBody: `<p>It has been a few weeks since you started using <b>CMP </b>
                     Beta via the Marketplace. We hope it’s helping you
                     streamline your Liferay operations. Could you spare 
                     <b>5 minutes</b> to let us know how we’re doing?</p>`,
-    marketplaceHost: 'https://marketplace-uat.liferay.com',
-    productName: 'Content Marketing Platform',
-    productType: 'Beta',
-    productThumbnail: 'https://github.com/liferay.png',
-    orderId: '42168052',
     livePreview: true,
+    marketplaceHost: 'https://marketplace-uat.liferay.com',
+    orderId: '42168052',
+    productName: 'Content Marketing Platform',
+    productThumbnail: 'https://github.com/liferay.png',
+    productType: 'Beta',
 } as Props;
