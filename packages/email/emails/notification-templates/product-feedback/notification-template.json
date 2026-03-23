@@ -1,8 +1,8 @@
 {
     "description": "",
     "editorType": "richText",
-    "externalReferenceCode": "MARKETPLACE-PRODUCT-FEEDBACK",
-    "name": "Product Feedback",
+    "externalReferenceCode": "MARKETPLACE-REQUEST-PRODUCT-FEEDBACK",
+    "name": "Marketplace Request Product Feedback",
     "recipientType": "email",
     "recipients": [
         {
@@ -18,7 +18,7 @@
         }
     ],
     "subject": {
-        "en_US": "Liferay Marketplace - Product Feedback"
+        "en_US": "Liferay Marketplace - Feedback Survey"
     },
     "type": "email"
 }

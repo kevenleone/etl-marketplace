@@ -11,25 +11,25 @@ import {
 import Layout from '../../layout/Layout';
 
 type Props = {
-    appType: string;
-    cpDefinitionDeveloperName: string;
-    cpDefinitionName: string;
-    cpDefinitionThumbnail: string;
-    emailDescription: string;
-    enviroment: string;
-    orderId: string;
+    catalogName: string;
+    emailBody: string;
+    marketplaceHost: string;
     livePreview: boolean;
+    orderId: string;
+    productName: string;
+    productThumbnail: string;
+    productType: string;
 };
 
 export default function ProductFeedback({
-    appType = '[%APP_TYPE%]',
-    cpDefinitionDeveloperName = '[%CATALOG_NAME%]',
-    cpDefinitionName = '[%CPDEFINITION_NAME%]',
-    cpDefinitionThumbnail = '[%CPDEFINITION_THUMBNAIL%]',
-    emailDescription = '[%EMAIL_DESCRIPTION%]',
-    enviroment = '[%ENVIROMENT%]',
-    orderId = '[%ORDER_ID%]',
+    catalogName = '[%CATALOG_NAME%]',
+    emailBody = '[%EMAIL_BODY%]',
     livePreview = false,
+    marketplaceHost = '[%MARKETPLACE_HOST%]',
+    orderId = '[%ORDER_ID%]',
+    productName = '[%PRODUCT_NAME%]',
+    productThumbnail = '[%PRODUCT_THUMBNAIL%]',
+    productType = '[%PRODUCT_TYPE%]',
 }: Props) {
     return (
         <Layout preview="Your Opinion Matters">
@@ -41,7 +41,7 @@ export default function ProductFeedback({
                 <Row>
                     <Column width="56">
                         <Img
-                            src={cpDefinitionThumbnail}
+                            src={productThumbnail}
                             width="56"
                             height="56"
                             alt="App Icon"
@@ -57,7 +57,7 @@ export default function ProductFeedback({
                                 }}
                             >
                                 <Text className="text-[23px] font-semibold text-heading m-0">
-                                    {cpDefinitionName}
+                                    {productName}
                                 </Text>
                             </Column>
 
@@ -70,12 +70,12 @@ export default function ProductFeedback({
                                 }}
                             >
                                 <Text className="text-[13px] text-[#166E9E] font-semibold text-center rounded bg-[#D1ECFA] px-[8px] py-[4px] m-0">
-                                    {appType}
+                                    {productType}
                                 </Text>
                             </Column>
                         </Row>
                         <Text className="text-base text-text m-0 pr-4">
-                            {cpDefinitionDeveloperName}
+                            {catalogName}
                         </Text>
                     </Column>
                 </Row>
@@ -85,17 +85,17 @@ export default function ProductFeedback({
                 {livePreview ? (
                     <div
                         dangerouslySetInnerHTML={{
-                            __html: emailDescription,
+                            __html: emailBody,
                         }}
                     />
                 ) : (
-                    emailDescription
+                    emailBody
                 )}
             </Section>
 
             <Section className="mb-6">
                 <Link
-                    href={`https://${enviroment}.liferay.com/product-feedback?orderId=${orderId}`}
+                    href={`${marketplaceHost}/product-feedback?orderId=${orderId}`}
                     className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Share Beta Feedback
@@ -106,16 +106,16 @@ export default function ProductFeedback({
 }
 
 ProductFeedback.PreviewProps = {
-    appType: 'Beta',
     buttonLink: 'liferay.com',
-    cpDefinitionDeveloperName: 'Liferay, Inc.',
-    cpDefinitionName: 'Content Marketing Platform',
-    cpDefinitionThumbnail: 'https://github.com/liferay.png',
-    emailDescription: `<p>It has been a few weeks since you started using <b>CMP </b>
+    catalogName: 'Liferay, Inc.',
+    emailBody: `<p>It has been a few weeks since you started using <b>CMP </b>
                     Beta via the Marketplace. We hope it’s helping you
                     streamline your Liferay operations. Could you spare 
                     <b>5 minutes</b> to let us know how we’re doing?</p>`,
-    enviroment: 'marketplace-uat',
+    marketplaceHost: 'https://marketplace-uat.liferay.com',
+    productName: 'Content Marketing Platform',
+    productType: 'Beta',
+    productThumbnail: 'https://github.com/liferay.png',
     orderId: '42168052',
     livePreview: true,
 } as Props;
