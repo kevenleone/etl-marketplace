@@ -7,7 +7,7 @@ type Props = {
     fullName: string;
     jobTitle: string;
     emailAddress: string;
-    orderERC: string;
+    productName: string;
     ratingEaseOfUse: string;
     ratingSatisfaction: string;
     ratingUsefulness: string;
@@ -21,7 +21,7 @@ export default function NewProductFeedbackNotification({
     fullName = '[%PRODUCTFEEDBACK_FULLNAME%]',
     jobTitle = '[%PRODUCTFEEDBACK_JOBTITLE%]',
     emailAddress = '[%PRODUCTFEEDBACK_EMAILADDRESS%]',
-    orderERC = '[%ORDERTOPRODUCTFEEDBACK_COMMERCEORDER_ORDERTYPEEXTERNALREFERENCECODE%]',
+    productName = '[%PRODUCT_NAME%]',
     ratingEaseOfUse = '[%PRODUCTFEEDBACK_RATINGEASEOFUSE%]',
     ratingSatisfaction = '[%PRODUCTFEEDBACK_RATINGSATISFACTION%]',
     ratingUsefulness = '[%PRODUCTFEEDBACK_RATINGUSEFULNESS%]',
@@ -39,7 +39,8 @@ export default function NewProductFeedbackNotification({
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    A new CMP Beta product feedback has been submitted.
+                    A new feedback has been submitted for{' '}
+                    <span className="font-bold">{productName}</span>.
                 </Text>
 
                 <Text className="text-base text-text mb-4">
@@ -85,7 +86,7 @@ NewProductFeedbackNotification.PreviewProps = {
     fullName: 'John Doe',
     jobTitle: 'Software Engineer',
     emailAddress: 'john.doe@example.com',
-    orderERC: 'CMP_BETA',
+    productName: 'Example Product',
     ratingEaseOfUse: '5',
     ratingSatisfaction: '5',
     ratingUsefulness: '5',
