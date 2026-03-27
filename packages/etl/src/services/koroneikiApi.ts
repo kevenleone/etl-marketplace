@@ -1,4 +1,7 @@
-import { KoroneikiContact } from '../scripts/koroneiki-accounts/types';
+import {
+    KoroneikiAccount,
+    KoroneikiContact,
+} from '../scripts/koroneiki-accounts/types';
 import { APIResponse } from '../types';
 import koroneikiClient from './koroneiki';
 
@@ -24,12 +27,20 @@ export const koroneikiApi = {
         return await response.json();
     },
 
+    async getKoroneikiAccount(accountKey: string): Promise<KoroneikiAccount> {
+        const response = await koroneikiClient.fetch(
+            `o/koroneiki-rest/v1.0/accounts/${accountKey}`,
+        );
+
+        return response.json();
+    },
+
     async getKoroneikiAccounts(searchParams: URLSearchParams): Promise<any> {
         const response = await koroneikiClient.fetch(
             `o/koroneiki-rest/v1.0/accounts?${searchParams.toString()}`,
         );
 
-        return await response.json();
+        return response.json();
     },
 
     async getKoroneikiAccountContacts(

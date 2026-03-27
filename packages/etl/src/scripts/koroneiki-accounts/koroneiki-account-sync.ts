@@ -3,9 +3,9 @@ import process from 'node:process';
 import {
     PostalAddress,
     deleteAccountUserAccountByEmailAddress,
+    getAccountByExternalReferenceCode,
     getAccountsPage,
     getUserAccountByEmailAddress,
-    patchAccount,
     postAccount,
     postAccountPostalAddress,
     postAccountUserAccountByEmailAddress,
@@ -27,6 +27,7 @@ import PaginationRun from '../../core/PaginationRun';
 import { isEmailAddressValid } from '../../utils/validators';
 import { SearchBuilder } from 'odata-search-builder';
 import Cache from '../../utils/cache';
+import { APIResponse } from '../../types';
 
 type AccountWithUserAccount = Account & {
     accountUserAccounts: any[];
@@ -188,6 +189,7 @@ class KoroneikAccountSync {
                         contactEmailAddress:
                             koroneikiAccount.contactEmailAddress,
                         description: koroneikiAccount.description,
+                        externalLinks: koroneikiAccount.externalLinks,
                         externalReferenceCode: koroneikiAccount.key,
                         key: koroneikiAccount.key,
                         name: koroneikiAccount.name,
@@ -277,15 +279,6 @@ class KoroneikAccountSync {
                 : [koroneikiAccount.key],
         );
 
-        const liferayAccountsToUnassociate =
-            liferayAccount?.accountUserAccounts.filter(
-                ({ emailAddress }) =>
-                    !koroneikiContacts.find(
-                        ({ emailAddress: koroneikiEmailAddress }) =>
-                            koroneikiEmailAddress === emailAddress,
-                    ),
-            );
-
         for (const koroneikiContact of koroneikiContacts) {
             const emailAddress = koroneikiContact.emailAddress;
 
@@ -347,6 +340,15 @@ class KoroneikAccountSync {
             );
         }
 
+        const liferayAccountsToUnassociate =
+            liferayAccount?.accountUserAccounts?.filter(
+                ({ emailAddress }) =>
+                    !koroneikiContacts.find(
+                        ({ emailAddress: koroneikiEmailAddress }) =>
+                            koroneikiEmailAddress === emailAddress,
+                    ),
+            ) ?? [];
+
         for (const { emailAddress } of liferayAccountsToUnassociate) {
             const { error } = await deleteAccountUserAccountByEmailAddress({
                 client: liferayClient,
@@ -361,6 +363,19 @@ class KoroneikAccountSync {
                 error,
             );
         }
+    }
+
+    getSalesforceProjectKey(koroneikiAccount: KoroneikiAccount): string {
+        for (const externalLink of koroneikiAccount.externalLinks || []) {
+            const domain = externalLink.domain?.toLowerCase();
+            const entityName = externalLink.entityName?.toLowerCase();
+
+            if (domain === 'salesforce' && entityName === 'project') {
+                return externalLink.entityId;
+            }
+        }
+
+        return '';
     }
 
     getSalesforceAccountKey(koroneikiAccount: KoroneikiAccount): string {
@@ -379,10 +394,130 @@ class KoroneikAccountSync {
         return '';
     }
 
-    async syncLiferayAccount(
-        liferayAccount: Account | undefined,
+    getSalesforceProjectCacheKey(salesforceProject: string) {
+        return `salesforce:project:${salesforceProject}`;
+    }
+
+    async getSalesforceProject(salesforceProject: string) {
+        const key = this.getSalesforceProjectCacheKey(salesforceProject);
+
+        if (cacheInstance.has(key)) {
+            return cacheInstance.get(key);
+        }
+
+        const { data } = await liferayClient.get({
+            url: `/o/c/salesforceprojects?filter=${SearchBuilder.eq('externalReferenceCode', salesforceProject)}`,
+        });
+
+        const response = data as APIResponse;
+
+        if (response.totalCount > 0) {
+            cacheInstance.set(key, response.items[0]);
+
+            return response.items[0];
+        }
+
+        return null;
+    }
+
+    async getKoroneikiAccount(accountKey: string) {
+        let koroneikiAccount = cacheInstance.get(
+            `koroneiki-account:${accountKey}`,
+        );
+
+        if (koroneikiAccount) {
+            return koroneikiAccount;
+        }
+
+        koroneikiAccount = await koroneikiApi.getKoroneikiAccount(accountKey);
+
+        if (koroneikiAccount) {
+            cacheInstance.set(
+                `koroneiki-account:${accountKey}`,
+                koroneikiAccount,
+            );
+        }
+
+        return koroneikiAccount;
+    }
+
+    async syncSalesforceAccount(
+        salesforceAccountKey: string,
         koroneikiAccount: KoroneikiAccount,
     ) {
+        const salesforceProject =
+            await this.getSalesforceProject(salesforceAccountKey);
+
+        if (salesforceProject) {
+            return logger.info(
+                `[syncSalesforceAccount] Salesforce Project already exists ${salesforceAccountKey}`,
+            );
+        }
+
+        let marketplaceAccount = await this.getMarketplaceAccount(
+            koroneikiAccount.parentAccountKey,
+        );
+
+        if (!marketplaceAccount) {
+            if (!koroneikiAccount.parentAccountKey) {
+                return logger.info(
+                    `[syncSalesforceAccount] No parent account key for ${koroneikiAccount.key}`,
+                );
+            }
+
+            marketplaceAccount = (await this.createMarketplaceAccount(
+                await this.getKoroneikiAccount(
+                    koroneikiAccount.parentAccountKey,
+                ),
+            )) as Account;
+        }
+
+        const response = await liferayClient.post({
+            body: {
+                externalReferenceCode: salesforceAccountKey,
+                koroneikiAccountKey: koroneikiAccount.key,
+                name: koroneikiAccount.name,
+                r_salesforceProjectToAccounts_accountEntryERC:
+                    koroneikiAccount.parentAccountKey,
+            },
+            url: `/o/c/salesforceprojects`,
+        });
+
+        if (response.data) {
+            const key = this.getSalesforceProjectCacheKey(salesforceAccountKey);
+
+            cacheInstance.set(key, response.data);
+
+            return response.data;
+        }
+    }
+
+    async getMarketplaceAccount(externalReferenceCode: string) {
+        const key = `marketplace-account:${externalReferenceCode}`;
+        const cached = cacheInstance.get(key);
+
+        if (cached) {
+            return cached as Account;
+        }
+
+        const response = await getAccountByExternalReferenceCode({
+            client: liferayClient,
+            path: { externalReferenceCode },
+        });
+
+        if (response.data) {
+            cacheInstance.set(key, response.data as Account);
+
+            return response.data as Account;
+        }
+
+        return undefined;
+    }
+
+    async createMarketplaceAccount(koroneikiAccount: KoroneikiAccount) {
+        const salesforceAccountKey =
+            this.getSalesforceAccountKey(koroneikiAccount);
+
         const accountBody = {
             customFields: [
                 {
@@ -394,7 +529,7 @@ class KoroneikAccountSync {
                 {
                     name: 'salesforce-account-key',
                     customValue: {
-                        data: this.getSalesforceAccountKey(koroneikiAccount),
+                        data: salesforceAccountKey,
                     } as any,
                 },
             ],
@@ -402,37 +537,91 @@ class KoroneikAccountSync {
             name: koroneikiAccount.name,
         };
 
-        if (!liferayAccount) {
-            const { data, error } = await postAccount({
-                body: accountBody,
-                client: liferayClient,
-                query: { nestedFields: 'accountUserAccounts' } as any,
-            });
-
-            this.dynamicLog(
-                `[syncLiferayAccount] post account "${koroneikiAccount.name}"`,
-                error,
-            );
-
-            return data as Account;
-        }
-
-        if (
-            liferayAccount.description === koroneikiAccount.description &&
-            liferayAccount.name === koroneikiAccount.name
-        ) {
-            logger.info('[syncLiferayAccount] skip patch account');
-
-            return liferayAccount;
-        }
-
-        const { error } = await patchAccount({
+        const { data, error } = await postAccount({
             body: accountBody,
             client: liferayClient,
-            path: { accountId: `${liferayAccount.id}` },
+            query: { nestedFields: 'accountUserAccounts' } as any,
         });
 
-        this.dynamicLog(`[syncLiferayAccount] patch account`, error);
+        cacheInstance.set(
+            `marketplace-account:${koroneikiAccount.key}`,
+            data as Account,
+        );
+
+        this.dynamicLog(
+            `[createMarketplaceAccount] post account "${koroneikiAccount.name}"`,
+            error,
+        );
+
+        return data;
+    }
+
+    async syncMarketplaceAccount(
+        liferayAccount: Account | undefined,
+        koroneikiAccount: KoroneikiAccount,
+    ) {
+        const salesforceProjectKey =
+            this.getSalesforceProjectKey(koroneikiAccount);
+
+        /**
+         * If a Salesforce Project key exists, sync the Salesforce Project
+         * Into Marketplace Object Definition and stop the process.
+         */
+
+        if (salesforceProjectKey) {
+            logger.info('SalesforceProjectKey ' + salesforceProjectKey);
+
+            return this.syncSalesforceAccount(
+                salesforceProjectKey,
+                koroneikiAccount,
+            );
+        }
+
+        /**
+         * If no Salesforce Project key exists, sync the Marketplace account.
+         */
+
+        if (!liferayAccount) {
+            return this.createMarketplaceAccount(koroneikiAccount);
+        }
+
+        // if (
+        //   liferayAccount.description === koroneikiAccount.description &&
+        //   liferayAccount.name === koroneikiAccount.name
+        // ) {
+        //   logger.info('[syncMarketplaceAccount] skip patch account');
+
+        //   return liferayAccount;
+        // }
+
+        // const salesforceAccountKey = this.getSalesforceAccountKey(koroneikiAccount);
+
+        // const accountBody = {
+        //   customFields: [
+        //     {
+        //       name: 'koroneiki-parent-account-key',
+        //       customValue: {
+        //         data: koroneikiAccount.parentAccountKey,
+        //       } as any,
+        //     },
+        //     {
+        //       name: 'salesforce-account-key',
+        //       customValue: {
+        //         data: salesforceAccountKey,
+        //       } as any,
+        //     },
+        //   ],
+        //   externalReferenceCode: koroneikiAccount.key,
+        //   name: koroneikiAccount.name,
+        // };
+
+        // const { error } = await patchAccount({
+        //   body: accountBody,
+        //   client: liferayClient,
+        //   path: { accountId: `${liferayAccount.id}` },
+        // });
+
+        // this.dynamicLog(`[syncMarketplaceAccount] patch account`, error);
 
         return liferayAccount;
     }
@@ -508,7 +697,7 @@ class KoroneikAccountSync {
     async main() {
         logger.warn(`[main] start processing`);
 
-        const dxpAccounts = await this.getFileEntryValues<Account[]>(
+        const marketplaceAccounts = await this.getFileEntryValues<Account[]>(
             path.join(paths.json, 'dxp-accounts.json'),
             [],
         );
@@ -517,18 +706,25 @@ class KoroneikAccountSync {
             KoroneikiAccount[]
         >(path.join(paths.json, 'koroneiki-accounts.json'), []);
 
-        const dxpAccountsMap = new Map<string, Account>(
-            dxpAccounts.map((account) => [
-                account.externalReferenceCode,
-                account,
-            ]),
-        );
+        for (const marketplaceAccount of marketplaceAccounts) {
+            cacheInstance.set(
+                `marketplace-account:${marketplaceAccount.externalReferenceCode}`,
+                marketplaceAccount,
+            );
+        }
+
+        for (const koroneikiAccount of koroneikiAccounts) {
+            cacheInstance.set(
+                `koroneiki-account:${koroneikiAccount.key}`,
+                koroneikiAccount,
+            );
+        }
 
         let i = 1;
 
         for (const koroneikiAccount of koroneikiAccounts) {
-            let liferayAccount = dxpAccountsMap.get(
-                koroneikiAccount.externalReferenceCode,
+            let liferayAccount = cacheInstance.get(
+                `marketplace-account:${koroneikiAccount.externalReferenceCode}`,
             );
 
             logger.info('\n');
@@ -539,7 +735,7 @@ class KoroneikAccountSync {
                 `[main:start] - Koroneiki Account ${i}/${koroneikiAccounts.length}`,
             );
 
-            liferayAccount = await this.syncLiferayAccount(
+            liferayAccount = await this.syncMarketplaceAccount(
                 liferayAccount,
                 koroneikiAccount,
             );
@@ -569,5 +765,5 @@ class KoroneikAccountSync {
 const koroneikAccountSync = new KoroneikAccountSync();
 
 await koroneikAccountSync.getDXPAccounts();
-await koroneikAccountSync.getKoroneikiAccounts();
+// await koroneikAccountSync.getKoroneikiAccounts();
 await koroneikAccountSync.main();
