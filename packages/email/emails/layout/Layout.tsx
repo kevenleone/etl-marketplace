@@ -1,7 +1,6 @@
 import {
     Body,
     Container,
-    Font,
     Head,
     Heading,
     Hr,
@@ -23,13 +22,9 @@ export const Layout = ({ children, preview }: LayoutProps) => {
     return (
         <Html>
             <Head>
-                <Font
-                    fontFamily="Source Sans 3"
-                    fallbackFontFamily="sans-serif"
-                    webFont={{
-                        url: 'https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap',
-                        format: 'woff2',
-                    }}
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap"
+                    rel="stylesheet"
                 />
             </Head>
             <Preview>{preview}</Preview>
@@ -42,9 +37,12 @@ export const Layout = ({ children, preview }: LayoutProps) => {
                                 surface: '#FFFFFF',
                                 border: '#DDDDDD',
                                 text: '#6C6C75',
-                                heading: '#000000',
+                                heading: '#282934',
                                 primary: '#0B5FFF',
                             },
+                        },
+                        fontFamily: {
+                            sans: ['"Source Sans 3"', 'sans-serif'],
                         },
                     },
                 }}
@@ -52,9 +50,9 @@ export const Layout = ({ children, preview }: LayoutProps) => {
                 <Body className="bg-background font-sans my-auto mx-auto px-2">
                     <Container className="bg-surface border border-border rounded-[20px] my-[40px] mx-auto p-[48px] max-w-[640px]">
                         {/* Header */}
-                        <Section className="mb-6 text-center">
+                        <Section className="mb-6 pt-5 pb-5 text-center">
                             <Img
-                                className="inline-block mr-1.5"
+                                className="inline-block align-middle mr-1.5"
                                 height="28"
                                 alt="Liferay Logo"
                                 src="https://github.com/liferay.png"
@@ -63,7 +61,7 @@ export const Layout = ({ children, preview }: LayoutProps) => {
 
                             <Heading
                                 as="h1"
-                                className="text-2xl font-bold text-heading m-0 inline-block"
+                                className="text-2xl font-bold text-heading m-0 inline-block align-middle"
                             >
                                 Marketplace
                             </Heading>
