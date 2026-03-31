@@ -52,23 +52,21 @@ export const Layout = ({ children, preview }: LayoutProps) => {
                 <Body className="bg-background font-sans my-auto mx-auto px-2">
                     <Container className="bg-surface border border-border rounded-[20px] my-[40px] mx-auto p-[48px] max-w-[640px]">
                         {/* Header */}
-                        <Section className="mb-6">
-                            <div className="flex justify-center items-center">
-                                <Img
-                                    src="https://github.com/liferay.png"
-                                    width="28"
-                                    height="28"
-                                    alt="Liferay Logo"
-                                    className="inline-block mr-1.5"
-                                />
+                        <Section className="mb-6 text-center">
+                            <Img
+                                className="inline-block mr-1.5"
+                                height="28"
+                                alt="Liferay Logo"
+                                src="https://github.com/liferay.png"
+                                width="28"
+                            />
 
-                                <Heading
-                                    as="h1"
-                                    className="text-2xl font-bold text-heading m-0 inline-block"
-                                >
-                                    Marketplace
-                                </Heading>
-                            </div>
+                            <Heading
+                                as="h1"
+                                className="text-2xl font-bold text-heading m-0 inline-block"
+                            >
+                                Marketplace
+                            </Heading>
                         </Section>
                         <Hr className="border-border my-6" />
 

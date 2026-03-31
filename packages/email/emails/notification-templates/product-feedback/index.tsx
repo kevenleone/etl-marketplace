@@ -107,8 +107,8 @@ export default function ProductFeedback({
 
 ProductFeedback.PreviewProps = {
     catalogName: 'Liferay, Inc.',
-    emailBody: `<p>It has been a few weeks since you started using <b>CMP </b>
-                    Beta via the Marketplace. We hope it’s helping you
+    emailBody: `<p>It has been a few weeks since you started using <b>CMP Beta</b>
+                    via the Marketplace. We hope it’s helping you
                     streamline your Liferay operations. Could you spare 
                     <b>5 minutes</b> to let us know how we’re doing?</p>`,
     livePreview: true,
