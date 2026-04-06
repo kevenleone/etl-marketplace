@@ -55,13 +55,13 @@ export const Layout = ({ children, preview }: LayoutProps) => {
                                 className="inline-block align-middle mr-1.5"
                                 height="28"
                                 alt="Liferay Logo"
-                                src="https://github.com/liferay.png"
+                                src="https://cdn.brandfetch.io/idV44WjG0L/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1668014214259"
                                 width="28"
                             />
 
                             <Heading
                                 as="h1"
-                                className="text-2xl font-bold text-heading m-0 inline-block align-middle"
+                                className="text-3xl font-semibold text-heading m-0 inline-block align-middle"
                             >
                                 Marketplace
                             </Heading>
