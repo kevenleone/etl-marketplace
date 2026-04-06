@@ -2,19 +2,36 @@ import { $ } from 'bun';
 import fs from 'fs';
 import {
     getNotificationTemplatesPage,
+    NotificationTemplate,
     patchNotificationTemplate,
     postNotificationTemplate,
 } from 'liferay-headless-rest-client/notification-v1.0';
+
+import {
+    getObjectDefinitionsPage,
+    ObjectAction,
+    ObjectDefinition,
+    patchObjectAction,
+    postObjectDefinitionObjectAction,
+} from 'liferay-headless-rest-client/object-admin-v1.0';
 
 import { paths } from '../utils/paths';
 import { logger } from '../utils/logger';
 import { liferayClient } from '../services/liferay';
 
+function extractObjectDefinitionId(value: string): string {
+    return value.replace(/\[\$OBJECT_DEFINITION_ID:([^$]+)\$\]/, '$1');
+}
+
+type TransformedNotificationTemplate = {
+    body: string;
+    objectActions: any[];
+    template: any;
+};
+
 class UpdateNotificationTemplates {
     static async exportTemplates() {
-        logger.info(
-            '[exportTemplates] Exporting React Email Templates',
-        );
+        logger.info('[exportTemplates] Exporting React Email Templates');
 
         await $`cd ${paths.emailPackage} && bun run export`.quiet();
 
@@ -25,19 +42,16 @@ class UpdateNotificationTemplates {
         const notificationTemplates =
             await $`cd ${paths.emailPackage}/emails/notification-templates && ls`.quiet();
 
-        return notificationTemplates.stdout
-            .toString()
-            .trim()
-            .split('\n');
+        return notificationTemplates.stdout.toString().trim().split('\n');
     }
 
     static async transformNotificationTemplates() {
-        const notificationTemplates =
-            await this.getNotificationTemplates();
+        const notificationTemplates = await this.getNotificationTemplates();
         const transformedNotificationTemplates = [];
 
         for (const notificationTemplate of notificationTemplates) {
-            const notificationTemplatePath = `${paths.emailPackage}/emails/notification-templates/${notificationTemplate}/notification-template.json`;
+            const basePath = `${paths.emailPackage}/emails/notification-templates/${notificationTemplate}`;
+            const notificationTemplatePath = `${basePath}/notification-template.json`;
 
             if (!fs.existsSync(notificationTemplatePath)) {
                 logger.info(
@@ -47,9 +61,7 @@ class UpdateNotificationTemplates {
                 continue;
             }
 
-            const template = await Bun.file(
-                notificationTemplatePath,
-            ).json();
+            const template = await Bun.file(notificationTemplatePath).json();
 
             const indexHtmlPath = `${paths.emailPackage}/out/notification-templates/${notificationTemplate}/index.html`;
 
@@ -61,21 +73,113 @@ class UpdateNotificationTemplates {
                 continue;
             }
 
+            const objectActionsPath = `${basePath}/notification-template.object-actions.json`;
+
             transformedNotificationTemplates.push({
                 body: await Bun.file(indexHtmlPath).text(),
+                objectActions: fs.existsSync(objectActionsPath)
+                    ? await Bun.file(objectActionsPath).json()
+                    : [],
                 template,
             });
         }
 
-        return transformedNotificationTemplates;
+        return transformedNotificationTemplates as TransformedNotificationTemplate[];
+    }
+
+    static async syncObjectActions(
+        notificationTemplate: NotificationTemplate,
+        objectActions: TransformedNotificationTemplate['objectActions'],
+        objectDefinitions: ObjectDefinition[],
+    ) {
+        for (const objectAction of objectActions) {
+            const objectDefinitionName = extractObjectDefinitionId(
+                objectAction.objectDefinitionId,
+            );
+
+            delete objectAction.objectDefinitionId;
+
+            const objectDefinition = objectDefinitions.find(
+                (objectDefinition) =>
+                    objectDefinition.name === objectDefinitionName,
+            );
+
+            if (!objectDefinition) {
+                logger.warn(
+                    `[syncObjectActions] Object Definition "${objectDefinitionName}" not found`,
+                );
+
+                continue;
+            }
+
+            const existingObjectAction = objectDefinition.objectActions?.find(
+                ({ externalReferenceCode }) =>
+                    externalReferenceCode ===
+                    objectAction.externalReferenceCode,
+            );
+
+            if (existingObjectAction) {
+                const { data, error } = await patchObjectAction({
+                    body: {
+                        ...existingObjectAction,
+                        ...objectAction,
+                        parameters: {
+                            ...existingObjectAction.parameters,
+                            ...objectAction.parameters,
+                            notificationTemplateId: notificationTemplate.id,
+                        },
+                    },
+                    client: liferayClient,
+                    path: { objectActionId: String(existingObjectAction.id) },
+                });
+
+                if (error) {
+                    logger.error(
+                        `[syncObjectActions] Unable to update "${existingObjectAction.label?.en_US}" Object Action`,
+                    );
+
+                    console.error(error);
+                }
+
+                continue;
+            }
+
+            const { error } = await postObjectDefinitionObjectAction({
+                body: {
+                    ...objectAction,
+                    parameters: {
+                        ...objectAction.parameters,
+                        notificationTemplateId: notificationTemplate.id,
+                    },
+                },
+                client: liferayClient,
+                path: { objectDefinitionId: String(objectDefinition.id) },
+            });
+
+            if (error) {
+                logger.error(
+                    `[syncObjectActions] Unable to create Object Action "${objectAction.label?.en_US}" for Object Definition: "${objectDefinition.label?.en_US}"`,
+                );
+
+                console.error(error);
+            }
+        }
     }
 
     static async run() {
-        const { data, error } =
-            await getNotificationTemplatesPage({
-                client: liferayClient,
-                query: { pageSize: '-1' },
-            });
+        const [{ data, error }, { data: objectDefinitionPage }] =
+            await Promise.all([
+                getNotificationTemplatesPage({
+                    client: liferayClient,
+                    query: { pageSize: '-1' },
+                }),
+                getObjectDefinitionsPage({
+                    client: liferayClient,
+                    query: { pageSize: '-1' },
+                }),
+            ]);
+
+        const objectDefinitions = objectDefinitionPage?.items ?? [];
 
         if (error) {
             throw new Error(error as any);
@@ -87,13 +191,11 @@ class UpdateNotificationTemplates {
             await this.transformNotificationTemplates();
 
         for (const notificationTemplate of notificationTemplates) {
-            const existingNotificationTemplate =
-                data?.items?.find(
-                    (item) =>
-                        item.externalReferenceCode ===
-                        notificationTemplate.template
-                            .externalReferenceCode,
-                );
+            const existingNotificationTemplate = data?.items?.find(
+                (item) =>
+                    item.externalReferenceCode ===
+                    notificationTemplate.template.externalReferenceCode,
+            );
 
             if (existingNotificationTemplate) {
                 logger.info(
@@ -115,6 +217,12 @@ class UpdateNotificationTemplates {
                     },
                 });
 
+                await this.syncObjectActions(
+                    existingNotificationTemplate,
+                    notificationTemplate.objectActions,
+                    objectDefinitions,
+                );
+
                 continue;
             }
 
@@ -122,17 +230,22 @@ class UpdateNotificationTemplates {
                 `[run] Creating | ${notificationTemplate.template.name}`,
             );
 
-            await postNotificationTemplate({
-                body: {
-                    ...notificationTemplate.template,
+            const { data: newNotificationTemplate } =
+                await postNotificationTemplate({
                     body: {
-                        en_US: notificationTemplate.body,
+                        ...notificationTemplate.template,
+                        body: {
+                            en_US: notificationTemplate.body,
+                        },
                     },
-                },
-                client: liferayClient,
-            });
+                    client: liferayClient,
+                });
 
-            continue;
+            await this.syncObjectActions(
+                newNotificationTemplate as NotificationTemplate,
+                notificationTemplate.objectActions,
+                objectDefinitions,
+            );
         }
 
         const diff = data?.items
@@ -141,8 +254,7 @@ class UpdateNotificationTemplates {
                     !notificationTemplates?.find(
                         (notificationTemplate) =>
                             item.externalReferenceCode ===
-                            notificationTemplate.template
-                                .externalReferenceCode,
+                            notificationTemplate.template.externalReferenceCode,
                     ),
             )
             .map(
@@ -150,9 +262,7 @@ class UpdateNotificationTemplates {
                     `${index}. ${name} - ${externalReferenceCode}`,
             );
 
-        logger.info(
-            `[run] Templates not processed: \n\n${diff?.join('\n')}`,
-        );
+        logger.info(`[run] Templates not processed: \n\n${diff?.join('\n')}`);
         logger.info(
             `[run] Templates processed: ${notificationTemplates.length}, skipped: ${diff?.length}`,
         );
