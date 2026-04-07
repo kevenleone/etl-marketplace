@@ -4,9 +4,13 @@ import {
     PostalAddress,
     deleteAccountUserAccountByEmailAddress,
     getAccountByExternalReferenceCode,
+    getAccountGroupAccountsPage,
+    getAccountGroupByExternalReferenceCode,
     getAccountsPage,
     getUserAccountByEmailAddress,
+    patchAccount,
     postAccount,
+    postAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode,
     postAccountPostalAddress,
     postAccountUserAccountByEmailAddress,
     postUserAccount,
@@ -45,6 +49,31 @@ const countriesRegionMap = new Map<string, string[]>(
     (data?.items as Country[]).map(({ name, regions }) => [
         name,
         regions?.map(({ name }) => name) as string[],
+    ]),
+);
+
+const { data: accountGroup, error } =
+    await getAccountGroupByExternalReferenceCode({
+        client: liferayClient,
+        path: { externalReferenceCode: 'PARTNERS' },
+    });
+
+if ((error as any)?.status === 'NOT_FOUND') {
+    logger.error('Unable to proceed without AccountGroup');
+
+    process.exit(1);
+}
+
+const { data: accountGroupAccountsPage } = await getAccountGroupAccountsPage({
+    client: liferayClient,
+    path: { accountGroupId: String(accountGroup!.id) },
+    query: { pageSize: '-1' },
+});
+
+const accountGroupAccountsMap = new Map(
+    accountGroupAccountsPage?.items?.map((accountGroupAccount) => [
+        accountGroupAccount.externalReferenceCode,
+        accountGroupAccount,
     ]),
 );
 
@@ -188,6 +217,10 @@ class KoroneikAccountSync {
                     items.push({
                         contactEmailAddress:
                             koroneikiAccount.contactEmailAddress,
+                        _isPartner: koroneikiAccount.entitlements.some(
+                            ({ name }) =>
+                                name.toLocaleLowerCase() === 'partner',
+                        ),
                         description: koroneikiAccount.description,
                         externalLinks: koroneikiAccount.externalLinks,
                         externalReferenceCode: koroneikiAccount.key,
@@ -585,43 +618,35 @@ class KoroneikAccountSync {
             return this.createMarketplaceAccount(koroneikiAccount);
         }
 
-        // if (
-        //   liferayAccount.description === koroneikiAccount.description &&
-        //   liferayAccount.name === koroneikiAccount.name
-        // ) {
-        //   logger.info('[syncMarketplaceAccount] skip patch account');
+        const salesforceAccountKey =
+            this.getSalesforceAccountKey(koroneikiAccount);
 
-        //   return liferayAccount;
-        // }
+        const accountBody = {
+            customFields: [
+                {
+                    name: 'koroneiki-parent-account-key',
+                    customValue: {
+                        data: koroneikiAccount.parentAccountKey,
+                    } as any,
+                },
+                {
+                    name: 'salesforce-account-key',
+                    customValue: {
+                        data: salesforceAccountKey,
+                    } as any,
+                },
+            ],
+            externalReferenceCode: koroneikiAccount.key,
+            name: koroneikiAccount.name,
+        };
 
-        // const salesforceAccountKey = this.getSalesforceAccountKey(koroneikiAccount);
+        const { error } = await patchAccount({
+            body: accountBody,
+            client: liferayClient,
+            path: { accountId: `${liferayAccount.id}` },
+        });
 
-        // const accountBody = {
-        //   customFields: [
-        //     {
-        //       name: 'koroneiki-parent-account-key',
-        //       customValue: {
-        //         data: koroneikiAccount.parentAccountKey,
-        //       } as any,
-        //     },
-        //     {
-        //       name: 'salesforce-account-key',
-        //       customValue: {
-        //         data: salesforceAccountKey,
-        //       } as any,
-        //     },
-        //   ],
-        //   externalReferenceCode: koroneikiAccount.key,
-        //   name: koroneikiAccount.name,
-        // };
-
-        // const { error } = await patchAccount({
-        //   body: accountBody,
-        //   client: liferayClient,
-        //   path: { accountId: `${liferayAccount.id}` },
-        // });
-
-        // this.dynamicLog(`[syncMarketplaceAccount] patch account`, error);
+        this.dynamicLog(`[syncMarketplaceAccount] patch account`, error);
 
         return liferayAccount;
     }
@@ -694,6 +719,40 @@ class KoroneikAccountSync {
         }
     }
 
+    async syncAccountGroups(
+        liferayAccount: AccountWithUserAccount,
+        koroneikiAccount: KoroneikiAccount,
+    ) {
+        if (!koroneikiAccount._isPartner) {
+            return;
+        }
+
+        if (accountGroupAccountsMap.has(liferayAccount.externalReferenceCode)) {
+            return;
+        }
+
+        const { error } =
+            await postAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode(
+                {
+                    path: {
+                        externalReferenceCode: 'PARTNERS',
+                        accountExternalReferenceCode:
+                            liferayAccount.externalReferenceCode,
+                    },
+                },
+            );
+
+        this.dynamicLog(
+            '[syncAccountGroups] Added in Partners Account Group',
+            error,
+        );
+
+        accountGroupAccountsMap.set(
+            liferayAccount.externalReferenceCode,
+            liferayAccount as any,
+        );
+    }
+
     async main() {
         logger.warn(`[main] start processing`);
 
@@ -747,6 +806,7 @@ class KoroneikAccountSync {
             }
 
             for (const sync of [
+                this.syncAccountGroups,
                 this.syncAccountAddress,
                 this.syncKoroneikiAccountMembers,
             ]) {
@@ -765,5 +825,5 @@ class KoroneikAccountSync {
 const koroneikAccountSync = new KoroneikAccountSync();
 
 await koroneikAccountSync.getDXPAccounts();
-// await koroneikAccountSync.getKoroneikiAccounts();
+await koroneikAccountSync.getKoroneikiAccounts();
 await koroneikAccountSync.main();

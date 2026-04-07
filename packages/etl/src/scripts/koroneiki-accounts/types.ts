@@ -66,9 +66,20 @@ type ExternalLink = {
 
 export type KoroneikiAccount = {
     contactEmailAddress: string;
+    entitlements: {
+        entitlementDefinitionKey: string;
+        name: string;
+    }[];
     externalLinks: ExternalLink[];
     description: string;
+
     externalReferenceCode: string;
+
+    /**
+     * Virtual field
+     */
+    _isPartner?: boolean;
+
     key: string;
     name: string;
     parentAccountKey: string;
