@@ -60,37 +60,37 @@ export default function InvoicePaymentTemplate({
 }: Props) {
     return (
         <Layout preview="New Order Placed">
-            <Heading className="text-2xl font-bold text-heading m-0 mb-6">
+            <Heading className="text-2xl font-semibold text-heading m-0 mb-6">
                 New Order Placed
             </Heading>
 
             <Text className="text-base text-text m-0 mb-6">
                 A new order has been successfully placed by the{' '}
-                <span className="font-bold">{accountName}</span>. Below you can
-                find the order and account details for Finance review and
+                <span className="font-semibold">{accountName}</span>.<br />
+                Below you can find the order and account details for Finance review and
                 processing.
             </Text>
 
-            <Text className="text-base font-bold text-[#3f404b] m-0 mb-2 block">
-                Order Detail
+            <Text className="text-lg font-semibold text-heading m-0 mb-2 block">
+                Order Details
             </Text>
             <Hr className="border-[#e2e2e4] my-2 mb-4" />
 
             <Text className="text-sm m-0">
-                Order ID: <span className="font-bold">{orderId}</span>
+                Order ID: <span className="font-semibold">{orderId}</span>
             </Text>
             <Text className="text-sm m-0">
-                Order Date: <span className="font-bold">{orderDate}</span>
+                Order Date: <span className="font-semibold">{orderDate}</span>
             </Text>
             <Text className="text-sm m-0">
                 Order Payment Method:{' '}
-                <span className="font-bold">{orderPaymentMethod}</span>
+                <span className="font-semibold">{orderPaymentMethod}</span>
             </Text>
             <Text className="text-sm m-0 mb-4">
-                Order Status: <span className="font-bold">{orderStatus}</span>
+                Order Status: <span className="font-semibold">{orderStatus}</span>
             </Text>
 
-            <Section className="mb-4">
+            <Section className="mt-6 mb-8">
                 <Row>
                     <Column width="56">
                         <Img
@@ -117,44 +117,58 @@ export default function InvoicePaymentTemplate({
                 </Row>
             </Section>
 
-            <Text className="text-base font-bold text-[#3f404b] m-0 mt-4 block">
+            <Text className="text-lg font-semibold text-heading m-0 mt-4 block">
                 Order Summary
             </Text>
             <Hr className="border-[#e2e2e4] my-2 mb-4" />
-
-            <Section className="text-[#282934] text-sm mb-4">
+            
+            <Section>
+            <Section
+                className="text-heading text-base"
+                align="left"
+            >
                 <Row>
-                    <Column align="left">Net Price:</Column>
-                    <Column align="right" className="font-bold">
+                    <Column width="110" className="pr-4 pb-1 whitespace-nowrap" align="left">
+                        Net Price:
+                    </Column>
+                    <Column width="100" align="right" className="font-semibold whitespace-nowrap pb-1">
                         {netPriceFormatted}
                     </Column>
+                    <Column className="pl-2 pb-1 text-left"></Column>
                 </Row>
                 <Row>
-                    <Column align="left">VAT:</Column>
-                    <Column align="right" className="font-bold">
+                    <Column width="110" className="pr-4 pb-1 whitespace-nowrap" align="left">
+                        VAT:
+                    </Column>
+                    <Column width="100" align="right" className="font-semibold pb-1">
                         {taxAmountFormatted}
                     </Column>
+                    <Column className="pl-2 pb-1 text-left"></Column>
                 </Row>
                 <Row>
-                    <Column align="left">Total:</Column>
-                    <Column align="right" className="font-bold">
+                    <Column width="110" className="pr-4 pb-1 whitespace-nowrap" align="left">
+                        Total:
+                    </Column>
+                    <Column width="100" align="right" className="text-lg font-semibold pb-1">
                         {totalFormatted}
                     </Column>
-                    <Column width="100">
-                        <span className="bg-[#E6EBF5] text-[#1C3667] text-[11px] rounded px-2 py-0.5 ml-2">
+                    <Column className="pl-2 pb-1 text-left">
+                        <span className="bg-[#E6EBF5] text-[#1C3667] text-[11px] rounded px-2 py-0.5 whitespace-nowrap inline-block">
                             {licenseType}
                         </span>
                     </Column>
                 </Row>
                 <Row>
-                    <Column align="left">Exchange Rate:</Column>
-                    <Column align="right" className="font-bold">
+                    <Column width="110" className="pr-4 whitespace-nowrap" align="left">
+                        Exchange Rate:
+                    </Column>
+                    <Column width="100" align="right" className="font-semibold">
                         {exchangeRate}
                     </Column>
-                    <Column width="20">
+                    <Column className="pl-2 text-left">
                         <span
                             title={`Exchange rate applied on ${orderDate}`}
-                            className="border border-[#1C3667] text-[#1C3667] rounded-full text-[13px] font-bold w-4 h-4 text-center inline-block ml-1 cursor-help"
+                            className="border border-[#1C3667] text-[#1C3667] rounded-full text-[13px] font-semibold w-4 h-4 text-center inline-block cursor-help"
                         >
                             ?
                         </span>
@@ -162,52 +176,55 @@ export default function InvoicePaymentTemplate({
                 </Row>
             </Section>
 
-            <Text className="text-base font-bold text-[#3f404b] m-0 mt-6 block">
+            </Section>
+
+            <Text className="text-lg font-semibold text-heading m-0 mt-4 block">
                 Account Details
             </Text>
             <Hr className="border-[#e2e2e4] my-2 mb-4" />
 
-            <Text className="text-sm m-0">
-                Account Name: <span className="font-bold">{accountName}</span>
-            </Text>
-            <Text className="text-sm m-0">
-                Account ID: <span className="font-bold">{accountId}</span>
-            </Text>
-            <Text className="text-sm m-0">
-                Tax/VAT ID: <span className="font-bold">{taxId}</span>
-            </Text>
-            <Text className="text-sm m-0 mb-4">
-                Payment Terms:{' '}
-                <span className="font-bold">{paymentTermDescription}</span>
-            </Text>
 
-            <Text className="text-base font-bold text-[#3f404b] m-0 mt-6 block">
+            <Text className="text-heading text-base m-0">
+                Account Name: <span className="font-semibold">{accountName}</span>
+            </Text>
+            <Text className="text-heading text-base m-0">
+                Account ID: <span className="font-semibold">{accountId}</span>
+            </Text>
+            <Text className="text-heading text-base m-0">
+                Tax/VAT ID: <span className="font-semibold">{taxId}</span>
+            </Text>
+            <Text className="text-heading text-base m-0">
+                Payment Terms:{' '}
+                <span className="font-semibold">{paymentTermDescription}</span>
+            </Text> 
+
+            <Text className="text-lg font-semibold text-heading m-0 mt-6 block">
                 Billing Address
             </Text>
             <Hr className="border-[#e2e2e4] my-2 mb-4" />
 
-            <Text className="text-base font-bold text-[#3f404b] m-0 block">
+            <Text className="text-base font-semibold text-heading m-0 block">
                 {billingAddressName}
             </Text>
-            <Text className="text-sm text-[#54555F] m-0 mb-4">
+            <Text className="text-base text-text m-0 mb-4">
                 {billingAddressFormatted}
             </Text>
 
-            <Text className="text-base font-bold text-[#3f404b] m-0 mt-0 block">
+            <Text className="text-lg font-semibold text-heading m-0 mt-0 block">
                 Billing Contact
             </Text>
             <Hr className="border-[#e2e2e4] my-2 mb-4" />
 
-            <Text className="text-sm m-0">
+            <Text className="text-heading text-base m-0">
                 Contact Person:{' '}
-                <span className="font-bold">{billingAddressName}</span>
+                <span className="font-semibold">{billingAddressName}</span>
             </Text>
-            <Text className="text-sm m-0">
-                E-mail: <span className="font-bold">{emailAddress}</span>
+            <Text className="text-heading text-base m-0">
+                E-mail: <span className="font-semibold">{emailAddress}</span>
             </Text>
-            <Text className="text-sm m-0 mb-4">
+            <Text className="text-heading text-base m-0 mb-4">
                 Phone Number:{' '}
-                <span className="font-bold">{billingAddressPhone}</span>
+                <span className="font-semibold">{billingAddressPhone}</span>
             </Text>
         </Layout>
     );
@@ -230,7 +247,7 @@ InvoicePaymentTemplate.PreviewProps = {
     orderPaymentMethod: 'Credit Card',
     orderStatus: 'Completed',
     paymentTermDescription: 'Net 30',
-    productThumbnail: 'https://github.com/liferay.png',
+    productThumbnail: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     productType: 'SaaS',
     taxAmountFormatted: '$10.00',
     taxId: '123456789',

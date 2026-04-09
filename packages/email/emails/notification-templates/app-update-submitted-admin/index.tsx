@@ -9,6 +9,7 @@ import {
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     productType: string;
@@ -27,12 +28,12 @@ export default function AppUpdateSubmittedAdmin({
 }: Props) {
     return (
         <Layout preview="Updated App Submission Pending Your Review">
-            <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
+            <Heading className="text-[32px] font-bold text-heading mb-6 text-left">
                 Updated App Submission Pending Your Review
             </Heading>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-6">
+                <Text className="text-base text-text m-0">
                     A publisher has submitted an update to an existing app on
                     the marketplace. Please review the updated submission in the
                     admin panel.
@@ -51,24 +52,28 @@ export default function AppUpdateSubmittedAdmin({
                         />
                     </Column>
                     <Column className="pl-3">
-                        <Text className="text-[28px] font-semibold text-heading m-0">
+                        <Text className="text-[23px] font-semibold text-heading m-0">
                             {productName}
                         </Text>
+
                         <Row className="mt-1">
-                            <Column>
-                                <Text className="text-base text-text m-0 pr-4">
+                            <Column
+                                style={{
+                                    display: 'inline-block',
+                                    width: 'auto',
+                                }}>
+                                <Text className="text-base text-text m-0 pr-3">
                                     {catalogName}
                                 </Text>
                             </Column>
-                            <Column>
-                                <Text className="text-base text-text m-0 pr-4">
-                                    {catalogName}
-                                </Text>
-                            </Column>
-                            <Column>
-                                <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
+                            <Column
+                            style={{
+                                    display: 'inline-block',
+                                    width: 'auto',
+                                }}>
+                                <Text className="text-[11px] text-center font-semibold px-[8px] m-0 rounded bg-gray-200">
                                     {productType}
-                                </div>
+                                </Text>
                             </Column>
                         </Row>
                     </Column>
@@ -76,7 +81,7 @@ export default function AppUpdateSubmittedAdmin({
             </Section>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-4">
+                <Text className="text-base text-text m-0">
                     Once approved, the updated app will go live, replacing the
                     previous version on the marketplace.
                 </Text>
@@ -87,7 +92,7 @@ export default function AppUpdateSubmittedAdmin({
 
             <Section className="mb-6">
                 <Link
-                    href={`https://marketplace.liferay.com/administrator-dashboard#/apps/${cpDefinitionProductId}`}
+                    href={`${LIFERAY_HOME}/administrator-dashboard#/apps/${cpDefinitionProductId}`}
                     className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Review App
@@ -102,5 +107,5 @@ AppUpdateSubmittedAdmin.PreviewProps = {
     catalogName: 'Liferay, Inc.',
     productName: 'Liferay',
     cpDefinitionProductId: '123456789',
-    productThumbnail: 'https://github.com/liferay.png',
+    productThumbnail: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
 } as Props;

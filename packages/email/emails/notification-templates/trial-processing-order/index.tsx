@@ -13,10 +13,6 @@ export default function TrialProcessingOrder({
 }: Props) {
     return (
         <Layout preview="Trial Processing Order">
-            <Section className="mb-6">
-                {/* Spacing handled by layout */}
-            </Section>
-
             <Section>
                 <Text className="text-base text-text mb-4">
                     Dear{' '}

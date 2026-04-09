@@ -115,6 +115,6 @@ ProductFeedback.PreviewProps = {
     marketplaceHost: 'https://marketplace-uat.liferay.com',
     orderId: '42168052',
     productName: 'Content Marketing Platform',
-    productThumbnail: 'https://github.com/liferay.png',
+    productThumbnail: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     productType: 'Beta',
 } as Props;

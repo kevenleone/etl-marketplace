@@ -15,54 +15,52 @@ export default function NextStepsTemplateFree({
 }: Props) {
     return (
         <Layout preview="Next Steps">
-            <Section className="text-center mb-[35px] mt-[35px]">
-                {/* Logo and Next Steps are handled in content area in original but Logo is in header in Layout.
-                    Original: Logo, then Next Steps.
-                    Layout: key parts match.
-                 */}
-            </Section>
-
             <Heading
-                as="h2"
-                className="text-[30px] font-bold m-0 mb-4 mt-[2.5rem] text-center text-black"
+                className="text-[32px] font-bold text-heading mb-6 text-left"
             >
                 Next Steps
             </Heading>
 
-            <Section className="px-[7rem] mb-[2.5rem] text-center">
-                <Text className="text-text text-center m-0 mb-4">
+            <Section className="mb-6">
+                <Text className="text-base text-text m-0 mb-4">
                     Congratulations on the purchase of{' '}
-                    <b>{getAppInformationProductName}</b>!
+                    <span className="font-bold">{getAppInformationProductName}</span>!
                 </Text>
-                <Text className="text-text text-center m-0 mb-4">
+                <Text className="text-base text-text m-0 mb-4">
                     Your app is ready for download.
                 </Text>
-                <Text className="text-text text-center m-0 mb-4">
+                <Text className="text-base text-text m-0 mb-4">
                     Your Order ID is:{' '}
-                    <b className="text-black">{getAppInformationOrderId}</b>
+                    <span className="font-bold">{getAppInformationOrderId}</span>
                 </Text>
-                <Text className="text-text text-center m-0">
+                <Text className="text-base text-text m-0">
                     To find your app download, find your Order ID and choose
                     Manage, then Download LPKG.
                 </Text>
             </Section>
 
-            <Section className="text-center mb-[2.5rem]">
+            <Section className="mb-6">
                 <Link
                     href={getAppInformationDashboardLink}
-                    className="bg-white border-2 border-black text-black font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem]"
+                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 mb-14 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
                 </Link>
             </Section>
 
-            <Section className="text-center px-[7rem] py-1">
-                <Link
-                    href="https://learn.liferay.com"
-                    className="text-primary font-bold text-xl no-underline"
-                >
-                    Learn more about App Configuration
-                </Link>
+            <Section className="bg-[#F7F7F8] rounded-lg p-6 mb-6">
+                <Text className="text-base font-semibold text-heading m-0 mb-2">
+                    Do you need help?
+                </Text>
+                <Text className="text-xs text-text m-0">
+                    If you have any questions, please{' '}
+                    <Link
+                        href="https://learn.liferay.com"
+                        className="font-semibold text-primary no-underline"
+                    >
+                        Learn more about App Configuration
+                    </Link>
+                </Text>
             </Section>
         </Layout>
     );

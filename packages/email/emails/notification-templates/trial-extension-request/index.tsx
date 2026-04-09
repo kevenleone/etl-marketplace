@@ -1,6 +1,7 @@
 import { Link, Section, Text } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     trialExtensionRequestAuthorFirstName: string;
@@ -15,8 +16,6 @@ export default function TrialExtensionRequest({
 }: Props) {
     return (
         <Layout preview="Trial Extension Requested">
-            <Section className="mb-6"></Section>
-
             <Section>
                 <Text className="text-base text-text mb-4">
                     Dear <span className="font-bold">SSA Admin</span>,
@@ -48,10 +47,10 @@ export default function TrialExtensionRequest({
                     The Liferay Marketplace Team
                 </Text>
 
-                <Section className="text-center">
+                <Section className="text-left">
                     <Link
-                        href="http://localhost:8080/web/marketplace/ssa-dashboard"
-                        className="bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem]"
+                        href={`${LIFERAY_HOME}/web/marketplace/ssa-dashboard`}
+                        className="bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block"
                     >
                         Go to Dashboard
                     </Link>

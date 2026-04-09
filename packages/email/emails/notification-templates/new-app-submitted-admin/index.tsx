@@ -9,6 +9,7 @@ import {
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     catalogName: string;
@@ -27,12 +28,12 @@ export default function NewAppSubmittedAdmin({
 }: Props) {
     return (
         <Layout preview="New App Submission Pending Approval">
-            <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
+            <Heading className="text-[32px] font-bold text-heading mb-6 text-left">
                 New App Submission Pending Approval
             </Heading>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-6">
+                <Text className="text-base text-text m-0">
                     A publisher has submitted a new app to the marketplace.
                     Please review the app details in the admin panel and decide
                     whether to approve or reject the submission.
@@ -51,24 +52,27 @@ export default function NewAppSubmittedAdmin({
                         />
                     </Column>
                     <Column className="pl-3">
-                        <Text className="text-[28px] font-semibold text-heading m-0">
+                        <Text className="text-[23px] font-semibold text-heading m-0">
                             {productName}
                         </Text>
                         <Row className="mt-1">
-                            <Column>
-                                <Text className="text-base text-text m-0 pr-4">
+                            <Column
+                                style={{
+                                    display: 'inline-block',
+                                    width: 'auto',
+                                }}>
+                                <Text className="text-base text-text m-0 pr-3">
                                     {catalogName}
                                 </Text>
                             </Column>
-                            <Column>
-                                <Text className="text-base text-text m-0 pr-4">
-                                    {catalogName}
-                                </Text>
-                            </Column>
-                            <Column>
-                                <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
+                            <Column
+                            style={{
+                                    display: 'inline-block',
+                                    width: 'auto',
+                                }}>
+                                <Text className="text-[11px] text-center font-semibold px-[8px] m-0 rounded bg-gray-200">
                                     {productType}
-                                </div>
+                                </Text>
                             </Column>
                         </Row>
                     </Column>
@@ -87,7 +91,7 @@ export default function NewAppSubmittedAdmin({
 
             <Section className="mb-6">
                 <Link
-                    href={`https://marketplace.liferay.com/administrator-dashboard#/apps/${cpDefinitionProductId}`}
+                    href={`${LIFERAY_HOME}/administrator-dashboard#/apps/${cpDefinitionProductId}`}
                     className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Review App
@@ -101,6 +105,6 @@ NewAppSubmittedAdmin.PreviewProps = {
     catalogName: 'Liferay, Inc.',
     cpDefinitionProductId: '123456789',
     productName: 'Liferay',
-    productThumbnail: 'https://github.com/liferay.png',
+    productThumbnail: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     productType: 'SaaS',
 } as Props;

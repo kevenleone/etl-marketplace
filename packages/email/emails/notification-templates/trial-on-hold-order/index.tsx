@@ -13,7 +13,6 @@ export default function TrialOnHoldOrder({
 }: Props) {
     return (
         <Layout preview="Trial On Hold Order">
-            <Section className="mb-6"></Section>
 
             <Section>
                 <Text className="text-base text-text mb-4">

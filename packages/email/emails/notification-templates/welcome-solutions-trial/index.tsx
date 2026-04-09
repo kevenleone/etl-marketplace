@@ -17,8 +17,8 @@ export default function WelcomeSolutionsTrial({
 }: Props) {
     return (
         <Layout preview="Welcome Solutions Trial">
-            <Section className="mb-6 text-center">
-                <Heading className="text-[30px] font-bold text-black m-0 mt-[2.5rem] mb-4 text-center">
+            <Section className="mb-6 text-left">
+                <Heading className="text-[30px] font-bold text-black m-0 text-left">
                     Your solution is being provisioned
                 </Heading>
             </Section>
@@ -40,7 +40,7 @@ export default function WelcomeSolutionsTrial({
 
                 <Text className="text-base text-text mb-4">
                     Your Order ID is:{' '}
-                    <span className="font-bold text-black">
+                    <span className="font-bold">
                         {commerceOrderId}
                     </span>
                 </Text>
