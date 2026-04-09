@@ -10,6 +10,7 @@ import {
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     appPrice: string;
@@ -132,7 +133,7 @@ export default function PaymentApproved({
 
             <Section className="mb-12">
                 <Link
-                    href={`https://marketplace.liferay.com/customer-dashboard#/order/${orderId}`}
+                    href={`${LIFERAY_HOME}/customer-dashboard#/order/${orderId}`}
                     className="bg-primary border border-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     {buttonText}
@@ -165,7 +166,7 @@ PaymentApproved.PreviewProps = {
     livePreview: true,
     orderId: '123456789',
     productName: 'Customer Data Platform',
-    productThumbnail: 'https://github.com/liferay.png',
+    productThumbnail: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     subtotalFormatted: '$200.00',
     taxAmountFormatted: '$44.00',
     totalFormatted: '$261.00',

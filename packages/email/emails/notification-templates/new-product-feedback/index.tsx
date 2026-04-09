@@ -31,44 +31,43 @@ export default function NewProductFeedbackNotification({
 }: Props) {
     return (
         <Layout preview="New Product Feedback Notification">
-            <Section className="mb-6"></Section>
 
             <Section>
                 <Text className="text-base text-text mb-4">
-                    Dear <span className="font-bold">Admin</span>,
+                    Dear <span className="font-semibold">Admin</span>,
                 </Text>
 
                 <Text className="text-base text-text mb-4">
                     A new feedback has been submitted for{' '}
-                    <span className="font-bold">{productName}</span>.
+                    <span className="font-semibold">{productName}</span>.
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    Name: <span className="font-bold">{fullName}</span>
+                    Name: <span className="font-semibold">{fullName}</span>
                     <br />
-                    Email: <span className="font-bold">{emailAddress}</span>
+                    Email: <span className="font-semibold">{emailAddress}</span>
                     <br />
-                    Company: <span className="font-bold">{companyName}</span>
+                    Company: <span className="font-semibold">{companyName}</span>
                     <br />
-                    Job Title: <span className="font-bold">{jobTitle}</span>
+                    Job Title: <span className="font-semibold">{jobTitle}</span>
                     <br />
                     Rating - Ease of Use:{' '}
-                    <span className="font-bold">{ratingEaseOfUse}</span>
+                    <span className="font-semibold">{ratingEaseOfUse}</span>
                     <br />
                     Rating - Satisfaction:{' '}
-                    <span className="font-bold">{ratingSatisfaction}</span>
+                    <span className="font-semibold">{ratingSatisfaction}</span>
                     <br />
                     Rating - Usefulness:{' '}
-                    <span className="font-bold">{ratingUsefulness}</span>
+                    <span className="font-semibold">{ratingUsefulness}</span>
                     <br />
                     Suggestion - Features:{' '}
-                    <span className="font-bold">{suggestionFeatures}</span>
+                    <span className="font-semibold">{suggestionFeatures}</span>
                     <br />
                     Suggestion - Improvements:{' '}
-                    <span className="font-bold">{suggestionImprovements}</span>
+                    <span className="font-semibold">{suggestionImprovements}</span>
                     <br />
                     Suggestion - Satisfaction:{' '}
-                    <span className="font-bold">{suggestionSatisfaction}</span>
+                    <span className="font-semibold">{suggestionSatisfaction}</span>
                 </Text>
 
                 <Text className="text-base text-text mb-8">

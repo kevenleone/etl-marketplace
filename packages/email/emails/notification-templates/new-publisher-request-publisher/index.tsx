@@ -23,13 +23,13 @@ export default function NewPublisherRequestPublisher({
 }: Props) {
     return (
         <Layout preview="Publisher Request Received">
-            <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
+            <Heading className="text-[32px] font-bold text-heading mb-6 text-left">
                 Thank you for requesting to become a publisher on the
                 marketplace.
             </Heading>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-6">
+                <Text className="text-base text-text m-0">
                     Your publisher request is currently under review by Liferay.
                     Once approved, you'll be able to submit and manage your apps
                     directly from your publisher account.
@@ -48,7 +48,7 @@ export default function NewPublisherRequestPublisher({
                         />
                     </Column>
                     <Column className="pl-3">
-                        <Text className="text-[28px] font-semibold text-heading m-0">
+                        <Text className="text-[23px] font-semibold text-heading m-0">
                             {publisherName}
                         </Text>
                         <Text className="text-base text-text m-0">
@@ -90,6 +90,6 @@ export default function NewPublisherRequestPublisher({
 
 NewPublisherRequestPublisher.PreviewProps = {
     catalogName: 'Liferay, Inc.',
-    publisherImage: 'https://github.com/liferay.png',
+    publisherImage: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     publisherName: 'Liferay, Inc.',
 } as Props;

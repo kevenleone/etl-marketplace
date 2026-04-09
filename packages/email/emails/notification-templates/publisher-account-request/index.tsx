@@ -12,7 +12,7 @@ export default function PublisherAccountRequest({
     return (
         <Layout preview="Invite Members">
             <Section className="mb-[40px]">
-                <Heading className="text-[28px] font-bold text-heading mb-6 text-left">
+                <Heading className="text-[23px] font-bold text-heading mb-6 text-left">
                     New Publisher Account Request
                 </Heading>
 
@@ -25,10 +25,10 @@ export default function PublisherAccountRequest({
                 </Text>
             </Section>
 
-            <Section className="mb-[18px]">
+            <Section className="mb-6">
                 <Link
                     href={reviewSubmissionLink}
-                    className="bg-primary text-white rounded-lg text-base font-semibold no-underline inline-block py-2 px-6 w-[175px] text-center"
+                    className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Review Submission
                 </Link>

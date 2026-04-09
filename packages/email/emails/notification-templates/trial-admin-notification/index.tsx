@@ -18,10 +18,7 @@ export default function TrialAdminNotification({
     return (
         <Layout
             preview="Trial Admin Notification"
-            style={{ maxWidth: '640px' }}
         >
-            <Section className="mb-6"></Section>
-
             <Section>
                 <Text className="text-base text-text mb-4">
                     Dear <span className="font-bold">SSA Admin</span>,

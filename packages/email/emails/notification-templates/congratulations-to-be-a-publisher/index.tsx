@@ -10,6 +10,7 @@ import {
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     catalogName: string;
@@ -26,23 +27,23 @@ export default function CongratulationsToBeAPublisher({
 }: Props) {
     return (
         <Layout preview="Congratulations on Becoming a Publisher">
-            <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
+            <Heading className="text-[32px] font-bold text-heading mb-6 text-left">
                 Congratulations!
             </Heading>
 
             <Section className="mb-6">
                 <Row>
-                    <Column width="58">
+                    <Column width="56">
                         <Img
                             src={publisherImage}
-                            width="58"
-                            height="58"
+                            width="56"
+                            height="56"
                             alt="App Icon"
                             className="rounded-full block"
                         />
                     </Column>
                     <Column className="pl-3">
-                        <Text className="text-[28px] font-semibold text-heading m-0">
+                        <Text className="text-[23px] font-semibold text-heading leading-7 m-0">
                             {publisherName}
                         </Text>
                         <Text className="text-base text-text m-0">
@@ -53,8 +54,8 @@ export default function CongratulationsToBeAPublisher({
             </Section>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-4">
-                    Dear <span className="font-bold">{publisherName}</span>
+                <Text className="text-base text-text m-0">
+                    Dear <span className="text-heading font-semibold">{publisherName}</span>,
                 </Text>
                 <Text className="text-base text-text m-0">
                     Congratulations! Your application to become a publisher on
@@ -65,10 +66,10 @@ export default function CongratulationsToBeAPublisher({
             </Section>
 
             <Section>
-                <Text className="text-base text-text font-bold m-0">
+                <Text className="text-base text-lg text-heading font-semibold m-0">
                     What's next?
                 </Text>
-                <Hr className="border-border my-4" />
+                <Hr className="border-border mt-2 mb-4" />
             </Section>
 
             <Section className="mb-4">
@@ -77,7 +78,7 @@ export default function CongratulationsToBeAPublisher({
                 </Text>
 
                 <div className="mb-6">
-                    <Text className="text-base text-text font-bold m-0 mb-1">
+                    <Text className="text-base text-text font-semibold text-heading m-0 mb-1">
                         1. Log in to your Publisher Account
                     </Text>
                     <Text className="text-base text-text m-0 mb-4">
@@ -86,7 +87,7 @@ export default function CongratulationsToBeAPublisher({
                     </Text>
 
                     <Link
-                        href={`https://marketplace.liferay.com/publisher-dashboard#/app/${productId}`}
+                        href={`${LIFERAY_HOME}/publisher-dashboard#/app/${productId}`}
                         className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                     >
                         Go to Dashboard
@@ -94,7 +95,7 @@ export default function CongratulationsToBeAPublisher({
                 </div>
 
                 <div className="mb-6">
-                    <Text className="text-base text-text font-bold m-0 mb-1">
+                    <Text className="text-base text-text font-semibold text-heading m-0 mb-1">
                         2. Prepare your Application
                     </Text>
                     <Text className="text-base text-text m-0">
@@ -111,7 +112,7 @@ export default function CongratulationsToBeAPublisher({
                 </div>
 
                 <div className="mb-6">
-                    <Text className="text-base text-text font-bold m-0 mb-1">
+                    <Text className="text-base text-text font-semibold text-heading m-0 mb-1">
                         3. Submit Your App
                     </Text>
                     <Text className="text-base text-text m-0">
@@ -122,7 +123,7 @@ export default function CongratulationsToBeAPublisher({
                 </div>
 
                 <div className="mb-6">
-                    <Text className="text-base text-text font-bold m-0 mb-1">
+                    <Text className="text-base text-text font-semibold text-heading m-0 mb-1">
                         4. Review Process
                     </Text>
                     <Text className="text-base text-text m-0">
@@ -134,10 +135,10 @@ export default function CongratulationsToBeAPublisher({
             </Section>
 
             <Section>
-                <Text className="text-base text-text font-bold m-0 mb-1">
+                <Text className="text-base text-text font-semibold text-heading m-0 mb-1">
                     Help Publisher
                 </Text>
-                <Hr className="border-border my-4" />
+                <Hr className="border-border mt-2 mb-4" />
                 <Text className="text-base text-text m-0 mb-4">
                     We're here to support you at every step. For any questions
                     or assistance with your application, contact our{' '}
@@ -145,8 +146,8 @@ export default function CongratulationsToBeAPublisher({
                     clicking the button below.
                 </Text>
                 <Link
-                    href={`https://marketplace.liferay.com/publisher-dashboard#/app/${productId}`}
-                    className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
+                    href={`${LIFERAY_HOME}/publisher-dashboard#/app/${productId}`}
+                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Support
                 </Link>
@@ -169,6 +170,6 @@ export default function CongratulationsToBeAPublisher({
 CongratulationsToBeAPublisher.PreviewProps = {
     catalogName: 'Liferay, Inc.',
     productId: '123456789',
-    publisherImage: 'https://github.com/liferay.png',
+    publisherImage: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     publisherName: 'Liferay, Inc.',
 } as Props;

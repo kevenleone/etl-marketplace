@@ -1,6 +1,7 @@
 import { Link, Section, Text } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     name: string;
@@ -15,8 +16,6 @@ export default function TrialCompletedOrder({
 }: Props) {
     return (
         <Layout preview="Trial Completed Order">
-            <Section className="mb-6"></Section>
-
             <Section>
                 <Text className="text-base text-text mb-4">
                     Dear <span className="font-bold">{name}</span>,
@@ -50,16 +49,16 @@ export default function TrialCompletedOrder({
                     <br />
                 </Text>
 
-                <Section className="mt-5 text-center">
+                <Section className="mt-5 text-left mb-14">
                     <Link
                         href={url}
-                        className="bg-primary text-white font-semibold py-3 px-6 rounded-lg text-base no-underline inline-block items-center justify-center min-w-[150px] mr-3"
+                        className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block mr-4"
                     >
                         Access your solution
                     </Link>
                     <Link
-                        href="http://localhost:8080/web/marketplace/customer-dashboard/#/solutions"
-                        className="bg-[#edf3fe] text-primary font-semibold py-3 px-6 rounded-lg text-base no-underline inline-block items-center justify-center min-w-[150px]"
+                        href={`${LIFERAY_HOME}/web/marketplace/customer-dashboard/#/solutions`}
+                        className="bg-white border border-primary text-primary font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                     >
                         Go to Dashboard
                     </Link>

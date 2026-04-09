@@ -55,7 +55,7 @@ export const Layout = ({ children, preview }: LayoutProps) => {
                                 className="inline-block align-middle mr-1.5"
                                 height="28"
                                 alt="Liferay Logo"
-                                src="https://cdn.brandfetch.io/idV44WjG0L/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1668014214259"
+                                src="https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28"
                                 width="28"
                             />
 

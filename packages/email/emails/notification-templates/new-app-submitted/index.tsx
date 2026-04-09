@@ -9,6 +9,7 @@ import {
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     createDate: string;
@@ -66,7 +67,7 @@ export default function NewAppSubmitted({
 
             <Section className="mb-6 text-center">
                 <Link
-                    href={dashboardURL}
+                    href={LIFERAY_HOME}
                     className="bg-primary text-white font-bold py-3 px-6 rounded-lg text-base no-underline inline-block"
                 >
                     Go to app
@@ -79,7 +80,6 @@ export default function NewAppSubmitted({
 NewAppSubmitted.PreviewProps = {
     catalogName: 'Liferay, Inc.',
     createDate: 'Jan 1, 2023',
-    dashboardURL: 'https://marketplace.liferay.com',
     productName: 'Liferay',
-    productThumbnail: 'https://github.com/liferay.png',
+    productThumbnail: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
 } as Props;

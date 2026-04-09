@@ -31,7 +31,6 @@ export default function NewCMPFeedbackNotification({
 }: Props) {
     return (
         <Layout preview="New Product Feedback Notification">
-            <Section className="mb-6"></Section>
 
             <Section>
                 <Text className="text-base text-text mb-4">
@@ -40,31 +39,31 @@ export default function NewCMPFeedbackNotification({
 
                 <Text className="text-base text-text mb-4">
                     A new feedback has been submitted for{' '}
-                    <span className="font-bold">AI Hub</span>.
+                    <span className="font-semibold">AI Hub</span>.
                 </Text>
 
                 <Text className="text-base text-text mb-4">
-                    Administrator Email Address: <span className="font-bold">{administratorEmailAddress}</span>
+                    Administrator Email Address: <span className="font-semibold">{administratorEmailAddress}</span>
                     <br />
-                    AI Hub Account Name: <span className="font-bold">{aiHubAccountName}</span>
+                    AI Hub Account Name: <span className="font-semibold">{aiHubAccountName}</span>
                     <br />
-                    Business Email Address: <span className="font-bold">{businessEmailAddress}</span>
+                    Business Email Address: <span className="font-semibold">{businessEmailAddress}</span>
                     <br />
-                    Company Name: <span className="font-bold">{companyName}</span>
+                    Company Name: <span className="font-semibold">{companyName}</span>
                     <br />
-                    Country: <span className="font-bold">{country}</span>
+                    Country: <span className="font-semibold">{country}</span>
                     <br />
-                    Extension: <span className="font-bold">{extension}</span>
+                    Extension: <span className="font-semibold">{extension}</span>
                     <br />
-                    Full Name: <span className="font-bold">{fullName}</span>
+                    Full Name: <span className="font-semibold">{fullName}</span>
                     <br />
-                    International Code: <span className="font-bold">{intlCode}</span>
+                    International Code: <span className="font-semibold">{intlCode}</span>
                     <br />
-                    Job Title: <span className="font-bold">{jobTitle}</span>
+                    Job Title: <span className="font-semibold">{jobTitle}</span>
                     <br />
-                    Phone Number: <span className="font-bold">{phoneNumber}</span>
+                    Phone Number: <span className="font-semibold">{phoneNumber}</span>
                     <br />
-                    Purpose: <span className="font-bold">{purpose}</span>
+                    Purpose: <span className="font-semibold">{purpose}</span>
                 </Text>
 
                 <Text className="text-base text-text mb-8">

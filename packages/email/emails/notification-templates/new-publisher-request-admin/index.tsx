@@ -9,6 +9,7 @@ import {
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     catalogName: string;
@@ -23,12 +24,12 @@ export default function NewPublisherRequestAdmin({
 }: Props) {
     return (
         <Layout preview="New Publisher Request Pending Approval">
-            <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
+            <Heading className="text-[32px] font-bold text-heading mb-6 text-left">
                 New Publisher Request Pending Approval
             </Heading>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-6">
+                <Text className="text-base text-text m-0">
                     A user has requested to become a publisher on the
                     marketplace. Please review the request in the admin panel
                     and decide whether to approve or reject it.
@@ -47,7 +48,7 @@ export default function NewPublisherRequestAdmin({
                         />
                     </Column>
                     <Column className="pl-3">
-                        <Text className="text-[28px] font-semibold text-heading m-0">
+                        <Text className="text-[23px] font-semibold text-heading m-0">
                             {publisherName}
                         </Text>
                         <Text className="text-base text-text m-0">
@@ -66,7 +67,7 @@ export default function NewPublisherRequestAdmin({
 
             <Section className="mb-6">
                 <Link
-                    href="https://marketplace.liferay.com/administrator-dashboard#/publisher-request"
+                    href={`${LIFERAY_HOME}/administrator-dashboard#/publisher-request`}
                     className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Review Publisher Request
@@ -78,6 +79,6 @@ export default function NewPublisherRequestAdmin({
 
 NewPublisherRequestAdmin.PreviewProps = {
     catalogName: 'Liferay, Inc.',
-    publisherImage: 'https://github.com/liferay.png',
+    publisherImage: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     publisherName: 'Liferay, Inc.',
 } as Props;

@@ -1,6 +1,7 @@
 import { Heading, Link, Section, Text } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     commerceOrderId: string;
@@ -11,27 +12,24 @@ export default function NextStepsTemplatePaidOrTrial({
 }: Props) {
     return (
         <Layout preview="Next Steps Paid DXP">
-            <Section className="text-center mb-[35px] mt-[35px]"></Section>
-
             <Heading
-                as="h2"
-                className="text-[30px] font-bold m-0 mb-4 mt-[2.5rem] text-center text-black"
+                className="text-[32px] font-bold text-heading mb-6 text-left"
             >
                 Next Steps
             </Heading>
 
-            <Section className="px-[7rem] mb-[2.5rem] text-center">
-                <Text className="text-text text-center m-0 mb-4">
+            <Section className="mb-6">
+                <Text className="text-base text-text m-0 mb-4">
                     Congratulations on your recent purchase!
                 </Text>
-                <Text className="text-text text-center m-0 mb-4">
+                <Text className="text-base text-text m-0 mb-4">
                     Before deploying to your DXP instance, you'll need to create
                     a license for your app.
                 </Text>
-                <Text className="text-text text-center m-0 mb-4">
+                <Text className="text-base text-text m-0 mb-4">
                     Your Order ID is: <strong>{commerceOrderId}</strong>
                 </Text>
-                <Text className="text-text text-center m-0">
+                <Text className="text-base text-text m-0">
                     Click <strong>Continue Configuration</strong> below to
                     license your app, or visit your Dashboard to locate your
                     Order ID and create a license. Be sure to have your instance
@@ -39,28 +37,34 @@ export default function NextStepsTemplatePaidOrTrial({
                 </Text>
             </Section>
 
-            <Section className="text-center mb-[2.5rem]">
+            <Section className="text-left mb-14">
                 <Link
-                    href="http://localhost:8080/web/marketplace/customer-dashboard"
-                    className="bg-white border text-black border-black font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem] mr-4"
+                    href={`${LIFERAY_HOME}/web/marketplace/customer-dashboard`}
+                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 mr-4 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
                 </Link>
                 <Link
                     href="https://console.marketplacedemo.liferay.sh/projects"
-                    className="bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem]"
+                    className="bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block"
                 >
                     Continue Configuration
                 </Link>
             </Section>
 
-            <Section className="text-center px-[7rem] py-1">
-                <Link
-                    href="https://learn.liferay.com"
-                    className="text-primary font-bold text-xl no-underline"
-                >
-                    Learn more about App Configuration
-                </Link>
+            <Section className="bg-[#F7F7F8] rounded-lg p-6 mb-6">
+                <Text className="text-base font-semibold text-heading m-0 mb-2">
+                    Do you need help?
+                </Text>
+                <Text className="text-xs text-text m-0">
+                    If you have any questions, please{' '}
+                    <Link
+                        href="https://learn.liferay.com"
+                        className="font-semibold text-primary no-underline"
+                    >
+                        Learn more about App Configuration
+                    </Link>
+                </Text>
             </Section>
         </Layout>
     );

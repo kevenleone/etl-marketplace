@@ -9,6 +9,7 @@ import {
 } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     catalogName: string;
@@ -27,12 +28,12 @@ export default function AppUpdateSubmittedPublisher({
 }: Props) {
     return (
         <Layout preview="Your App Update is Under Review">
-            <Heading className="text-[32px] font-bold text-heading mb-6 text-center">
+            <Heading className="text-[32px] font-bold text-heading mb-6 text-left">
                 Your App Update is Under Review
             </Heading>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-6">
+                <Text className="text-base text-text m-0">
                     Your submission is currently under review by Liferay's Team.
                     Once the process is complete, the app will be immediately
                     published on the Marketplace. Meanwhile, any information or
@@ -52,19 +53,27 @@ export default function AppUpdateSubmittedPublisher({
                         />
                     </Column>
                     <Column className="pl-3">
-                        <Text className="text-[28px] font-semibold text-heading m-0">
+                        <Text className="text-[23px] font-semibold text-heading m-0">
                             {productName}
                         </Text>
                         <Row className="mt-1">
-                            <Column>
-                                <Text className="text-base text-text m-0 pr-4">
+                            <Column
+                                style={{
+                                    display: 'inline-block',
+                                    width: 'auto',
+                                }}>
+                                <Text className="text-base text-text m-0 pr-3">
                                     {catalogName}
                                 </Text>
                             </Column>
-                            <Column>
-                                <div className="text-[11px] font-semibold h-[20px] w-[44px] text-center rounded bg-gray-200">
+                            <Column
+                            style={{
+                                    display: 'inline-block',
+                                    width: 'auto',
+                                }}>
+                                <Text className="text-[11px] text-center font-semibold px-[8px] m-0 rounded bg-gray-200">
                                     {productType}
-                                </div>
+                                </Text>
                             </Column>
                         </Row>
                     </Column>
@@ -72,7 +81,7 @@ export default function AppUpdateSubmittedPublisher({
             </Section>
 
             <Section className="mb-6">
-                <Text className="text-base text-text m-0 mb-4">
+                <Text className="text-base text-text m-0">
                     You will be notified by email once a decision has been made:{' '}
                     <span className="font-bold">
                         this process may take up to 3 business days.
@@ -85,7 +94,7 @@ export default function AppUpdateSubmittedPublisher({
 
             <Section className="mb-12">
                 <Link
-                    href={`https://marketplace.liferay.com/publisher-dashboard#/app/${cpDefinitionProductId}`}
+                    href={`${LIFERAY_HOME}/publisher-dashboard#/app/${cpDefinitionProductId}`}
                     className="bg-white border border-primary text-primary font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
@@ -114,6 +123,6 @@ AppUpdateSubmittedPublisher.PreviewProps = {
     catalogName: 'Liferay, Inc.',
     cpDefinitionProductId: '123456789',
     productName: 'Liferay',
-    productThumbnail: 'https://github.com/liferay.png',
+    productThumbnail: 'https://marketplace.liferay.com/documents/d/marketplace/liferay-logo-28',
     productType: 'SaaS',
 } as Props;

@@ -1,6 +1,7 @@
 import { Link, Section, Text } from '@react-email/components';
 
 import Layout from '../../layout/Layout';
+import { LIFERAY_HOME } from '../../constants';
 
 type Props = {
     trialCreatorFirstName: string;
@@ -13,10 +14,6 @@ export default function TrialExpiringOrder({
 }: Props) {
     return (
         <Layout preview="Trial Expiring Order">
-            <Section className="mb-6">
-                {/* Empty div in original, but spacing might be needed */}
-            </Section>
-
             <Section>
                 <Text className="text-base text-text mb-4">
                     Dear{' '}
@@ -39,12 +36,14 @@ export default function TrialExpiringOrder({
                     Liferay Marketplace Team
                 </Text>
 
-                <Link
-                    href="http://localhost:8080/customer-dashboard/#/solutions"
-                    className="bg-highlight text-primary font-semibold text-base py-3 px-6 rounded-lg no-underline inline-block text-center min-w-[150px]"
-                >
-                    Go to Dashboard
-                </Link>
+                <Section className="text-left">
+                    <Link
+                        href={`${LIFERAY_HOME}/customer-dashboard/#/solutions`}
+                        className="bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block"
+                    >
+                        Go to Dashboard
+                    </Link>
+                </Section>
             </Section>
         </Layout>
     );
