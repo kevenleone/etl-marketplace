@@ -38,7 +38,7 @@ export default function CloudNextStepsTemplate({
             <Section className="text-left mb-[2.5rem]">
                 <Link
                     href={getAppInformationDashboardLink}
-                    className="text-center bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block w-[10rem]"
+                    className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
                 </Link>

@@ -42,7 +42,7 @@ export default function NextStepsTemplateFree({
             <Section className="mb-6">
                 <Link
                     href={getAppInformationDashboardLink}
-                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 mb-14 rounded-lg text-base no-underline inline-block"
+                    className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
                 </Link>

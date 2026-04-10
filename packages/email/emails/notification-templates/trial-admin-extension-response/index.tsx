@@ -52,7 +52,7 @@ export default function TrialAdminExtensionResponse({
                 <Section className="text-left">
                     <Link
                         href={`${LIFERAY_HOME}/web/marketplace/ssa-dashboard`}
-                        className="bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block"
+                        className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                     >
                         Go to Dashboard
                     </Link>
