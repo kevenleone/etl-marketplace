@@ -39,16 +39,16 @@ export default function NextStepsTemplatePaidOrTrial({
 
             <Section className="text-left mb-14">
                 <Link
-                    href={`${LIFERAY_HOME}/web/marketplace/customer-dashboard`}
-                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 mr-4 rounded-lg text-base no-underline inline-block"
-                >
-                    Go to Dashboard
-                </Link>
-                <Link
                     href="https://console.marketplacedemo.liferay.sh/projects"
-                    className="bg-primary text-white font-bold py-2 px-6 rounded-lg text-base no-underline inline-block"
+                    className="bg-primary text-white font-semibold py-2 px-4 mr-4 rounded-lg text-base no-underline inline-block"
                 >
                     Continue Configuration
+                </Link>
+                <Link
+                    href={`${LIFERAY_HOME}/web/marketplace/customer-dashboard`}
+                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
+                >
+                    Go to Dashboard
                 </Link>
             </Section>
 

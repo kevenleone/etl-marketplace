@@ -132,7 +132,7 @@ export default function NewAppApprovedAndPublished({
             <Section className="mb-12">
                 <Link
                     href={`${LIFERAY_HOME}/publisher-dashboard#/app/${cpDefinitionProductId}`}
-                    className="bg-white border border-primary text-primary font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
+                    className="bg-primary text-white font-semibold py-2 px-4 rounded-lg text-base no-underline inline-block"
                 >
                     Go to Dashboard
                 </Link>
