@@ -21,17 +21,24 @@ import {
     getCountriesPage,
 } from 'liferay-headless-rest-client/headless-admin-address-v1.0';
 
+import mongoose from 'mongoose';
+import { KoroneikiAccountModel } from './model';
 import { Account, KoroneikiAccount, KoroneikiContact } from './types';
 
 import { koroneikiApi } from '../../services/koroneikiApi';
+
+import { SearchBuilder } from 'odata-search-builder';
+import PaginationRun from '../../core/PaginationRun';
 import { liferayClient } from '../../services/liferay';
+import { APIResponse } from '../../types';
+import Cache from '../../utils/cache';
 import { logger } from '../../utils/logger';
 import { path, paths } from '../../utils/paths';
-import PaginationRun from '../../core/PaginationRun';
 import { isEmailAddressValid } from '../../utils/validators';
-import { SearchBuilder } from 'odata-search-builder';
-import Cache from '../../utils/cache';
-import { APIResponse } from '../../types';
+
+await mongoose.connect(
+    'mongodb://root:root@localhost:27017/etl-marketplace?authSource=admin',
+);
 
 type AccountWithUserAccount = Account & {
     accountUserAccounts: any[];
@@ -58,7 +65,9 @@ const { data: accountGroup, error } =
         path: { externalReferenceCode: 'PARTNERS' },
     });
 
-if ((error as any)?.status === 'NOT_FOUND') {
+console.log(error, accountGroup);
+
+if (!accountGroup || (error as any)?.status === 'NOT_FOUND') {
     logger.error('Unable to proceed without AccountGroup');
 
     process.exit(1);
@@ -92,7 +101,7 @@ class KoroneikAccountSync {
             logger.info(
                 `[SHUTDOWN] Cache contains ${cacheInstance.cache.size} items`,
             );
-            console.log(cacheInstance.cache.keys());
+            // console.log(cacheInstance.cache.keys());
 
             logger.info('[SHUTDOWN] Exiting gracefully');
             process.exit(0);
@@ -235,12 +244,15 @@ class KoroneikAccountSync {
             { page: 1, pageSize: 50 },
         );
 
-        logger.info('[getKoroneikiAccounts] writing file');
+        logger.info('[getKoroneikiAccounts] writing to MongoDB');
 
-        await Bun.write(
-            path.join(paths.json, 'koroneiki-accounts.json'),
-            JSON.stringify(items, null, 2),
-        );
+        for (const item of items) {
+            await KoroneikiAccountModel.findOneAndUpdate(
+                { key: item.key },
+                item,
+                { upsert: true, returnDocument: 'after' },
+            );
+        }
 
         return items;
     }
@@ -427,12 +439,8 @@ class KoroneikAccountSync {
         return '';
     }
 
-    getSalesforceProjectCacheKey(salesforceProject: string) {
-        return `salesforce:project:${salesforceProject}`;
-    }
-
     async getSalesforceProject(salesforceProject: string) {
-        const key = this.getSalesforceProjectCacheKey(salesforceProject);
+        const key = `salesforce:project:${salesforceProject}`;
 
         if (cacheInstance.has(key)) {
             return cacheInstance.get(key);
@@ -444,7 +452,7 @@ class KoroneikAccountSync {
 
         const response = data as APIResponse;
 
-        if (response.totalCount > 0) {
+        if (response?.totalCount > 0) {
             cacheInstance.set(key, response.items[0]);
 
             return response.items[0];
@@ -517,9 +525,12 @@ class KoroneikAccountSync {
         });
 
         if (response.data) {
-            const key = this.getSalesforceProjectCacheKey(salesforceAccountKey);
+            cacheInstance.set(
+                `salesforce:project:${salesforceAccountKey}`,
+                response.data,
+            );
 
-            cacheInstance.set(key, response.data);
+            logger.info('[syncSalesforceAccount] project created');
 
             return response.data;
         }
@@ -604,14 +615,16 @@ class KoroneikAccountSync {
         if (salesforceProjectKey) {
             logger.info('SalesforceProjectKey ' + salesforceProjectKey);
 
-            return this.syncSalesforceAccount(
+            await this.syncSalesforceAccount(
                 salesforceProjectKey,
                 koroneikiAccount,
             );
+
+            return;
         }
 
         /**
-         * If no Salesforce Project key exists, sync the Marketplace account.
+         * If is not a Salesforce Project, sync into a Marketplace account.
          */
 
         if (!liferayAccount) {
@@ -655,6 +668,10 @@ class KoroneikAccountSync {
         liferayAccount: AccountWithUserAccount,
         koroneikiAccount: KoroneikiAccount,
     ) {
+        if (!koroneikiAccount.postalAddresses.length) {
+            return logger.warn('No Koroneiki Account addresses to Sync');
+        }
+
         for (const koroneikiPostalAddress of koroneikiAccount.postalAddresses) {
             const liferayAccountAddress = liferayAccount.postalAddresses?.find(
                 ({ streetAddressLine1 }) =>
@@ -670,7 +687,7 @@ class KoroneikAccountSync {
                 continue;
             }
 
-            let addressRegion = '';
+            let addressRegion = koroneikiPostalAddress.addressRegion;
 
             if (!addressRegion) {
                 addressRegion =
@@ -686,34 +703,38 @@ class KoroneikAccountSync {
                 );
             }
 
-            const { error } = await postAccountPostalAddress({
-                body: {
-                    addressCountry: koroneikiPostalAddress.addressCountry,
-                    addressLocality: koroneikiPostalAddress.addressLocality,
-                    postalCode: koroneikiPostalAddress.postalCode,
-                    streetAddressLine1:
-                        koroneikiPostalAddress.streetAddressLine1,
-                    streetAddressLine2:
-                        koroneikiPostalAddress.streetAddressLine2,
-                    streetAddressLine3:
-                        koroneikiPostalAddress.streetAddressLine3,
-                    addressType: 'billing-and-shipping',
-                    addressRegion: addressRegion,
-                    primary: koroneikiPostalAddress.primary,
+            const { error, request, response } = await postAccountPostalAddress(
+                {
+                    body: {
+                        addressCountry: koroneikiPostalAddress.addressCountry,
+                        addressLocality: koroneikiPostalAddress.addressLocality,
+                        name: koroneikiPostalAddress.primary
+                            ? 'Primary Address'
+                            : 'Secondary Address',
+                        postalCode: koroneikiPostalAddress.postalCode,
+                        streetAddressLine1:
+                            koroneikiPostalAddress.streetAddressLine1,
+                        streetAddressLine2:
+                            koroneikiPostalAddress.streetAddressLine2,
+                        streetAddressLine3:
+                            koroneikiPostalAddress.streetAddressLine3,
+                        addressType: 'billing-and-shipping',
+                        addressRegion: addressRegion,
+                        primary: koroneikiPostalAddress.primary,
+                    },
+                    client: liferayClient,
+                    path: { accountId: liferayAccount.id.toString() },
                 },
-                client: liferayClient,
-                path: { accountId: liferayAccount.id.toString() },
-            });
+            );
 
             if (error) {
-                logger.error(
-                    '[syncAccountAddress] Failed to post account with region ' +
-                        JSON.stringify(koroneikiPostalAddress),
-                );
+                console.error('liferayAccount', liferayAccount);
+                console.error('request', request);
+                console.error('response', response);
             }
 
             this.dynamicLog(
-                `[syncAccountAddress] address synced region: ${addressRegion}`,
+                `[syncAccountAddress] post account address: ${JSON.stringify(koroneikiPostalAddress)}`,
                 error,
             );
         }
@@ -724,16 +745,21 @@ class KoroneikAccountSync {
         koroneikiAccount: KoroneikiAccount,
     ) {
         if (!koroneikiAccount._isPartner) {
+            logger.warn('Not a partner');
+
             return;
         }
 
         if (accountGroupAccountsMap.has(liferayAccount.externalReferenceCode)) {
+            logger.warn('Skipping, already belong to accountGroup');
+
             return;
         }
 
         const { error } =
             await postAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode(
                 {
+                    client: liferayClient,
                     path: {
                         externalReferenceCode: 'PARTNERS',
                         accountExternalReferenceCode:
@@ -761,9 +787,10 @@ class KoroneikAccountSync {
             [],
         );
 
-        const koroneikiAccounts = await this.getFileEntryValues<
-            KoroneikiAccount[]
-        >(path.join(paths.json, 'koroneiki-accounts.json'), []);
+        const koroneikiAccounts = (await KoroneikiAccountModel.find({
+            processed: { $eq: false },
+            // postalAddresses: { $ne: [], $exists: true },
+        }).lean()) as KoroneikiAccount[];
 
         for (const marketplaceAccount of marketplaceAccounts) {
             cacheInstance.set(
@@ -802,6 +829,13 @@ class KoroneikAccountSync {
             if (!liferayAccount) {
                 logger.info('[main] Liferay account not exist');
 
+                await KoroneikiAccountModel.updateOne(
+                    { key: koroneikiAccount.key },
+                    { processed: true },
+                );
+
+                i++;
+
                 continue;
             }
 
@@ -817,13 +851,22 @@ class KoroneikAccountSync {
                 );
             }
 
+            await KoroneikiAccountModel.updateOne(
+                { key: koroneikiAccount.key },
+                { processed: true },
+            );
+
             i++;
         }
+
+        logger.info('Process finished.');
+
+        process.exit(0);
     }
 }
 
 const koroneikAccountSync = new KoroneikAccountSync();
 
 await koroneikAccountSync.getDXPAccounts();
-await koroneikAccountSync.getKoroneikiAccounts();
+// await koroneikAccountSync.getKoroneikiAccounts();
 await koroneikAccountSync.main();

@@ -3,8 +3,8 @@ import { createClient } from 'liferay-headless-rest-client';
 
 import { ENV } from '../config/env';
 import { liferayAuthSchema } from '../schemas/zod';
-import { logger } from '../utils/logger';
 import Cache from '../utils/cache';
+import { logger } from '../utils/logger';
 
 const {
     LIFERAY_HOST,

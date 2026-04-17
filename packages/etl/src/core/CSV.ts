@@ -3,7 +3,7 @@ import { paths } from '../utils/paths';
 type Headers = {
     name: string;
     label: string;
-    render?: (key: string, item: any) => void;
+    render?: (key: any, item: any) => void;
 };
 
 export default class CSV {

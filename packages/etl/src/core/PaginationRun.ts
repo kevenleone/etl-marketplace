@@ -7,11 +7,11 @@ export default class PaginationRun<T> {
     protected logger = logger;
     protected processedItems = 0;
 
-    public async dryRun(
+    public async dryRun<V = any>(
         act: {
             fetchData: (page: number, pageSize: number) => any;
             name?: string;
-            processItem: <T = any>(item: T, index: number) => any;
+            processItem: (item: V, index: number) => any;
             processFinished?: () => any;
         },
         pagination: { page: number; pageSize: number },
