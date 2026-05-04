@@ -1,0 +1,18 @@
+[
+    {
+        "active": true,
+        "conditionExpression": "orderType == \"DSR\"",
+        "externalReferenceCode": "MKT-DSR-FEEDBACK-EMAIL",
+        "label": {
+            "en_US": "DSR Feedback Email"
+        },
+        "name": "DSRFeedbackEmail",
+        "objectActionExecutorKey": "notification",
+        "objectActionTriggerKey": "onAfterAdd",
+        "objectDefinitionId": "[$OBJECT_DEFINITION_ID:ProductFeedback$]",
+        "parameters": {
+            "notificationTemplateExternalReferenceCode": "MARKETPLACE-DSR-FEEDBACK-SUBMIT-TEMPLATE",
+            "type": "email"
+        }
+    }
+]

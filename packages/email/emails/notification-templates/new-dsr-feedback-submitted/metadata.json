@@ -1,0 +1,7 @@
+{
+    "description": "Alerts the DSR product team about new user feedback",
+    "isObjectAction": false,
+    "recipients": ["antonio.alvino@liferay.com", "giulia.nobile@liferay.com"],
+    "sender": "do-not-reply@liferay.com",
+    "triggerConditions": "When a user submits feedback specifically for the DSR"
+}
