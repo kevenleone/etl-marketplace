@@ -1,0 +1,24 @@
+{
+    "description": "",
+    "editorType": "richText",
+    "externalReferenceCode": "MARKETPLACE-DSR-FEEDBACK-SUBMIT-TEMPLATE",
+    "name": "New DSR Feedback",
+    "recipientType": "email",
+    "recipients": [
+        {
+            "bcc": "",
+            "cc": "",
+            "from": "do-not-reply@liferay.com",
+            "fromName": {
+                "en-US": "Liferay Marketplace"
+            },
+            "to": {
+                "en-US": "antonio.alvino@liferay.com, giulia.nobile@liferay.com"
+            }
+        }
+    ],
+    "subject": {
+        "en_US": "Liferay Marketplace - New DSR Feedback"
+    },
+    "type": "email"
+}
