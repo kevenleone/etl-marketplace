@@ -1,0 +1,24 @@
+{
+	"description": "Notification sent to customers when they order a Beta AI Hub.",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-AI-HUB-ORDER-CONFIRMATION",
+	"name": "AI Hub Order Confirmation",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "[%EMAIL_ADDRESS%]"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Liferay Marketplace - AI Hub Order Confirmation"
+	},
+	"type": "email"
+}

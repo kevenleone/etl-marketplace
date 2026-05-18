@@ -1,0 +1,7 @@
+{
+    "description": "Notification sent to customers when they order a Beta AI Hub",
+    "isObjectAction": false,
+    "recipients": "[%EMAIL_ADDRESS%]",
+    "sender": "do-not-reply@liferay.com",
+    "triggerConditions": "When a new Beta AI Hub order is placed and ready to be provisioned."
+}
