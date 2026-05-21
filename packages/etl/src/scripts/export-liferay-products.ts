@@ -11,16 +11,14 @@ import { safeJSONParse } from '../utils/json';
 import { logger } from '../utils/logger';
 
 class ExportLiferayProducts {
-    private orders: Order[] = [];
-
     async runAiHub() {
-        const self = this;
         const paginationRun = new PaginationRun();
+        const orders: Order[] = [];
 
         await paginationRun.dryRun<Order>(
             {
                 async processItem(order: Order) {
-                    self.orders.push(order);
+                    orders.push(order);
                 },
 
                 async processFinished() {
@@ -41,7 +39,7 @@ class ExportLiferayProducts {
                                 label: 'AI HUB Account Name',
                                 render: (customFields) => {
                                     const orderMetadata = safeJSONParse(
-                                        customFields['order-metadata'],
+                                        customFields?.['order-metadata'],
                                         { aiHubForm: { aiHubAccountName: '' } },
                                     );
 
@@ -54,7 +52,7 @@ class ExportLiferayProducts {
                                 label: 'AI Hub Email Address',
                                 render: (customFields) => {
                                     const orderMetadata = safeJSONParse(
-                                        customFields['order-metadata'],
+                                        customFields?.['order-metadata'],
                                         {
                                             aiHubForm: {
                                                 businessEmail: '',
@@ -71,7 +69,7 @@ class ExportLiferayProducts {
                                 },
                             },
                         ],
-                        self.orders,
+                        orders,
                     );
 
                     await csv.save('ai-hub.csv');
@@ -105,13 +103,13 @@ class ExportLiferayProducts {
     }
 
     async runCMPBeta() {
-        const self = this;
         const paginationRun = new PaginationRun();
+        const orders: Order[] = [];
 
         await paginationRun.dryRun<Order>(
             {
                 async processItem(order: Order) {
-                    self.orders.push(order);
+                    orders.push(order);
                 },
 
                 async processFinished() {
@@ -128,7 +126,7 @@ class ExportLiferayProducts {
                                 render: (account) => account.name,
                             }
                         ],
-                        self.orders,
+                        orders,
                     );
 
                     await csv.save('cmp-beta.csv');
@@ -161,14 +159,110 @@ class ExportLiferayProducts {
         logger.info('Processed finished');
     }
 
-    async runDXPFree() {
-        const self = this;
+    async runDSR() {
         const paginationRun = new PaginationRun();
+        const orders: Order[] = [];
 
         await paginationRun.dryRun<Order>(
             {
                 async processItem(order: Order) {
-                    self.orders.push(order);
+                    orders.push(order);
+                },
+
+                async processFinished() {
+                    const csv = new CSV(
+                        [
+                            { name: 'id', label: 'Order ID' },
+                            {
+                                name: 'creatorEmailAddress',
+                                label: 'Creator Email Address',
+                            },
+                            {
+                                name: 'account',
+                                label: 'Account Name',
+                                render: (account) => account.name,
+                            },
+                            {
+                                name: 'customFields',
+                                label: 'Project Name',
+                                render: (customFields) => {
+                                    const orderMetadata = safeJSONParse(
+                                        customFields?.['order-metadata'],
+                                        { analyticsProject: { name: '' } },
+                                    );
+
+                                    return orderMetadata?.analyticsProject
+                                        ?.name;
+                                },
+                            },
+                            {
+                                name: 'customFields',
+                                label: 'Server Location',
+                                render: (customFields) => {
+                                    const orderMetadata = safeJSONParse(
+                                        customFields?.['order-metadata'],
+                                        { analyticsProject: { serverLocation: '' } },
+                                    );
+
+                                    return orderMetadata?.analyticsProject
+                                        ?.serverLocation;
+                                },
+                            },
+                            {
+                                name: 'customFields',
+                                label: 'Incident Report Email Addresses',
+                                render: (customFields) => {
+                                    const orderMetadata = safeJSONParse(
+                                        customFields?.['order-metadata'],
+                                        { analyticsProject: { incidentReportEmailAddresses: [] } },
+                                    );
+
+                                    return orderMetadata?.analyticsProject
+                                        ?.incidentReportEmailAddresses?.join(', ');
+                                },
+                            }
+                        ],
+                        orders,
+                    );
+
+                    await csv.save('dsr.csv');
+                },
+                fetchData: (page, pageSize) =>
+                    getOrdersPage({
+                        client: liferayClient,
+                        query: {
+                            filter: SearchBuilder.in(
+                                'orderTypeExternalReferenceCode',
+                                ['DSR'],
+                            ),
+                            nestedFields: 'account',
+                            page: `${page}`,
+                            pageSize: `${pageSize}`,
+                        },
+                    })
+                        .then((response) => response.data)
+                        .catch((error) => {
+                            logger.error(error);
+
+                            return {
+                                items: [],
+                            };
+                        }),
+            },
+            { page: 1, pageSize: 20 },
+        );
+
+        logger.info('Processed finished');
+    }
+
+    async runDXPFree() {
+        const paginationRun = new PaginationRun();
+        const orders: Order[] = [];
+
+        await paginationRun.dryRun<Order>(
+            {
+                async processItem(order: Order) {
+                    orders.push(order);
                 },
 
                 async processFinished() {
@@ -189,7 +283,7 @@ class ExportLiferayProducts {
                                 label: 'Domain',
                                 render: (customFields) => {
                                     const orderMetadata = safeJSONParse(
-                                        customFields['order-metadata'],
+                                        customFields?.['order-metadata'],
                                         { dxpTypeFreeForm: { domain: '' } },
                                     );
 
@@ -198,7 +292,7 @@ class ExportLiferayProducts {
                                 },
                             },
                         ],
-                        self.orders,
+                        orders,
                     );
 
                     await csv.save('dxp-free.csv');
@@ -237,5 +331,6 @@ class ExportLiferayProducts {
 const exportLiferayProducts = new ExportLiferayProducts();
 
 await exportLiferayProducts.runAiHub();
+await exportLiferayProducts.runDSR();
 await exportLiferayProducts.runCMPBeta();
 await exportLiferayProducts.runDXPFree();
