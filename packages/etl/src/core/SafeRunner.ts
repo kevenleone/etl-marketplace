@@ -1,6 +1,7 @@
 import prompts from 'prompts';
 
 import { ENV } from '../config/env';
+import { logger } from '../utils/logger';
 
 if (ENV.LIFERAY_HOST?.startsWith('https')) {
     const { value } = await prompts({
@@ -15,3 +16,5 @@ if (ENV.LIFERAY_HOST?.startsWith('https')) {
         process.exit(0);
     }
 }
+
+logger.info("Liferay HOST: " + ENV.LIFERAY_HOST)

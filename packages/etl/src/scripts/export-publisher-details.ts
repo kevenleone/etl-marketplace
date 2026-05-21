@@ -1,7 +1,5 @@
 import '../core/SafeRunner';
 
-import { liferayClient } from '../services/liferay';
-import PaginationRun from '../core/PaginationRun';
 import {
     Account,
     CustomField,
@@ -13,8 +11,10 @@ import {
     Catalog,
     getCatalogsPage,
 } from 'liferay-headless-rest-client/headless-commerce-admin-catalog-v1.0';
-import { paths } from '../utils/paths';
 import { SearchBuilder } from 'odata-search-builder';
+import PaginationRun from '../core/PaginationRun';
+import { liferayClient } from '../services/liferay';
+import { paths } from '../utils/paths';
 
 function escapeCSV(value: any) {
     if (value == null) {

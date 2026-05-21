@@ -6,13 +6,13 @@ import {
     getOrdersPage,
 } from 'liferay-headless-rest-client/headless-commerce-admin-order-v1.0';
 
-import { ENV } from '../config/env';
-import { liferayAuthSchema } from '../schemas/zod';
-import PaginationRun from '../core/PaginationRun';
-import { paths } from '../utils/paths';
 import { SearchBuilder } from 'odata-search-builder';
+import { ENV } from '../config/env';
+import PaginationRun from '../core/PaginationRun';
+import { liferayAuthSchema } from '../schemas/zod';
 import { liferayClient } from '../services/liferay';
 import { logger } from '../utils/logger';
+import { paths } from '../utils/paths';
 
 const authSchema = liferayAuthSchema.parse(ENV);
 
@@ -32,9 +32,9 @@ function countOrders(orders: any[]) {
 
 const filter = new SearchBuilder()
     .openGroup()
-    .gt('createDate', new Date(2024, 0, 1))
+    .gt('createDate', new Date(2026, 0, 1))
     .and()
-    .lt('createDate', new Date(2025, 0, 1))
+    .lt('createDate', new Date(2027, 0, 1))
     .closeGroup()
     .and()
     .not()

@@ -29,7 +29,7 @@ const kyFetch = liferay.extend({
             ? `Basic ${btoa(`${LIFERAY_USERNAME}:${LIFERAY_PASSWORD}`)}`
             : '',
     },
-    timeout: 30000,
+    timeout: 60000,
     hooks: {
         beforeRequest: [
             async (request) => {

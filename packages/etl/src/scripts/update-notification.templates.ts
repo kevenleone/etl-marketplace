@@ -1,3 +1,4 @@
+import '../core/SafeRunner'
 import { $ } from 'bun';
 import fs from 'fs';
 import {
@@ -9,7 +10,6 @@ import {
 
 import {
     getObjectDefinitionsPage,
-    ObjectAction,
     ObjectDefinition,
     patchObjectAction,
     postObjectDefinitionObjectAction,

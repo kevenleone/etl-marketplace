@@ -104,6 +104,63 @@ class ExportLiferayProducts {
         logger.info('Processed finished');
     }
 
+    async runCMPBeta() {
+        const self = this;
+        const paginationRun = new PaginationRun();
+
+        await paginationRun.dryRun<Order>(
+            {
+                async processItem(order: Order) {
+                    self.orders.push(order);
+                },
+
+                async processFinished() {
+                    const csv = new CSV(
+                        [
+                            { name: 'id', label: 'Order ID' },
+                            {
+                                name: 'creatorEmailAddress',
+                                label: 'Creator Email Address',
+                            },
+                            {
+                                name: 'account',
+                                label: 'Account Name',
+                                render: (account) => account.name,
+                            }
+                        ],
+                        self.orders,
+                    );
+
+                    await csv.save('cmp-beta.csv');
+                },
+                fetchData: (page, pageSize) =>
+                    getOrdersPage({
+                        client: liferayClient,
+                        query: {
+                            filter: SearchBuilder.in(
+                                'orderTypeExternalReferenceCode',
+                                ['CMP_BETA'],
+                            ),
+                            nestedFields: 'account',
+                            page: `${page}`,
+                            pageSize: `${pageSize}`,
+                        },
+                    })
+                        .then((response) => response.data)
+                        .catch((error) => {
+                            logger.error(error);
+
+                            return {
+                                items: [],
+                            };
+                        }),
+            },
+            { page: 1, pageSize: 20 },
+        );
+
+        logger.info('Processed finished');
+    }
+
     async runDXPFree() {
         const self = this;
         const paginationRun = new PaginationRun();
@@ -173,8 +230,12 @@ class ExportLiferayProducts {
 
         logger.info('Processed finished');
     }
+
+    
 }
 
 const exportLiferayProducts = new ExportLiferayProducts();
 
-exportLiferayProducts.runAiHub();
+await exportLiferayProducts.runAiHub();
+await exportLiferayProducts.runCMPBeta();
+await exportLiferayProducts.runDXPFree();
